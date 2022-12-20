@@ -30,12 +30,6 @@ class Vector4f {
         Vector4f operator-(Vector4f &v) const{
             return Vector4f(x - v.x, y - v.y, z - v.z);
         }
-
-        float* list(){
-            float m[4] = {x,y,z,w};
-            return m;
-        }
-        
 };
 
 class Matrix4x4 {
@@ -72,7 +66,7 @@ class Matrix4x4 {
         Vector4f operator*(Vector4f &v) const {
             Vector4f ret;
             float _m[4];
-            float* _v = v.list();
+            float _v[4] = {v.x, v.y, v.z, v.w};
             for (int i = 0; i < 4; i++) {
                 _m[i] = 0;
                 for (int j = 0; j < 4; j++) {
