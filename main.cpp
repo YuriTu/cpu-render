@@ -1,7 +1,8 @@
 #include <vector>
-// #include <stdio.h>
+#include <stdio.h>
 #include <math.h>
 #include <complex>
+#include <iostream>
 
 
 const float WIDTH = 800.0;
@@ -11,41 +12,28 @@ const float HEIGHT = 600.0;
 // #define WIDTH = 800.0;
 // #define HEIGHT = 600.0;
 
-class Vector4 {
+class Vector4f {
     public:
-        float m[4];
-        Vector4() {
-            memset(m, 0, sizeof(float) * 4);
-            m[3] = 1.0;
-        }
-        Vector4(const float _m[4]){
-            memcpy(m, _m, sizeof(float) * 4);
-        }
-        float x(){
-            return m[0];
-        }
-        float y(){
-            return m[1];
-        }
-        float z(){
-            return m[2];
-        }
-        float w(){
-            return m[3];
-        }
-        float cross(Vector4 &v){
-            float _m[4];
-            _m[0] = m[1] * v.m[2] - m[2]*v.m[1];
-            _m[1] = m[2] * v.m[0] - m[0]*v.m[2];
-            _m[2] = m[0] * v.m[1] - m[1]*v.m[0];
+        float x,y,z,w;
+        Vector4f() :x(0),y(0),z(0),w(1) {}
+        Vector4f(float xx) :x(xx),y(xx),z(xx),w(1) {}
+        Vector4f(float xx, float yy, float zz): x(xx),y(yy),z(zz),w(1) {}
+        
+        Vector4f cross(Vector4f &v){
+            float _m[3];
+            _m[0] = y * v.z - z*v.y;
+            _m[1] = z * v.x - x*v.z;
+            _m[2] = x * v.y - y*v.x;
+            return Vector4f(_m[0],_m[1],_m[2]);
         }
 
-        Vector4 operator-(Vector4 &v){
-            float _m[4];
-            for (int i = 0; i < 4; i++) {
-                _m[i] = m[i] - v.m[i];
-            }
-            return _m;
+        Vector4f operator-(Vector4f &v) const{
+            return Vector4f(x - v.x, y - v.y, z - v.z);
+        }
+
+        float* list(){
+            float m[4] = {x,y,z,w};
+            return m;
         }
         
 };
@@ -81,15 +69,17 @@ class Matrix4x4 {
             }
             return ret;
         }
-        Vector4 operator*(Vector4 &v) const {
-            Vector4 ret;
+        Vector4f operator*(Vector4f &v) const {
+            Vector4f ret;
+            float _m[4];
+            float* _v = v.list();
             for (int i = 0; i < 4; i++) {
-                ret.m[i] = 0;
+                _m[i] = 0;
                 for (int j = 0; j < 4; j++) {
-                    ret.m[i] += m[i][j] * v.m[j];
+                    _m[i] += m[i][j] * _v[j];
                 }
             }
-            return ret;
+            return Vector4f(_m[0],_m[1],_m[2]);
         }
 };
 
@@ -142,135 +132,54 @@ Matrix4x4 getProjection(float near, float far, float aspect, float fov) {
 
 
 
-class BmpGenerator {
-    public:
-        int width;
-        int height;
-        const int BYTES_PER_PIXEL = 3;
-        const int FILE_HEADER_SIZE = 14;
-        const int INFO_HEADER_SIZE = 40;
-        BmpGenerator(int _width, int _height){
-            width = _width;
-            height = _height;
-        }
 
-        unsigned char* createBitmapFileHeader(int stride){
-            int fileSize = FILE_HEADER_SIZE + INFO_HEADER_SIZE + (stride  * height);
-            static unsigned char fileHeader[] = {
-                0,0,
-                0,0,0,0,
-                0,0,0,0,
-                0,0,0,0,
-            };
+// void exportImg(std::vector<Vector4> frameBuffer){
+//     FILE* fp = fopen("img.ppm","wb");
 
-            fileHeader[ 0] = (unsigned char)('B');
-            fileHeader[ 1] = (unsigned char)('M');
-            fileHeader[ 2] = (unsigned char)(fileSize      );
-            fileHeader[ 3] = (unsigned char)(fileSize >>  8);
-            fileHeader[ 4] = (unsigned char)(fileSize >> 16);
-            fileHeader[ 5] = (unsigned char)(fileSize >> 24);
-            fileHeader[10] = (unsigned char)(FILE_HEADER_SIZE + INFO_HEADER_SIZE);
+//     for (int i = 0; i < WIDTH * HEIGHT; i++) {
+//         static unsigned char* color[3];
+//         color[0] = (char)( frameBuffer[i].x());
+//         fwrite(color, 1, 3, fp);
+//     }
 
-            return fileHeader;
-        }
+//     fclose(fp);
+// }
 
-        unsigned char* createBitmapInfoHeader(){
-            static unsigned char infoHeader[] = {
-                0,0,0,0, /// header size
-                0,0,0,0, /// image width
-                0,0,0,0, /// image height
-                0,0,     /// number of color planes
-                0,0,     /// bits per pixel
-                0,0,0,0, /// compression
-                0,0,0,0, /// image size
-                0,0,0,0, /// horizontal resolution
-                0,0,0,0, /// vertical resolution
-                0,0,0,0, /// colors in color table
-                0,0,0,0, /// important color count
-            };
-
-            infoHeader[ 0] = (unsigned char)(INFO_HEADER_SIZE);
-            infoHeader[ 4] = (unsigned char)(width      );
-            infoHeader[ 5] = (unsigned char)(width >>  8);
-            infoHeader[ 6] = (unsigned char)(width >> 16);
-            infoHeader[ 7] = (unsigned char)(width >> 24);
-            infoHeader[ 8] = (unsigned char)(height      );
-            infoHeader[ 9] = (unsigned char)(height >>  8);
-            infoHeader[10] = (unsigned char)(height >> 16);
-            infoHeader[11] = (unsigned char)(height >> 24);
-            infoHeader[12] = (unsigned char)(1);
-            infoHeader[14] = (unsigned char)(BYTES_PER_PIXEL*8);
-
-            return infoHeader;
-        }
-
-        void export(std::vector<std::vector<std::vector<float>>> *buffer, char* fileName) {
-            int widthInBytes = width * BYTES_PER_PIXEL;
-
-            unsigned char padding[3] = {0,0,0};
-            int paddingSize = (4 - (widthInBytes) % 4) % 4;
-
-            int stride = (widthInBytes) + paddingSize;
-
-            FILE* imageFile = fopen(fileName, "wb");
-
-            unsigned char* fileHeader = createBitmapFileHeader(stride);
-            fwrite(fileHeader, 1, FILE_HEADER_SIZE, imageFile);
-
-            unsigned char* infoHeader = createBitmapInfoHeader();
-            fwrite(infoHeader, 1, INFO_HEADER_SIZE, imageFile);
-
-            
-            for (int i = 0; i < height; i++) {
-                fwrite(buffer + (i*widthInBytes), BYTES_PER_PIXEL, width, imageFile);
-                fwrite(padding, 1, paddingSize, imageFile);
-            }
-
-            fclose(imageFile);
-        }
-};
-
-bool inTrangle(float x, float y, std::vector<Vector4> points) {
+bool inTrangle(float x, float y, std::vector<Vector4f> points) {
     bool ret = false;
-    Vector4 l0 = points[0] - points[1];
-    Vector4 l1 = points[1] - points[2];
-    Vector4 l2 = points[2] - points[0];
+    Vector4f l0 = points[0] - points[1];
+    Vector4f l1 = points[1] - points[2];
+    Vector4f l2 = points[2] - points[0];
 
-    float r0 = l0.cross(l1);
-    float r1 = l1.cross(l2);
-    float r2 = l2.cross(l0);
+    float r0 = (l0.cross(l1)).z;
+    float r1 = (l1.cross(l2)).z;
+    float r2 = (l2.cross(l0)).z;
 
-    if ((r0 >=0 && r1 >=0 && r2 >=0 )|| (r0 <0 && r1 <0 && r2 <0)) {
-        ret = true;
-    }
+    ret = (r0 >=0 && r1 >=0 && r2 >=0 )|| (r0 <0 && r1 <0 && r2 <0);
     return ret;
 }
 
-std::vector<Vector4> getPoints(){
-    std::vector<Vector4> ret;
-    std::vector<float[4]> points = {
-        {0.0, 0.0, 0.0, 1.0 },
-        {100.0, 0.0, 0.0, 1.0},
-        {50.0, 50.0, 0.0, 1.0}
+std::vector<Vector4f> getPoints(){
+    std::vector<Vector4f> ret = {
+        Vector4f(0.0, 0.0, 0.0),
+        Vector4f(100.0, 0.0, 0.0),
+        Vector4f(50.0, 50.0, 0.0),
     };
-    for (int i = 0; i < points.size(); i++) {
-        ret[i] = Vector4(points[i]);
-    }
     return ret;
 }
 
-void rasterization (std::vector<std::vector<std::vector<float>>> &frameBuffer, std::vector<Vector4> points) {
-    std::vector<float> tempColor = {255.0,255.0,255.0};
+void rasterization (std::vector<Vector4f> &frameBuffer, std::vector<Vector4f> points) {
+    Vector4f defaultColor = Vector4f(255.0,255.0,255.0);
     float x_min = 0;
     float x_max = 0;
     float y_min = 0;
     float y_max = 0;
     for (int i = 0; i < points.size(); i++) {
-        Vector4 point = points[i];
-        x_min = std::min(x_min, point.x());
-        x_max = std::max(x_max, point.x());
-        y_min = std::min(y_min, point.y());
-        y_max = std::max(y_max, point.y());
+        Vector4f point = points[i];
+        x_min = std::min(x_min, point.x);
+        x_max = std::max(x_max, point.x);
+        y_min = std::min(y_min, point.y);
+        y_max = std::max(y_max, point.y);
     }
 
     float buffer[800][600];
@@ -282,7 +191,8 @@ void rasterization (std::vector<std::vector<std::vector<float>>> &frameBuffer, s
             if (i < x_max && i > x_min && j < y_max && j > y_min) {
                 if (inTrangle(i,j, points)) {
                     flag = true;
-                    frameBuffer[i][j] = tempColor;
+                    int index = j * HEIGHT + i;
+                    frameBuffer[index] = defaultColor;
                 }
             }
 
@@ -314,11 +224,11 @@ void rasterization (std::vector<std::vector<std::vector<float>>> &frameBuffer, s
 
 int main(int argc, char const *argv[])
 {
-    std::vector<std::vector<std::vector<float>>> frameBuffer;
+    std::vector<Vector4f> frameBuffer;
     // float *** frameBuffer;
     // vector 1 2 3
 
-    std::vector<Vector4> points = getPoints();
+    std::vector<Vector4f> points = getPoints();
     
     // scene
     // m matrix 设置坐标点 为原点
@@ -347,7 +257,7 @@ int main(int argc, char const *argv[])
 
     // render 
     // 获得转换后的本地坐标系坐标
-    std::vector<Vector4> localPoints = {};
+    std::vector<Vector4f> localPoints = {};
     for (int i = 0; i < points.size(); i++) {
         localPoints[i] =  projection * points[i];
     }
@@ -362,9 +272,10 @@ int main(int argc, char const *argv[])
     // 根据depth buffer 判断是否需要把color buffer更新
 
     // 输出结果
-
-    BmpGenerator bmp = BmpGenerator(WIDTH, HEIGHT);
-    bmp.export(frameBuffer,"test.bmp");
+    std::cout << frameBuffer.size() << std::endl;
+    // BmpGenerator bmp(WIDTH, HEIGHT);
+    // bmp.export(&frameBuffer,"test.bmp");
+    // exportImg(frameBuffer);
 
     
 
