@@ -8,6 +8,8 @@ const float WIDTH = 800.0;
 const float HEIGHT = 600.0;
 
 #define PI 3.1415926;
+// #define WIDTH = 800.0;
+// #define HEIGHT = 600.0;
 
 class Vector4 {
     public:
@@ -19,6 +21,33 @@ class Vector4 {
         Vector4(const float _m[4]){
             memcpy(m, _m, sizeof(float) * 4);
         }
+        float x(){
+            return m[0];
+        }
+        float y(){
+            return m[1];
+        }
+        float z(){
+            return m[2];
+        }
+        float w(){
+            return m[3];
+        }
+        float cross(Vector4 &v){
+            float _m[4];
+            _m[0] = m[1] * v.m[2] - m[2]*v.m[1];
+            _m[1] = m[2] * v.m[0] - m[0]*v.m[2];
+            _m[2] = m[0] * v.m[1] - m[1]*v.m[0];
+        }
+
+        Vector4 operator-(Vector4 &v){
+            float _m[4];
+            for (int i = 0; i < 4; i++) {
+                _m[i] = m[i] - v.m[i];
+            }
+            return _m;
+        }
+        
 };
 
 class Matrix4x4 {
@@ -63,8 +92,6 @@ class Matrix4x4 {
             return ret;
         }
 };
-
-
 
 Matrix4x4 getProjection(float near, float far, float aspect, float fov) {
     Matrix4x4 ortho;
@@ -113,11 +140,26 @@ Matrix4x4 getProjection(float near, float far, float aspect, float fov) {
     return ortho * orthoToPerspect;
 }
 
-
 class Scene {
-    std::vector<float> colorBuffer;
     std::vector<float> depthBuffer;
+    std::vector<float> frameBuffer;
 };
+
+bool inTrangle(float x, float y, std::vector<Vector4> points) {
+    bool ret = false;
+    Vector4 l0 = points[0] - points[1];
+    Vector4 l1 = points[1] - points[2];
+    Vector4 l2 = points[2] - points[0];
+
+    float r0 = l0.cross(l1);
+    float r1 = l1.cross(l2);
+    float r2 = l2.cross(l0);
+
+    if ((r0 >=0 && r1 >=0 && r2 >=0 )|| (r0 <0 && r1 <0 && r2 <0)) {
+        ret = true;
+    }
+    return ret;
+}
 
 std::vector<Vector4> getPoints(){
     std::vector<Vector4> ret;
@@ -132,6 +174,45 @@ std::vector<Vector4> getPoints(){
     return ret;
 }
 
+void rasterization (std::vector<float> &frameBuffer, std::vector<Vector4> points) {
+    float x_min = 0;
+    float x_max = 0;
+    float y_min = 0;
+    float y_max = 0;
+    for (int i = 0; i < points.size(); i++) {
+        Vector4 point = points[i];
+        x_min = std::min(x_min, point.x());
+        x_max = std::max(x_max, point.x());
+        y_min = std::min(y_min, point.y());
+        y_max = std::max(y_max, point.y());
+    }
+
+    float buffer[800][600];
+
+    for (int i = 0; i < WIDTH; i++) {
+        for (int j = 0; j < HEIGHT; j++){
+            bool flag = false;
+            // aabb judge
+            if (i < x_max && i > x_min && j < y_max && j > y_min) {
+                if (inTrangle(i,j, points)) {
+                    flag = true;
+                }
+            }
+
+
+
+            if (flag) {
+                // cal 重力坐标
+
+                // cal z value 
+
+                // update depth buffer
+
+                // get color
+            }
+        }
+    }
+}
 
 // scene流程
 // mvp变换
