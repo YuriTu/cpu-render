@@ -3,6 +3,7 @@
 #include <math.h>
 #include <complex>
 #include <iostream>
+#include <cstring>
 
 
 const float WIDTH = 800.0;
@@ -11,6 +12,10 @@ const float HEIGHT = 600.0;
 #define PI 3.1415926;
 // #define WIDTH = 800.0;
 // #define HEIGHT = 600.0;
+
+inline float clamp(float max, float min, float v) {
+    return std::min(max, std::max(min,v));
+}
 
 class Vector4f {
     public:
@@ -127,17 +132,19 @@ Matrix4x4 getProjection(float near, float far, float aspect, float fov) {
 
 
 
-// void exportImg(std::vector<Vector4> frameBuffer){
-//     FILE* fp = fopen("img.ppm","wb");
+void exportImg(std::vector<Vector4f> frameBuffer){
+    FILE* fp = fopen("img.ppm","wb");
+    (void)fprintf(fp, "P6\n%d %d\n255\n", WIDTH, HEIGHT);
+    for (int i = 0; i < WIDTH * HEIGHT; i++) {
+        static unsigned char color[3];
+        color[0] = (char)(255. * clamp(1.0,0., frameBuffer[i].x));
+        color[1] = (char)(255. * clamp(1.0,0., frameBuffer[i].y));
+        color[2] = (char)(255. * clamp(1.0,0., frameBuffer[i].z));
+        fwrite(color, 1, 3, fp);
+    }
 
-//     for (int i = 0; i < WIDTH * HEIGHT; i++) {
-//         static unsigned char* color[3];
-//         color[0] = (char)( frameBuffer[i].x());
-//         fwrite(color, 1, 3, fp);
-//     }
-
-//     fclose(fp);
-// }
+    fclose(fp);
+}
 
 bool inTrangle(float x, float y, std::vector<Vector4f> points) {
     bool ret = false;
@@ -163,7 +170,7 @@ std::vector<Vector4f> getPoints(){
 }
 
 void rasterization (std::vector<Vector4f> &frameBuffer, std::vector<Vector4f> points) {
-    Vector4f defaultColor = Vector4f(255.0,255.0,255.0);
+    Vector4f defaultColor = Vector4f(1.0,1.0,1.0);
     float x_min = 0;
     float x_max = 0;
     float y_min = 0;
@@ -218,8 +225,7 @@ void rasterization (std::vector<Vector4f> &frameBuffer, std::vector<Vector4f> po
 
 int main(int argc, char const *argv[])
 {
-    std::vector<Vector4f> frameBuffer;
-    // float *** frameBuffer;
+    std::vector<Vector4f> frameBuffer(WIDTH * HEIGHT);
     // vector 1 2 3
 
     std::vector<Vector4f> points = getPoints();
@@ -251,9 +257,9 @@ int main(int argc, char const *argv[])
 
     // render 
     // 获得转换后的本地坐标系坐标
-    std::vector<Vector4f> localPoints = {};
+    std::vector<Vector4f> localPoints;
     for (int i = 0; i < points.size(); i++) {
-        localPoints[i] =  projection * points[i];
+        localPoints.push_back(projection * points[i]);
     }
 
 
@@ -264,13 +270,10 @@ int main(int argc, char const *argv[])
     // 根据三角形重力坐标计算颜色的插值
 
     // 根据depth buffer 判断是否需要把color buffer更新
-
+    
+    exportImg(frameBuffer);
     // 输出结果
-    std::cout << frameBuffer.size() << std::endl;
-    // BmpGenerator bmp(WIDTH, HEIGHT);
-    // bmp.export(&frameBuffer,"test.bmp");
-    // exportImg(frameBuffer);
-
+    std::cout << frameBuffer.size() << "hahahah" << std::endl;
     
 
     /* code */
