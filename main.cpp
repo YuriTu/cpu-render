@@ -134,14 +134,29 @@ Matrix4x4 getProjection(float near, float far, float aspect, float fov) {
 
 void exportImg(std::vector<Vector4f> frameBuffer){
     FILE* fp = fopen("img.ppm","wb");
-    (void)fprintf(fp, "P6\n%d %d\n255\n", WIDTH, HEIGHT);
-    for (int i = 0; i < WIDTH * HEIGHT; i++) {
+    // (void)fprintf(fp, "P6\n%d %d\n255\n", WIDTH, HEIGHT);
+    std::cout << " export framebuffer size" << frameBuffer.size() << std::endl;
+    for (int i = 0; i < frameBuffer.size(); i++) {
         static unsigned char color[3];
-        color[0] = (char)(255. * clamp(1.0,0., frameBuffer[i].x));
-        color[1] = (char)(255. * clamp(1.0,0., frameBuffer[i].y));
-        color[2] = (char)(255. * clamp(1.0,0., frameBuffer[i].z));
+        
+        Vector4f pixel = frameBuffer[i];
+        // std::cout << " export index" << i << std::endl;
+        color[0] = (char)(255 * clamp(1.0,0., pixel.x));
+        color[1] = (char)(255 * clamp(1.0,0., pixel.y));
+        color[2] = (char)(255 * clamp(1.0,0., pixel.z));
+        if (pixel.x > 0 || pixel.y > 0) {
+            std::cout << " frame: x:" << pixel.x << "y:" << pixel.y << 255.0 * clamp(1.0,0., pixel.x) << std::endl;
+            std::cout << " frame: index:" << i << std::endl;
+            std::cout << " color: x:" << color[0] << "y:" << color[1] << std::endl;
+        }
+
+        if (i > 4000) {
+            std::cout << "602  frame: index:" << i << std::endl;
+        }
+        
         fwrite(color, 1, 3, fp);
     }
+    std::cout << " ????"<< std::endl;
 
     fclose(fp);
 }
@@ -183,8 +198,6 @@ void rasterization (std::vector<Vector4f> &frameBuffer, std::vector<Vector4f> po
         y_max = std::max(y_max, point.y);
     }
 
-    float buffer[800][600];
-
     for (int i = 0; i < WIDTH; i++) {
         for (int j = 0; j < HEIGHT; j++){
             bool flag = false;
@@ -193,7 +206,12 @@ void rasterization (std::vector<Vector4f> &frameBuffer, std::vector<Vector4f> po
                 if (inTrangle(i,j, points)) {
                     flag = true;
                     int index = j * HEIGHT + i;
-                    frameBuffer[index] = defaultColor;
+                    (frameBuffer[index]) = defaultColor;
+                    // memcpy(&(frameBuffer[index]), &defaultColor, sizeof(defaultColor));
+                    
+                        // printf("in tr x:%d, y:%d ind:%d  r:%d defR:%d\n",i,j,index,frameBuffer[index].x,defaultColor.x);    
+                    // std::cout << "in tr x:" << i << "y:" << j << "index:" << index << "x:" << frameBuffer[index].x << std::endl;
+                    
                 }
             }
 
@@ -273,7 +291,7 @@ int main(int argc, char const *argv[])
     
     exportImg(frameBuffer);
     // 输出结果
-    std::cout << frameBuffer.size() << "hahahah" << std::endl;
+    printf("gen done ");
     
 
     /* code */
