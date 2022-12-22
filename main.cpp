@@ -6,12 +6,10 @@
 #include <cstring>
 
 
-const float WIDTH = 800.0;
-const float HEIGHT = 600.0;
+constexpr float WIDTH = 800.0;
+constexpr float HEIGHT = 600.0;
 
 #define PI 3.1415926;
-// #define WIDTH = 800.0;
-// #define HEIGHT = 600.0;
 
 inline float clamp(float max, float min, float v) {
     return std::min(max, std::max(min,v));
@@ -129,12 +127,11 @@ Matrix4x4 getProjection(float near, float far, float aspect, float fov) {
     return ortho * orthoToPerspect;
 }
 
-
-
-
 void exportImg(std::vector<Vector4f> frameBuffer){
     FILE* fp = fopen("img.ppm","wb");
-    // (void)fprintf(fp, "P6\n%d %d\n255\n", WIDTH, HEIGHT);
+    int w = WIDTH;
+    int h = HEIGHT;
+    (void)fprintf(fp, "P6\n%d %d\n255\n", w, h);
     std::cout << " export framebuffer size" << frameBuffer.size() << std::endl;
     for (int i = 0; i < frameBuffer.size(); i++) {
         static unsigned char color[3];
