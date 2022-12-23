@@ -15,11 +15,14 @@ inline float clamp(float max, float min, float v) {
     return std::min(max, std::max(min,v));
 }
 
+
+
 class Vector4f {
     public:
         float x,y,z,w;
         Vector4f() :x(0),y(0),z(0),w(1) {}
         Vector4f(float xx) :x(xx),y(xx),z(xx),w(1) {}
+        Vector4f(float xx, float yy) :x(xx),y(yy),z(1),w(1) {}
         Vector4f(float xx, float yy, float zz): x(xx),y(yy),z(zz),w(1) {}
         
         Vector4f cross(Vector4f &v){
@@ -30,10 +33,40 @@ class Vector4f {
             return Vector4f(_m[0],_m[1],_m[2]);
         }
 
+        float dot(Vector4f &v) {
+            return x*v.x + y*v.y + z*v.z;
+        }
+
+        Vector4f operator+(Vector4f &v) const{
+            return Vector4f(x + v.x, y + v.y, z + v.z);
+        }
+
         Vector4f operator-(Vector4f &v) const{
             return Vector4f(x - v.x, y - v.y, z - v.z);
         }
+
+        Vector4f operator*(Vector4f &v) const {
+            return Vector4f( x*v.x, y*v.y ,z*v.z);
+        }
+
+        Vector4f operator*(float v) const {
+            return Vector4f( x*v, y*v, z*v);
+        }
 };
+
+inline std::vector<float> getBarycentric2D(float x, float y, std::vector<Vector4f> points) {
+    Vector4f point = Vector4f(x,y);
+    Vector4f a = points[0] - points[1];
+    Vector4f b = points[0] - points[2];
+    Vector4f p = points[0] - point;
+    Vector4f z = Vector4f(0,0,-1);
+    float all = (b.cross(a)).dot(z);
+    float r1 = (p.cross(a)).dot(z) / all;
+    float r2 = (b.cross(p)).dot(z) / all;
+    float r3 = 1 - r1 - r2;
+
+    return {r1, r2, r3};
+}
 
 class Matrix4x4 {
     public:
@@ -173,14 +206,14 @@ bool inTrangle(float x, float y, std::vector<Vector4f> points) {
 
 std::vector<Vector4f> getPoints(){
     std::vector<Vector4f> ret = {
-        Vector4f(0.0, 0.0, 0.0),
-        Vector4f(100.0, 0.0, 0.0),
-        Vector4f(50.0, 50.0, 0.0),
+        Vector4f(0.0, 50.0, -1.0),
+        Vector4f(100.0, 50.0, -1.0),
+        Vector4f(50.0, 100.0, -1.0),
     };
     return ret;
 }
 
-void rasterization (std::vector<Vector4f> &frameBuffer, std::vector<Vector4f> points) {
+void rasterization (std::vector<Vector4f> &frameBuffer, std::vector<float> &depthBuffer, std::vector<Vector4f> &points, std::vector<Vector4f> &colors) {
     Vector4f defaultColor = Vector4f(1.0,1.0,1.0);
     float x_min = 0;
     float x_max = 0;
@@ -196,25 +229,34 @@ void rasterization (std::vector<Vector4f> &frameBuffer, std::vector<Vector4f> po
     for (int i = 0; i < WIDTH; i++) {
         for (int j = 0; j < HEIGHT; j++){
             bool flag = false;
+            int index = (HEIGHT - j) * WIDTH + i;
             // aabb judge
             if (i < x_max && i > x_min && j < y_max && j > y_min) {
                 if (inTrangle(i,j, points)) {
                     flag = true;
-                    int index = (HEIGHT - j) * WIDTH + i;
-                    (frameBuffer[index]) = defaultColor;
+                    // (frameBuffer[index]) = defaultColor;
                 }
             }
 
-
-
             if (flag) {
-                // cal 重力坐标
-
+                // compute 重力坐标
+                std::vector<float> bray = getBarycentric2D(i,j,points);
+                float a = bray[0];
+                float b = bray[1];
+                float g = bray[2];
                 // cal z value 
-
-                // update depth buffer
-
-                // get color
+                float cur_z = points[0].z * a + points[1].z * a + points[2].z * g;
+                // judge depth buffer
+                if (depthBuffer[index] - cur_z >= .0001) {
+                    depthBuffer[index] = cur_z;
+                    // get color
+                    // Vector4f color = ( colors[0] * a + colors[1] * b + colors[2] * g);
+                    Vector4f tem1 = colors[0] * a;
+                    Vector4f tem2 = colors[1] * b;
+                    Vector4f tem3 = colors[2] * g;
+                    Vector4f color = tem1 + tem2 + tem3;
+                    frameBuffer[index] = color;
+                }
             }
         }
     }
@@ -234,9 +276,15 @@ void rasterization (std::vector<Vector4f> &frameBuffer, std::vector<Vector4f> po
 int main(int argc, char const *argv[])
 {
     std::vector<Vector4f> frameBuffer(WIDTH * HEIGHT);
-    // vector 1 2 3
+    std::vector<float> depthBuffer(WIDTH * HEIGHT,0);
+    
 
     std::vector<Vector4f> points = getPoints();
+    std::vector<Vector4f> colors = {
+        Vector4f(1.0,0.0,0.0),
+        Vector4f(0.0,1.0,0.0),
+        Vector4f(0.0,0.0,1.0),
+    };
     
     // scene
     // m matrix 设置坐标点 为原点
@@ -273,7 +321,7 @@ int main(int argc, char const *argv[])
 
     // rasterasing
     // 根据aabb判断哪些像素点需要被着色
-    rasterization(frameBuffer, points);
+    rasterization(frameBuffer,depthBuffer, points, colors);
 
     // 根据三角形重力坐标计算颜色的插值
 
