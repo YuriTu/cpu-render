@@ -10,11 +10,14 @@ namespace r
     {
     public:
         Render() = default;
-        Render(int w, int h):width(w), height(h) {
-            frameBuffer.resize(width * height);
-            depthBuffer.resize(width * height);
-        };
+        Render(int w, int h);
         ~Render() = default;
+
+        void setPerspectiveProjection(float near, float far, float aspect, float fov);
+        void setModule(Vector4f position);
+        void setView(Vector4f position);
+        void add(const mesh &m);
+        void render();
 
         int width;
         int height;
@@ -26,11 +29,7 @@ namespace r
         std::vector<Vector4f> points;
         std::vector<Vector4f> colors;
         
-        void setPerspectiveProjection(float near, float far, float aspect, float fov);
-        void setModule(Vector4f position);
-        void setView(Vector4f position);
-        void add(mesh &m);
-        void render();
+        
     private:
         void setMvp();
         void exportImg();

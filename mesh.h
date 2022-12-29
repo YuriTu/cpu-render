@@ -7,25 +7,19 @@ namespace r
     public:
         mesh() = default;
         ~mesh() = default;
-    protected:
+        int size() {
+            return data.size();
+        }
         std::vector<Vector4f> data;
     };
     
     
-    mesh::mesh(/* args */)
-    {
-    }
     
-    mesh::~mesh()
-    {
-    }
-
     class triangle: public mesh
     {
-    protected:
-        std::vector<Vector4f> data;
     public:
         triangle(Vector4f a, Vector4f b, Vector4f c): data({a,b,c}){};
+        std::vector<Vector4f> data;
         // ~triangle();
     };
     

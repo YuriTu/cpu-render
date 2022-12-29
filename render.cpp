@@ -1,14 +1,17 @@
 #include "render.h"
 #include "utils.h"
 
+r::Render::Render(int w, int h): width(w), height(h) {
+    frameBuffer.resize(width * height);
+    depthBuffer.resize(width * height);
+}
+
 void r::Render::render() 
 {
     setMvp();
     rasterization();
     exportImg();
 }
-
-
 
 void r::Render::setModule(Vector4f position)
 {
@@ -77,8 +80,7 @@ void r::Render::setMvp()
     // }
 }
 
-void r::Render::add(mesh &m){
-
+void r::Render::add(const mesh &m){
 }
 
 void r::Render::exportImg()

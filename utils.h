@@ -2,6 +2,7 @@
 
 #include <complex>
 #include <vector>
+#include <cstring>
 
 #define PI 3.1415926;
 
@@ -9,40 +10,6 @@ inline float clamp(float max, float min, float v) {
     return std::min(max, std::max(min,v));
 }
 
-
-inline std::vector<float> getBarycentric2D(float x, float y, std::vector<Vector4f> points) {
-    Vector4f point = Vector4f(x,y);
-    Vector4f a = points[0] - points[1];
-    Vector4f b = points[0] - points[2];
-    Vector4f p = points[0] - point;
-    Vector4f z = Vector4f(0,0,-1);
-    float all = (b.cross(a)).dot(z);
-    float r1 = (p.cross(a)).dot(z) / all;
-    float r2 = (b.cross(p)).dot(z) / all;
-    float r3 = 1 - r1 - r2;
-
-    return {r1, r2, r3};
-}
-
-inline bool inTrangle(float x, float y, std::vector<Vector4f> points) {
-    bool ret = false;
-    Vector4f l0 = points[0] - points[1];
-    Vector4f l1 = points[1] - points[2];
-    Vector4f l2 = points[2] - points[0];
-
-    Vector4f p = Vector4f(x,y,0.0);
-
-    Vector4f l00 = p - points[1];
-    Vector4f l11 = p - points[2];
-    Vector4f l22 = p - points[0];
-
-    float r0 = (l0.cross(l00)).z;
-    float r1 = (l1.cross(l11)).z;
-    float r2 = (l2.cross(l22)).z;
-
-    ret = (r0 >=0 && r1 >=0 && r2 >=0 )|| (r0 <0 && r1 <0 && r2 <0);
-    return ret;
-}
 
 class Vector4f {
     public:
@@ -131,6 +98,43 @@ class Matrix4x4 {
             m[2][3] = v.z;
         }
         void setEyePos(Vector4f &v) {
-            setPos(v * -1.0);
+            Vector4f _v = v * -1;
+            setPos(_v);
         }
 };
+
+
+
+inline std::vector<float> getBarycentric2D(float x, float y, std::vector<Vector4f> points) {
+    Vector4f point = Vector4f(x,y);
+    Vector4f a = points[0] - points[1];
+    Vector4f b = points[0] - points[2];
+    Vector4f p = points[0] - point;
+    Vector4f z = Vector4f(0,0,-1);
+    float all = (b.cross(a)).dot(z);
+    float r1 = (p.cross(a)).dot(z) / all;
+    float r2 = (b.cross(p)).dot(z) / all;
+    float r3 = 1 - r1 - r2;
+
+    return {r1, r2, r3};
+}
+
+inline bool inTrangle(float x, float y, std::vector<Vector4f> points) {
+    bool ret = false;
+    Vector4f l0 = points[0] - points[1];
+    Vector4f l1 = points[1] - points[2];
+    Vector4f l2 = points[2] - points[0];
+
+    Vector4f p = Vector4f(x,y,0.0);
+
+    Vector4f l00 = p - points[1];
+    Vector4f l11 = p - points[2];
+    Vector4f l22 = p - points[0];
+
+    float r0 = (l0.cross(l00)).z;
+    float r1 = (l1.cross(l11)).z;
+    float r2 = (l2.cross(l22)).z;
+
+    ret = (r0 >=0 && r1 >=0 && r2 >=0 )|| (r0 <0 && r1 <0 && r2 <0);
+    return ret;
+}

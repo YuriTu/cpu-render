@@ -2,7 +2,7 @@
 #include "mesh.h"
 #include <stdio.h>
 #include <iostream>
-#include <cstring>
+
 
 constexpr int WIDTH = 800;
 constexpr int HEIGHT = 600;
@@ -25,11 +25,12 @@ int main(int argc, char const *argv[])
         Vector4f(100.0, 50.0, -1.0),
         Vector4f(50.0, 100.0, -1.0)
     );
-    r.add(tri);
-    r.setModule(Vector4f(0));
-    r.setView(Vector4f(0,0,-1));
-    r.setPerspectiveProjection(0.01, 1000, WIDTH / HEIGHT , 45);
+    // r.add(tri);
+    // r.setModule(Vector4f(0));
+    // r.setView(Vector4f(0,0,-1));
+    // r.setPerspectiveProjection(0.01, 1000, WIDTH / HEIGHT , 45);
     r.render();
-    printf("gen done ");
+    // printf("gen done ");
+    // std::cout << r.render() << std::endl;
     return 0;
 }
