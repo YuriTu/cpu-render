@@ -28,7 +28,7 @@ namespace r
         
     private:
         std::vector<Vector4f> data;
-        std::vector<Vector4f> color;
+        std::vector<Vector4f> color = {Vector4f(1),Vector4f(1),Vector4f(1)};
     };
     
 } // namespace r
