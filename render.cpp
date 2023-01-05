@@ -1,3 +1,4 @@
+#include <iostream>
 #include "render.h"
 #include "utils.h"
 
@@ -80,7 +81,10 @@ void r::Render::setMvp()
     // }
 }
 
-void r::Render::add(const mesh &m){
+void r::Render::add(triangle &m){
+    points = m.getData();
+    colors = m.getColor();
+    std::cout << "points data:" << points.size() << std::endl;
 }
 
 void r::Render::exportImg()

@@ -10,6 +10,7 @@ namespace r
         int size() {
             return data.size();
         }
+    private:
         std::vector<Vector4f> data;
     };
     
@@ -19,8 +20,15 @@ namespace r
     {
     public:
         triangle(Vector4f a, Vector4f b, Vector4f c): data({a,b,c}){};
-        std::vector<Vector4f> data;
         // ~triangle();
+        std::vector<Vector4f> getData();
+        std::vector<Vector4f> getColor();
+        void setColor(Vector4f c1);
+        void setColor(Vector4f c1, Vector4f c2, Vector4f c3);
+        
+    private:
+        std::vector<Vector4f> data;
+        std::vector<Vector4f> color;
     };
     
 } // namespace r

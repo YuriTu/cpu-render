@@ -16,7 +16,7 @@ namespace r
         void setPerspectiveProjection(float near, float far, float aspect, float fov);
         void setModule(Vector4f position);
         void setView(Vector4f position);
-        void add(const mesh &m);
+        void add(triangle &m);
         void render();
 
         int width;
