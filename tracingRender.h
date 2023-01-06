@@ -3,35 +3,33 @@
 #include "utils.h"
 #include "mesh.h"
 
-
 namespace r
 {
-    class Render
+    class TracingRender
     {
     public:
-        Render() = default;
-        Render(int w, int h);
-        ~Render() = default;
+        TracingRender() = default;
+        TracingRender(int w, int h);
+        ~TracingRender() = default;
 
         void setPerspectiveProjection(float near, float far, float aspect, float fov);
         void setModule(Vector4f position);
         void setView(Vector4f position);
-        void add(triangle &m);
+        void add(Sphere &m);
         void render();
+        Vector4f getRadiance(Ray &ray);
+
 
         int width;
         int height;
         std::vector<Vector4f> frameBuffer;
         std::vector<float> depthBuffer;
-        Matrix4x4 m;
-        Matrix4x4 v;
-        Matrix4x4 p;
-        std::vector<Vector4f> points;
-        std::vector<Vector4f> colors;
+        std::vector<Sphere> objects;
+        Vector4f background;
         
         
     private:
-        void setMvp();
         void rasterization();
+        bool castRay(Ray &ray);
     };
 }

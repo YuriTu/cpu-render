@@ -27,7 +27,7 @@ class Vector4f {
             return Vector4f(_m[0],_m[1],_m[2]);
         }
 
-        float dot(Vector4f &v) {
+        float dot(Vector4f &v) const {
             return x*v.x + y*v.y + z*v.z;
         }
 
@@ -45,6 +45,9 @@ class Vector4f {
 
         Vector4f operator*(float v) const {
             return Vector4f( x*v, y*v, z*v);
+        }
+        Vector4f operator/(float v) const {
+            return Vector4f( x/v, y/v, z/v);
         }
 };
 
@@ -103,6 +106,13 @@ class Matrix4x4 {
         }
 };
 
+struct Ray
+{
+    
+    Ray(Vector4f _o,Vector4f _d):o(_o),dir(_d) {};
+    Vector4f o;
+    Vector4f dir;
+};
 
 
 inline std::vector<float> getBarycentric2D(float x, float y, std::vector<Vector4f> points) {
@@ -137,4 +147,31 @@ inline bool inTrangle(float x, float y, std::vector<Vector4f> points) {
 
     ret = (r0 >=0 && r1 >=0 && r2 >=0 )|| (r0 <0 && r1 <0 && r2 <0);
     return ret;
+}
+
+inline int getIndex(int i, int j, int width, int height) {
+    return (height -1 - j) * width + i;
+}
+
+inline void exportImg(std::vector<Vector4f> frameBuffer,int width, int height)
+{
+    FILE* fp = fopen("img.ppm","wb");
+    (void)fprintf(fp, "P6\n%d %d\n255\n", width, height);
+    for (int i = 0; i < frameBuffer.size(); i++) {
+        static unsigned char color[3];
+        
+        Vector4f pixel = frameBuffer[i];
+        color[0] = (char)(255 * clamp(1.0,0., pixel.x));
+        color[1] = (char)(255 * clamp(1.0,0., pixel.y));
+        color[2] = (char)(255 * clamp(1.0,0., pixel.z));
+        // if (pixel.x > 0 || pixel.y > 0) {
+        //     std::cout << " frame: x:" << pixel.x << "y:" << pixel.y << 255.0 * clamp(1.0,0., pixel.x) << std::endl;
+        //     std::cout << " frame: index:" << i << std::endl;
+        //     std::cout << " color: x:" << color[0] << "y:" << color[1] << std::endl;
+        // }
+        
+        fwrite(color, 1, 3, fp);
+    }
+
+    fclose(fp);
 }

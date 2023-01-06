@@ -30,5 +30,15 @@ namespace r
         std::vector<Vector4f> data;
         std::vector<Vector4f> color = {Vector4f(1),Vector4f(1),Vector4f(1)};
     };
+
+    class Sphere
+    {
+    public:
+        Sphere(Vector4f _o, float _r, Vector4f _c):o(o), radius(_r), color(_c) {};
+        float intersect(Ray &r);
+        Vector4f o;
+        float radius;
+        Vector4f color;
+    };
     
 } // namespace r

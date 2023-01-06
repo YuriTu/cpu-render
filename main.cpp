@@ -1,4 +1,5 @@
-#include "render.h"
+// #include "render.h"
+#include "tracingRender.h"
 #include "mesh.h"
 #include <stdio.h>
 #include <iostream>
@@ -19,13 +20,16 @@ std::vector<Vector4f> getPoints(){
 
 int main(int argc, char const *argv[])
 {
-    r::Render r(WIDTH, HEIGHT);
-    r::triangle tri(
-        Vector4f(0.0, 50.0, -1.0),
-        Vector4f(100.0, 50.0, -1.0),
-        Vector4f(50.0, 100.0, -1.0)
-    );
-    r.add(tri);
+    // r::Render r(WIDTH, HEIGHT);
+    // r::triangle tri(
+    //     Vector4f(0.0, 50.0, -1.0),
+    //     Vector4f(100.0, 50.0, -1.0),
+    //     Vector4f(50.0, 100.0, -1.0)
+    // );
+    r::TracingRender r(WIDTH, HEIGHT);
+    r::Sphere mesh(Vector4f(0,0, 1), 30, Vector4f(0.5));
+
+    r.add(mesh);
     r.setModule(Vector4f(0));
     r.setView(Vector4f(0,0,-1));
     r.setPerspectiveProjection(0.01, 1000, WIDTH / HEIGHT , 45);
