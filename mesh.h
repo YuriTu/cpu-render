@@ -34,8 +34,8 @@ namespace r
     class Sphere
     {
     public:
-        Sphere(Vector4f _o, float _r, Vector4f _c):o(o), radius(_r), color(_c) {};
-        float intersect(Ray &r);
+        Sphere(Vector4f _o, float _r, Vector4f _c):o(_o), radius(_r), color(_c) {};
+        bool intersect(Ray &r, float& tNear);
         Vector4f o;
         float radius;
         Vector4f color;

@@ -27,10 +27,9 @@ bool r::TracingRender::castRay(Ray &ray) {
     // ray 
     float t = -1;
     float index = 0;
-    for (int i; i < objects.size(); i++) {
-        float _t = objects[i].intersect(ray);
-        if (_t >= 0 && _t < t) {
-            t = _t;
+    for (int i = 0; i < objects.size(); i++) {
+        bool flag = objects[i].intersect(ray, t);
+        if (flag) {
             index = i;
         }
     }
@@ -38,21 +37,16 @@ bool r::TracingRender::castRay(Ray &ray) {
     if (t < 0) {
         return false;
     }
-
-
-
     return true;
-    
-
 }
 
 Vector4f r::TracingRender::getRadiance(Ray &ray) {
-
+    // printf("start cast");
     if (!castRay(ray)) {
         // background
         return background;
     }
-
+    // printf("has cast!!");
     return Vector4f(1,0,0);
 
     // return radiance
@@ -60,7 +54,7 @@ Vector4f r::TracingRender::getRadiance(Ray &ray) {
 
 void r::TracingRender::render()
 {
-    int samples = 50;
+    int samples = 1;
     // add objects
     // from mvp to get ray
 
@@ -71,15 +65,22 @@ void r::TracingRender::render()
     // intersect?
 
     //radiance
+    Vector4f cam(0,0,10);
+    float imageRadio = width / height;
 
 
     for (int i = 0; i < width; i++) {
         for(int j = 0; j < height; j++) {
             Vector4f radiance;
-            Ray ray(Vector4f(i,j,-1),Vector4f(0,0,0));
+            float x = (2.0 * ((i + 0.5f) / width) - 1.0f);
+            float y = (2.0 * ((j + 0.5f) / height) - 1.0f)  ;
+            Vector4f _dir(x,y,-1);
+            Vector4f dir = normalize(_dir);
+            Ray ray(cam,dir);
             int index = getIndex(i,j,width,height);
 
             for (int k = 0; k < samples; k++) {
+
                 Vector4f _radiance = getRadiance(ray);
                 radiance = radiance + _radiance;
             }

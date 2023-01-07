@@ -5,8 +5,8 @@
 #include <iostream>
 
 
-constexpr int WIDTH = 800;
-constexpr int HEIGHT = 600;
+constexpr int WIDTH = 400;
+constexpr int HEIGHT = 300;
 
 std::vector<Vector4f> getPoints(){
     std::vector<Vector4f> ret = {
@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
     //     Vector4f(50.0, 100.0, -1.0)
     // );
     r::TracingRender r(WIDTH, HEIGHT);
-    r::Sphere mesh(Vector4f(0,0, 1), 30, Vector4f(0.5));
+    r::Sphere mesh(Vector4f(.15,.55, 8.15), 1, Vector4f(1));
 
     r.add(mesh);
     r.setModule(Vector4f(0));

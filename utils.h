@@ -51,6 +51,16 @@ class Vector4f {
         }
 };
 
+inline Vector4f normalize(Vector4f &v) {
+    float morm = v.dot(v);
+    
+    if (morm > 0) {
+        float inv = 1 / sqrt(morm);
+        return Vector4f(v.x * inv , v.y * inv, v.z * inv);
+    }
+    return v;
+}
+
 class Matrix4x4 {
     public:
         float m[4][4];
@@ -175,3 +185,5 @@ inline void exportImg(std::vector<Vector4f> frameBuffer,int width, int height)
 
     fclose(fp);
 }
+
+

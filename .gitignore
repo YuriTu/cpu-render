@@ -2,3 +2,5 @@ build
 build.bat
 test.*
 .vscode
+*.ppm
+*.exe

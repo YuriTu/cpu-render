@@ -19,15 +19,23 @@ void r::triangle::setColor(Vector4f c1, Vector4f c2, Vector4f c3){
 }
 // 单点算相交
 // todo: float的比较精度
-float r::Sphere::intersect(Ray &r) {
+bool r::Sphere::intersect(Ray &r, float &tNear) {
     float a = r.dir.dot(r.dir);
     Vector4f o2o = r.o - o;
     float b = (r.dir * 2).dot(o2o);
     float c = o2o.dot(o2o) - (radius * radius);
-    float tMax = (-b + std::sqrt(b*b - 4 * a * c)) / 2 * a;
-    float tMin = (-b - std::sqrt(b*b - 4 * a * c)) / 2 * a;
-    if (tMax < 0 && tMin < 0) {
-        return tMax;
+    float safeQuad = b*b - 4 * a * c;
+    if (safeQuad < 0) {
+        return false;
     }
-    return std::min(tMax,tMin);
+    float tMax = (-b + std::sqrt(safeQuad)) / 2 * a;
+    float tMin = (-b - std::sqrt(safeQuad)) / 2 * a;
+    if (tMin < 0) {
+        tMin = tMax;
+    }
+    if (tMin < 0) {
+        return false;
+    }
+    tNear = tMin;
+    return true;
 }
