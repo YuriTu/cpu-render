@@ -28,8 +28,10 @@ int main(int argc, char const *argv[])
     // );
     r::TracingRender r(WIDTH, HEIGHT);
     r::Sphere mesh(Vector4f(.15,.55, 8.15), 1, Vector4f(1));
+    r::Light light(Vector4f(10,10, 3), .5);
 
     r.add(mesh);
+    r.add(light);
     r.setModule(Vector4f(0));
     r.setView(Vector4f(0,0,-1));
     r.setPerspectiveProjection(0.01, 1000, WIDTH / HEIGHT , 45);

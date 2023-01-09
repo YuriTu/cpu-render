@@ -39,3 +39,7 @@ bool r::Sphere::intersect(Ray &r, float &tNear) {
     tNear = tMin;
     return true;
 }
+
+void r::Sphere::getSurfaceProperties(Vector4f &hitPoint, Vector4f &N) {
+    N = normalize(hitPoint - o);
+}

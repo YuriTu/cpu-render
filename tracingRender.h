@@ -16,6 +16,7 @@ namespace r
         void setModule(Vector4f position);
         void setView(Vector4f position);
         void add(Sphere &m);
+        void add(Light &l);
         void render();
         Vector4f getRadiance(Ray &ray);
 
@@ -25,11 +26,11 @@ namespace r
         std::vector<Vector4f> frameBuffer;
         std::vector<float> depthBuffer;
         std::vector<Sphere> objects;
+        std::vector<Light> lights;
         Vector4f background;
         
         
     private:
-        void rasterization();
-        bool castRay(Ray &ray);
+        Interaction castRay(Ray &ray);
     };
 }

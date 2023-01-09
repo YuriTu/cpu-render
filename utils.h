@@ -11,9 +11,25 @@ inline float clamp(float max, float min, float v) {
 }
 
 
+
+enum reflectType {
+    DIFFUSE,
+    REFLECTION
+};
+
+
+struct Interaction
+{
+    bool flag;
+    Vector4f hitPoint;
+    float t;
+    int hitObjectIndex;
+};
+
+
+
 class Vector4f {
     public:
-        float x,y,z,w;
         Vector4f() :x(0),y(0),z(0),w(1) {}
         Vector4f(float xx) :x(xx),y(xx),z(xx),w(1) {}
         Vector4f(float xx, float yy) :x(xx),y(yy),z(1),w(1) {}
@@ -34,6 +50,12 @@ class Vector4f {
         Vector4f operator+(Vector4f &v) const{
             return Vector4f(x + v.x, y + v.y, z + v.z);
         }
+        Vector4f& operator+=(Vector4f &v){
+            x += v.x;
+            y += v.y;
+            z += v.z; 
+            return *this;
+        }
 
         Vector4f operator-(Vector4f &v) const{
             return Vector4f(x - v.x, y - v.y, z - v.z);
@@ -49,6 +71,11 @@ class Vector4f {
         Vector4f operator/(float v) const {
             return Vector4f( x/v, y/v, z/v);
         }
+        friend Vector4f operator*(const float& n, Vector4f& v) {
+            return Vector4f( n*v.x, n*v.y ,n*v.z);
+        }
+        
+        float x,y,z,w;
 };
 
 inline Vector4f normalize(Vector4f &v) {
@@ -124,7 +151,6 @@ struct Ray
     Vector4f dir;
 };
 
-
 inline std::vector<float> getBarycentric2D(float x, float y, std::vector<Vector4f> points) {
     Vector4f point = Vector4f(x,y);
     Vector4f a = points[0] - points[1];
@@ -161,6 +187,10 @@ inline bool inTrangle(float x, float y, std::vector<Vector4f> points) {
 
 inline int getIndex(int i, int j, int width, int height) {
     return (height -1 - j) * width + i;
+}
+
+inline Vector4f reflect(Vector4f I, Vector4f N) {
+    return I - 2 * I.dot(N) * N;
 }
 
 inline void exportImg(std::vector<Vector4f> frameBuffer,int width, int height)
