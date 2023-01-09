@@ -5,26 +5,20 @@
 #include <cstring>
 
 #define PI 3.1415926;
+#define EPS 1e-4
 
 inline float clamp(float max, float min, float v) {
     return std::min(max, std::max(min,v));
 }
 
-
-
-enum reflectType {
-    DIFFUSE,
-    REFLECTION
-};
-
-
-struct Interaction
+namespace utils
 {
-    bool flag;
-    Vector4f hitPoint;
-    float t;
-    int hitObjectIndex;
-};
+    enum reflectType {
+        DIFFUSE,
+        REFLECTION
+    };
+} // namespace utils
+
 
 
 
@@ -43,29 +37,29 @@ class Vector4f {
             return Vector4f(_m[0],_m[1],_m[2]);
         }
 
-        float dot(Vector4f &v) const {
+        float dot(const Vector4f &v) const {
             return x*v.x + y*v.y + z*v.z;
         }
 
-        Vector4f operator+(Vector4f &v) const{
+        Vector4f operator+(const Vector4f &v) const{
             return Vector4f(x + v.x, y + v.y, z + v.z);
         }
-        Vector4f& operator+=(Vector4f &v){
+        Vector4f& operator+=(const Vector4f &v){
             x += v.x;
             y += v.y;
             z += v.z; 
             return *this;
         }
 
-        Vector4f operator-(Vector4f &v) const{
+        Vector4f operator-(const Vector4f &v) const{
             return Vector4f(x - v.x, y - v.y, z - v.z);
         }
 
-        Vector4f operator*(Vector4f &v) const {
+        Vector4f operator*(const Vector4f &v) const {
             return Vector4f( x*v.x, y*v.y ,z*v.z);
         }
 
-        Vector4f operator*(float v) const {
+        Vector4f operator*(const float& v) const {
             return Vector4f( x*v, y*v, z*v);
         }
         Vector4f operator/(float v) const {
@@ -78,7 +72,7 @@ class Vector4f {
         float x,y,z,w;
 };
 
-inline Vector4f normalize(Vector4f &v) {
+inline Vector4f normalize(const Vector4f &v) {
     float morm = v.dot(v);
     
     if (morm > 0) {
@@ -150,6 +144,15 @@ struct Ray
     Vector4f o;
     Vector4f dir;
 };
+
+struct Interaction
+{
+    bool flag;
+    Vector4f hitPoint;
+    float t;
+    int hitObjectIndex;
+};
+
 
 inline std::vector<float> getBarycentric2D(float x, float y, std::vector<Vector4f> points) {
     Vector4f point = Vector4f(x,y);

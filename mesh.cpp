@@ -17,6 +17,14 @@ void r::triangle::setColor(Vector4f c1){
 void r::triangle::setColor(Vector4f c1, Vector4f c2, Vector4f c3){
     color = {c1, c2, c3};
 }
+
+r::Sphere::Sphere(Vector4f _o, float _r, Vector4f _c, utils::reflectType _t):o(_o), radius(_r), color(_c), reflectType(_t) {
+    diffuseColor = Vector4f(0.0,1.0,1.0);
+    kd = 0.8;
+    ks = 0.2;
+    specularExponent = 25;
+};
+
 // 单点算相交
 // todo: float的比较精度
 bool r::Sphere::intersect(Ray &r, float &tNear) {
@@ -41,5 +49,6 @@ bool r::Sphere::intersect(Ray &r, float &tNear) {
 }
 
 void r::Sphere::getSurfaceProperties(Vector4f &hitPoint, Vector4f &N) {
-    N = normalize(hitPoint - o);
+    Vector4f _N = hitPoint - o;
+    N = normalize(_N);
 }

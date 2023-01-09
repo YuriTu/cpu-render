@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <iostream>
 
+//todo 
+// path
+// denoise
+// subsurface
+// module loader
 
 constexpr int WIDTH = 400;
 constexpr int HEIGHT = 300;
@@ -27,11 +32,13 @@ int main(int argc, char const *argv[])
     //     Vector4f(50.0, 100.0, -1.0)
     // );
     r::TracingRender r(WIDTH, HEIGHT);
-    r::Sphere mesh(Vector4f(.15,.55, 8.15), 1, Vector4f(1));
-    r::Light light(Vector4f(10,10, 3), .5);
+    r::Sphere mesh(Vector4f(.15,.55, 6.15), 1, Vector4f(1),utils::DIFFUSE);
+    r::Light light(Vector4f(-15,15, 25), .5);
+    r::Light light2(Vector4f(15,15, 25), .5);
 
     r.add(mesh);
     r.add(light);
+    r.add(light2);
     r.setModule(Vector4f(0));
     r.setView(Vector4f(0,0,-1));
     r.setPerspectiveProjection(0.01, 1000, WIDTH / HEIGHT , 45);

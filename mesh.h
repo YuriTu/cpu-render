@@ -34,12 +34,13 @@ namespace r
     class Sphere
     {
     public:
-        Sphere(Vector4f _o, float _r, Vector4f _c):o(_o), radius(_r), color(_c) {};
+        Sphere(Vector4f _o, float _r, Vector4f _c, utils::reflectType _t);
         bool intersect(Ray &r, float& tNear);
         void getSurfaceProperties(Vector4f &hitPoint, Vector4f &N);
         Vector4f o;
         float radius;
         Vector4f color;
+        utils::reflectType reflectType;
         // b-phone mode
         Vector4f diffuseColor;
         float kd;
@@ -50,7 +51,7 @@ namespace r
     class Light
     {
     public:
-        Light(Vector4f &_pos, float _int):pos(_pos), intensity(_int){};
+        Light(Vector4f _pos, float _int):pos(_pos), intensity(_int){};
 
         Vector4f pos;
 

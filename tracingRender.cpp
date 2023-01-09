@@ -65,42 +65,44 @@ Vector4f r::TracingRender::getRadiance(Ray &ray) {
     // + ks * color * I/r^2 cos(half ^ N) ^ coeffi
     Vector4f ret(0,0,0);
     Vector4f hitPoint = interaction.hitPoint;
+    r::Sphere hitOBject = objects[interaction.hitObjectIndex];
 
-    for (r::Light light : lights) {
-        Vector4f lightDir = hitPoint - light.pos;
-        float lightDistance2 = lightDir.dot(lightDir);
-        lightDir = normalize(lightDir);
+    if (hitOBject.reflectType == utils::DIFFUSE) {
 
-        r::Sphere hitOBject = objects[interaction.hitObjectIndex];
-        Vector4f N;
-        hitOBject.getSurfaceProperties(hitPoint, N);
-        Vector4f outgoingDir = reflect(lightDir, N);
-        Vector4f halfVector = normalize(outgoingDir + lightDir);
+        for (r::Light light : lights) {
+            Vector4f lightDir = ( light.pos - hitPoint);
+            float lightDistance2 = lightDir.dot(lightDir);
+            lightDir = normalize(lightDir);
 
-        Ray shadowRay(hitPoint, lightDir);
-        Interaction shadowRayInteraction = castRay(shadowRay);
-        float diffuseCoefficient = 0;
-        if (shadowRayInteraction.flag) {
-            Vector4f tempShadowRayDir = shadowRay.o - shadowRayInteraction.hitPoint;
-            float tempShandowRayDistance2 = tempShadowRayDir.dot(tempShadowRayDir);
-            if (tempShandowRayDistance2 < lightDistance2) {
-                // shadow without diffuse
-                diffuseCoefficient = 0;
-            } else {
-                diffuseCoefficient = lightDir.dot(N);
+            
+            Vector4f N;
+            hitOBject.getSurfaceProperties(hitPoint, N);
+            Vector4f outgoingDir = reflect(lightDir, N);
+            Vector4f halfVector = normalize(outgoingDir + lightDir);
+
+            Ray shadowRay(hitPoint, lightDir);
+            Interaction shadowRayInteraction = castRay(shadowRay);
+            float diffuseCoefficient = std::max(lightDir.dot(N), 0.f) ;
+            if (shadowRayInteraction.flag) {
+                Vector4f tempShadowRayDir = shadowRay.o - shadowRayInteraction.hitPoint;
+                float tempShandowRayDistance2 = tempShadowRayDir.dot(tempShadowRayDir);
+                if (tempShandowRayDistance2 < lightDistance2) {
+                    // shadow without diffuse
+                    diffuseCoefficient = 0;
+                }
             }
+
+            Vector4f specularColor = light.intensity * std::pow(halfVector.dot(N),hitOBject.specularExponent); 
+
+
+            Vector4f diffuseRadiance = hitOBject.kd * hitOBject.diffuseColor * diffuseCoefficient;
+            Vector4f specularRadiance = hitOBject.ks * specularColor;
+            ret += diffuseRadiance + specularRadiance;
         }
-
-        Vector4f specularColor = light.intensity * std::pow(halfVector.dot(N),hitOBject.specularExponent); 
-
-
-        Vector4f diffuseRadiance = hitOBject.kd * hitOBject.diffuseColor * diffuseCoefficient;
-        Vector4f specularRadiance = hitOBject.ks * specularColor;
-        ret += diffuseRadiance + specularRadiance;
     }
 
-
-    return Vector4f(1,0,0);
+    return ret;
+    // return Vector4f(1.0,0.0,0.0);
 
     // return radiance
 }
