@@ -63,7 +63,7 @@ Vector4f r::TracingRender::getRadiance(Ray &ray) {
 
     // kd * color * I/r^2 * cos(light, hitpot_N)
     // + ks * color * I/r^2 cos(half ^ N) ^ coeffi
-    Vector4f ret(0,0,0);
+    Vector4f ret(0.0,0,0);
     Vector4f hitPoint = interaction.hitPoint;
     r::Sphere hitOBject = objects[interaction.hitObjectIndex];
 
@@ -79,8 +79,9 @@ Vector4f r::TracingRender::getRadiance(Ray &ray) {
             hitOBject.getSurfaceProperties(hitPoint, N);
             Vector4f outgoingDir = reflect(lightDir, N);
             Vector4f halfVector = normalize(outgoingDir + lightDir);
-
-            Ray shadowRay(hitPoint, lightDir);
+            // polygon offset 类似shadow map避免精度问题
+            Vector4f temporigin = ray.dir.dot(N) < 0 ? hitPoint + N * EPS : hitPoint - N * EPS;
+            Ray shadowRay(temporigin, lightDir);
             Interaction shadowRayInteraction = castRay(shadowRay);
             float diffuseCoefficient = std::max(lightDir.dot(N), 0.f) ;
             if (shadowRayInteraction.flag) {
@@ -94,7 +95,9 @@ Vector4f r::TracingRender::getRadiance(Ray &ray) {
 
             Vector4f specularColor = light.intensity * std::pow(halfVector.dot(N),hitOBject.specularExponent); 
 
-
+            if (diffuseCoefficient == 0) {
+                Vector4f foo;
+            }
             Vector4f diffuseRadiance = hitOBject.kd * hitOBject.diffuseColor * diffuseCoefficient;
             Vector4f specularRadiance = hitOBject.ks * specularColor;
             ret += diffuseRadiance + specularRadiance;

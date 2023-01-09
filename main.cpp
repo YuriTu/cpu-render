@@ -38,7 +38,7 @@ int main(int argc, char const *argv[])
 
     r.add(mesh);
     r.add(light);
-    r.add(light2);
+    // r.add(light2);
     r.setModule(Vector4f(0));
     r.setView(Vector4f(0,0,-1));
     r.setPerspectiveProjection(0.01, 1000, WIDTH / HEIGHT , 45);
