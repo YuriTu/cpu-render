@@ -68,13 +68,23 @@ Vector4f r::TracingRender::getRadiance(Ray &ray, int bounce) {
     Vector4f ret(0.0,0,0);
     Vector4f hitPoint = interaction.hitPoint;
     r::Sphere hitOBject = objects[interaction.hitObjectIndex];
-     Vector4f N;
-     hitOBject.getSurfaceProperties(hitPoint, N);
-
-    if (hitOBject.reflectType == utils::REFLECTION) {
+    Vector4f N;
+    hitOBject.getSurfaceProperties(hitPoint, N);
+    if (hitOBject.reflectType == utils::REFLECTION_AND_REFRACTION) {
         float fresnelCoeffient = fresnel(ray.dir, N, hitOBject.ior);
-        Vector4f reflectRayDir = reflect(ray.dir, N);
-        Vector4f reflectRayOri = reflectRayDir.dot(N) < 0 ? hitPoint + N * EPS : hitPoint - N * EPS;
+        Vector4f reflectRayDir = normalize(reflect(ray.dir, N));
+        Vector4f reflectRayOri = reflectRayDir.dot(N) > 0 ? hitPoint + N * EPS : hitPoint - N * EPS;
+
+        Vector4f refractRayDir = normalize(refract(ray.dir, N, hitOBject.ior));
+        Vector4f refractRayOri = refractRayDir.dot(N) > 0? hitPoint + N * EPS : hitPoint - N * EPS;
+
+        Ray reflectRay(reflectRayOri, reflectRayDir);
+        Ray refractRay(refractRayOri, refractRayDir);
+        ret = getRadiance(reflectRay, bounce + 1) * fresnelCoeffient + getRadiance(refractRay, bounce + 1) * (1 - fresnelCoeffient);
+    } else if (hitOBject.reflectType == utils::REFLECTION) {
+        float fresnelCoeffient = fresnel(ray.dir, N, hitOBject.ior);
+        Vector4f reflectRayDir = normalize(reflect(ray.dir, N));
+        Vector4f reflectRayOri = reflectRayDir.dot(N) > 0 ? hitPoint + N * EPS : hitPoint - N * EPS;
 
         Ray reflectRay(reflectRayOri, reflectRayDir);
         ret = getRadiance(reflectRay, bounce + 1) * fresnelCoeffient;
@@ -83,9 +93,6 @@ Vector4f r::TracingRender::getRadiance(Ray &ray, int bounce) {
             Vector4f lightDir = ( light.pos - hitPoint);
             float lightDistance2 = lightDir.dot(lightDir);
             lightDir = normalize(lightDir);
-
-            
-           
             
             Vector4f outgoingDir = reflect(lightDir, N);
             Vector4f halfVector = normalize(outgoingDir + lightDir);

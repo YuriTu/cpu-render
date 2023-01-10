@@ -194,7 +194,19 @@ inline int getIndex(int i, int j, int width, int height) {
 }
 
 inline Vector4f reflect(Vector4f I, Vector4f N) {
-    return I - 2 * I.dot(N) * N;
+    return I - 2 * I.dot(N) * N ;
+}
+
+inline Vector4f refract(Vector4f I, Vector4f N, float ior) {
+    float n1 = 1;
+    float n2 = ior;
+    float eta = n1 / n2;
+    float cos_i = clamp(1, -1, I.dot(N));
+    float k = 1.f - eta * eta * (1.0 - cos_i * cos_i);
+    if (k < 0.0) {
+        return Vector4f(0.0);
+    }
+    return eta * I - (eta * cos_i + sqrtf(k)) * N;
 }
 
 inline void exportImg(std::vector<Vector4f> frameBuffer,int width, int height)
@@ -224,13 +236,17 @@ inline float fresnel(Vector4f I, Vector4f N, float ior) {
     float theta_input = I.dot(N);
     float n1 = 1;
     float n2 = ior;
-    float sin_input = 1 - sqrtf(std::max(0.f, 1 - theta_input * theta_input));
-    float sin_output = (n1 /ior) * sin_input;
+    if (theta_input < 0) {
+        std::swap(n1,n2);
+    }
+    theta_input = fabsf(theta_input);
+    float sin_input = sqrtf(std::max(0.f, 1 - theta_input * theta_input));
+    float sin_output = (n1 / n2) * sin_input;
 
     if (sin_output >= 1) {
         return 1;
     }
-    float theta_output = 1 - sqrtf(std::max(0.f,1 - sin_output * sin_output));
+    float theta_output = sqrtf(std::max(0.f,1 - sin_output * sin_output));
 
     float rs = (n1 * theta_input - n2 * theta_output) / (n1 * theta_input + n2 * theta_output);
     float rp = (n1 * theta_output - n2 * theta_input) / (n1 * theta_output + n2 * theta_input);
