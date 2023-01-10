@@ -18,11 +18,12 @@ namespace r
         void add(Sphere &m);
         void add(Light &l);
         void render();
-        Vector4f getRadiance(Ray &ray);
+        Vector4f getRadiance(Ray &ray, int bounce);
 
 
         int width;
         int height;
+        int maxBounce;
         std::vector<Vector4f> frameBuffer;
         std::vector<float> depthBuffer;
         std::vector<Sphere> objects;

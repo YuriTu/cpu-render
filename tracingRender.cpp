@@ -6,6 +6,7 @@
 r::TracingRender::TracingRender(int w, int h): width(w),height(h) {
     frameBuffer.resize(width * height);
     background = Vector4f(0.3);
+    maxBounce = 3;
 }
 
 void r::TracingRender::setPerspectiveProjection(float near, float far, float aspect, float fov) {
@@ -50,7 +51,11 @@ Interaction r::TracingRender::castRay(Ray &ray) {
     return ret;
 }
 
-Vector4f r::TracingRender::getRadiance(Ray &ray) {
+Vector4f r::TracingRender::getRadiance(Ray &ray, int bounce) {
+    if (bounce > maxBounce) {
+        return Vector4f(0.0);
+    }
+
     Interaction interaction = castRay(ray);
     if (!interaction.flag) {
         // background
@@ -58,25 +63,30 @@ Vector4f r::TracingRender::getRadiance(Ray &ray) {
     }
 
     // 1. mode witte style
-    // 1. phone style
-    // specular diffuse 
+    // 1. phone style specular diffuse + fresnel
 
-    // kd * color * I/r^2 * cos(light, hitpot_N)
-    // + ks * color * I/r^2 cos(half ^ N) ^ coeffi
     Vector4f ret(0.0,0,0);
     Vector4f hitPoint = interaction.hitPoint;
     r::Sphere hitOBject = objects[interaction.hitObjectIndex];
+     Vector4f N;
+     hitOBject.getSurfaceProperties(hitPoint, N);
 
-    if (hitOBject.reflectType == utils::DIFFUSE) {
+    if (hitOBject.reflectType == utils::REFLECTION) {
+        float fresnelCoeffient = fresnel(ray.dir, N, hitOBject.ior);
+        Vector4f reflectRayDir = reflect(ray.dir, N);
+        Vector4f reflectRayOri = reflectRayDir.dot(N) < 0 ? hitPoint + N * EPS : hitPoint - N * EPS;
 
+        Ray reflectRay(reflectRayOri, reflectRayDir);
+        ret = getRadiance(reflectRay, bounce + 1) * fresnelCoeffient;
+    } else if (hitOBject.reflectType == utils::DIFFUSE) {
         for (r::Light light : lights) {
             Vector4f lightDir = ( light.pos - hitPoint);
             float lightDistance2 = lightDir.dot(lightDir);
             lightDir = normalize(lightDir);
 
             
-            Vector4f N;
-            hitOBject.getSurfaceProperties(hitPoint, N);
+           
+            
             Vector4f outgoingDir = reflect(lightDir, N);
             Vector4f halfVector = normalize(outgoingDir + lightDir);
             // polygon offset 类似shadow map避免精度问题
@@ -130,7 +140,7 @@ void r::TracingRender::render()
             int index = getIndex(i,j,width,height);
 
             for (int k = 0; k < samples; k++) {
-                Vector4f _radiance = getRadiance(ray);
+                Vector4f _radiance = getRadiance(ray,0);
                 radiance = radiance + _radiance;
             }
             int s = frameBuffer.size();

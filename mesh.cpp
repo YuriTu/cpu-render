@@ -23,6 +23,7 @@ r::Sphere::Sphere(Vector4f _o, float _r, Vector4f _c, utils::reflectType _t):o(_
     kd = 0.8;
     ks = 0.2;
     specularExponent = 25;
+    ior = 0.8;
 };
 
 // 单点算相交

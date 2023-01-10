@@ -46,6 +46,8 @@ namespace r
         float kd;
         float ks;
         float specularExponent;
+        // reflect
+        float ior;
     };
 
     class Light

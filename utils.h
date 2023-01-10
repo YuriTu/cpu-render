@@ -15,7 +15,8 @@ namespace utils
 {
     enum reflectType {
         DIFFUSE,
-        REFLECTION
+        REFLECTION,
+        REFLECTION_AND_REFRACTION
     };
 } // namespace utils
 
@@ -219,4 +220,20 @@ inline void exportImg(std::vector<Vector4f> frameBuffer,int width, int height)
     fclose(fp);
 }
 
+inline float fresnel(Vector4f I, Vector4f N, float ior) {
+    float theta_input = I.dot(N);
+    float n1 = 1;
+    float n2 = ior;
+    float sin_input = 1 - sqrtf(std::max(0.f, 1 - theta_input * theta_input));
+    float sin_output = (n1 /ior) * sin_input;
 
+    if (sin_output >= 1) {
+        return 1;
+    }
+    float theta_output = 1 - sqrtf(std::max(0.f,1 - sin_output * sin_output));
+
+    float rs = (n1 * theta_input - n2 * theta_output) / (n1 * theta_input + n2 * theta_output);
+    float rp = (n1 * theta_output - n2 * theta_input) / (n1 * theta_output + n2 * theta_input);
+
+    return (rs*rs + rp*rp) / 2;
+}
