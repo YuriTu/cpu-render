@@ -4,3 +4,4 @@ test.*
 .vscode
 *.ppm
 *.exe
+main.exe
