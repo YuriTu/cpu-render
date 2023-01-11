@@ -11,6 +11,10 @@ inline float clamp(float max, float min, float v) {
     return std::min(max, std::max(min,v));
 }
 
+inline float deg2rad(float deg) {
+    return deg / 180.0 * PI;
+}
+
 namespace utils
 {
     enum reflectType {

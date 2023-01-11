@@ -10,8 +10,8 @@
 // subsurface
 // module loader
 
-constexpr int WIDTH = 400;
-constexpr int HEIGHT = 400;
+constexpr int WIDTH = 800;
+constexpr int HEIGHT = 600;
 
 std::vector<Vector4f> getPoints(){
     std::vector<Vector4f> ret = {

@@ -7,6 +7,7 @@ r::TracingRender::TracingRender(int w, int h): width(w),height(h) {
     frameBuffer.resize(width * height);
     background = Vector4f(0.3);
     maxBounce = 3;
+    fov = 90.f;
 }
 
 void r::TracingRender::setPerspectiveProjection(float near, float far, float aspect, float fov) {
@@ -132,14 +133,16 @@ void r::TracingRender::render()
     int samples = 1;
 
     Vector4f cam(0,0,10);
-    float imageRadio = width / height;
+    float scale = tan(deg2rad(fov * 0.5));  
+    float imageRadio = width / (float)height;
+
     #pragma omp parallel
     for (int i = 0; i < width; i++) {
         for(int j = 0; j < height; j++) {
             Vector4f radiance;
 
-            float x = (2.0 * ((i + 0.5f) / width) - 1.0f);
-            float y = (2.0 * ((j + 0.5f) / height) - 1.0f)  ;
+            float x = (2.0 * ((i + 0.5f) / width) - 1.0f) * imageRadio * scale;
+            float y = (2.0 * ((j + 0.5f) / height) - 1.0f) * scale;
             Vector4f _dir(x,y,-1);
             Vector4f dir = normalize(_dir);
             Ray ray(cam,dir);

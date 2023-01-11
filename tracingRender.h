@@ -24,6 +24,7 @@ namespace r
         int width;
         int height;
         int maxBounce;
+        float fov;
         std::vector<Vector4f> frameBuffer;
         std::vector<float> depthBuffer;
         std::vector<Sphere> objects;
