@@ -19,6 +19,7 @@ namespace r
         void add(Light &l);
         void render();
         Vector4f getRadiance(Ray &ray, int bounce);
+        Vector4f pathTracing(Ray &ray, int depth);
 
 
         int width;

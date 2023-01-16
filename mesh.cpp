@@ -24,6 +24,7 @@ r::Sphere::Sphere(Vector4f _o, float _r, Vector4f _c, utils::reflectType _t):o(_
     ks = 0.2;
     specularExponent = 25;
     ior = 0.8;
+    area = 2 * PI;
 };
 
 // 单点算相交
@@ -52,4 +53,17 @@ bool r::Sphere::intersect(Ray &r, float &tNear) {
 void r::Sphere::getSurfaceProperties(Vector4f &hitPoint, Vector4f &N) {
     Vector4f _N = hitPoint - o;
     N = normalize(_N);
+}
+
+void r::Sphere::sampleSphereUniform(Vector4f& wo, float& pdf){
+    
+    float phi =  getRandom(0,1) * 2 * PI;
+    float theta = getRandom(0,1) * PI;
+    float r = sin(theta);
+    float z = cos(theta);
+    float x = r * cos(phi);
+    float y = r * sin(phi);
+    wo = Vector4f(x,y,z);
+
+    pdf = 1/ area;
 }

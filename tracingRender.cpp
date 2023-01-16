@@ -128,6 +128,54 @@ Vector4f r::TracingRender::getRadiance(Ray &ray, int bounce) {
     // return radiance
 }
 
+Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
+    Vector4f ret(0.0);
+    Interaction interaction = castRay(ray);
+
+    if (!interaction.flag) {
+        return ret;
+    }
+
+    Sphere hitObject = objects[interaction.hitObjectIndex];
+    float rr = 0.8;
+
+    if (hitObject.reflectType == utils::DIFFUSE) {
+        // rr准入
+        // if !rr return 0
+        
+        float randomValue = getRandom(0,1);
+        if (randomValue > rr) {
+            return ret / rr;
+        }
+        float pdf;
+        Vector4f outputDir;
+        // 方位角随机数  pdf 就是整个面积的uniform没有特殊处理
+        hitObject.sampleSphereUniform(outputDir,pdf);
+        // 生产ray
+        // 均匀对于半球进行采样 按照pdf 进行N次采样
+        Ray lightRay(interaction.hitPoint, outputDir);
+        // castRay 看是否有intersection
+        Interaction lightInteraction = castRay(lightRay);
+        // brdf = fresnel ？  或者直接phone
+        Vector4f directRadiance = Lo * brdf * cos * (cos / distance * distance);
+        if (lightInteraction.flag){
+            // is light 不算  根据material de emit
+        }
+
+        Vector4f indirectRadiance(0.0);
+
+        indirectRadiance = pathTracing(lightRay) * brdf * cos;
+        // 是其他东西 = indir
+        // L = Lo * brdf * cos
+
+        //L =  Ld + Lindir /n * 1/pdf * 1/rr
+        // n在外面处理
+        return ret / pdf / rr;
+
+    }
+
+}
+
 void r::TracingRender::render()
 {
     int samples = 1;

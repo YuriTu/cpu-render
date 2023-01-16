@@ -7,9 +7,6 @@ namespace r
     public:
         mesh() = default;
         ~mesh() = default;
-        int size() {
-            return data.size();
-        }
     private:
         std::vector<Vector4f> data;
     };
@@ -37,6 +34,7 @@ namespace r
         Sphere(Vector4f _o, float _r, Vector4f _c, utils::reflectType _t);
         bool intersect(Ray &r, float& tNear);
         void getSurfaceProperties(Vector4f &hitPoint, Vector4f &N);
+        void sampleSphereUniform(Vector4f& wo, float& pdf);
         Vector4f o;
         float radius;
         Vector4f color;
@@ -48,6 +46,7 @@ namespace r
         float specularExponent;
         // reflect
         float ior;
+        float area;
     };
 
     class Light

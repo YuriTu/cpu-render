@@ -3,6 +3,7 @@
 #include <complex>
 #include <vector>
 #include <cstring>
+#include <random>
 
 #define PI 3.1415926;
 #define EPS 1e-4
@@ -256,4 +257,11 @@ inline float fresnel(Vector4f I, Vector4f N, float ior) {
     float rp = (n1 * theta_output - n2 * theta_input) / (n1 * theta_output + n2 * theta_input);
 
     return (rs*rs + rp*rp) / 2;
+}
+
+inline float getRandom(float min, float max) {
+    std::random_device rd;
+    std::mt19937 dev(rd());
+    std::uniform_real_distribution<float> range(min,max);
+    return range(dev);
 }
