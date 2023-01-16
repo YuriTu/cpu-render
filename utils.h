@@ -5,7 +5,7 @@
 #include <cstring>
 #include <random>
 
-#define PI 3.1415926;
+#define PI 3.1415926f
 #define EPS 1e-4
 
 inline float clamp(float max, float min, float v) {
@@ -59,6 +59,9 @@ class Vector4f {
 
         Vector4f operator-(const Vector4f &v) const{
             return Vector4f(x - v.x, y - v.y, z - v.z);
+        }
+        Vector4f operator-() const{
+            return Vector4f(-x,-y,-z);
         }
 
         Vector4f operator*(const Vector4f &v) const {
@@ -149,14 +152,6 @@ struct Ray
     Ray(Vector4f _o,Vector4f _d):o(_o),dir(_d) {};
     Vector4f o;
     Vector4f dir;
-};
-
-struct Interaction
-{
-    bool flag;
-    Vector4f hitPoint;
-    float t;
-    int hitObjectIndex;
 };
 
 

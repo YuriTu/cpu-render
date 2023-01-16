@@ -1,5 +1,11 @@
-#pragma once
+#ifndef RT_MESH_H
+#define RT_MESH_H
+
 #include "utils.h"
+
+struct Interaction;
+
+
 namespace r
 {
     class mesh
@@ -34,7 +40,9 @@ namespace r
         Sphere(Vector4f _o, float _r, Vector4f _c, utils::reflectType _t);
         bool intersect(Ray &r, float& tNear);
         void getSurfaceProperties(Vector4f &hitPoint, Vector4f &N);
-        void sampleSphereUniform(Vector4f& wo, float& pdf);
+        void sampleSphereUniform(Interaction& ret, float& pdf);
+        float evalBRDF();
+        bool hasEmit();
         Vector4f o;
         float radius;
         Vector4f color;
@@ -47,6 +55,8 @@ namespace r
         // reflect
         float ior;
         float area;
+        Vector4f emit;
+
     };
 
     class Light
@@ -62,3 +72,19 @@ namespace r
 
     
 } // namespace r
+
+struct Interaction
+{
+    Interaction() {
+        flag = false;
+        hitPoint = Vector4f();
+        hitObject = nullptr;
+    }
+    bool flag;
+    Vector4f hitPoint;
+    float t;
+    r::Sphere* hitObject;
+
+};
+
+#endif

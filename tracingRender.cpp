@@ -30,6 +30,19 @@ void r::TracingRender::add(Light &l) {
     lights.push_back(l);
 }
 
+void r::TracingRender::sampleLight(Interaction& light ,float& pdf) {
+    // todo 仅考虑一个光源
+    
+    for (int i=0; i < objects.size(); i++) {
+        if (objects[i].hasEmit()) {
+            Sphere lightObject = objects[i];
+            lightObject.sampleSphereUniform(light,pdf);
+            light.hitObject = &lightObject;
+        }
+    }
+    
+}
+
 Interaction r::TracingRender::castRay(Ray &ray) {
     // ray 
     Interaction ret;
@@ -48,7 +61,7 @@ Interaction r::TracingRender::castRay(Ray &ray) {
     }
     ret.flag = true;
     ret.hitPoint = ray.o + ray.dir * t;
-    ret.hitObjectIndex = index;
+    ret.hitObject = &objects[index];
     return ret;
 }
 
@@ -68,28 +81,28 @@ Vector4f r::TracingRender::getRadiance(Ray &ray, int bounce) {
 
     Vector4f ret(0.0,0,0);
     Vector4f hitPoint = interaction.hitPoint;
-    r::Sphere hitOBject = objects[interaction.hitObjectIndex];
+    r::Sphere* hitOBject = interaction.hitObject;
     Vector4f N;
-    hitOBject.getSurfaceProperties(hitPoint, N);
-    if (hitOBject.reflectType == utils::REFLECTION_AND_REFRACTION) {
-        float fresnelCoeffient = fresnel(ray.dir, N, hitOBject.ior);
+    hitOBject->getSurfaceProperties(hitPoint, N);
+    if (hitOBject->reflectType == utils::REFLECTION_AND_REFRACTION) {
+        float fresnelCoeffient = fresnel(ray.dir, N, hitOBject->ior);
         Vector4f reflectRayDir = normalize(reflect(ray.dir, N));
         Vector4f reflectRayOri = reflectRayDir.dot(N) > 0 ? hitPoint + N * EPS : hitPoint - N * EPS;
 
-        Vector4f refractRayDir = normalize(refract(ray.dir, N, hitOBject.ior));
+        Vector4f refractRayDir = normalize(refract(ray.dir, N, hitOBject->ior));
         Vector4f refractRayOri = refractRayDir.dot(N) > 0? hitPoint + N * EPS : hitPoint - N * EPS;
 
         Ray reflectRay(reflectRayOri, reflectRayDir);
         Ray refractRay(refractRayOri, refractRayDir);
         ret = getRadiance(reflectRay, bounce + 1) * fresnelCoeffient + getRadiance(refractRay, bounce + 1) * (1 - fresnelCoeffient);
-    } else if (hitOBject.reflectType == utils::REFLECTION) {
-        float fresnelCoeffient = fresnel(ray.dir, N, hitOBject.ior);
+    } else if (hitOBject->reflectType == utils::REFLECTION) {
+        float fresnelCoeffient = fresnel(ray.dir, N, hitOBject->ior);
         Vector4f reflectRayDir = normalize(reflect(ray.dir, N));
         Vector4f reflectRayOri = reflectRayDir.dot(N) > 0 ? hitPoint + N * EPS : hitPoint - N * EPS;
 
         Ray reflectRay(reflectRayOri, reflectRayDir);
         ret = getRadiance(reflectRay, bounce + 1) * fresnelCoeffient;
-    } else if (hitOBject.reflectType == utils::DIFFUSE) {
+    } else if (hitOBject->reflectType == utils::DIFFUSE) {
         for (r::Light light : lights) {
             Vector4f lightDir = ( light.pos - hitPoint);
             float lightDistance2 = lightDir.dot(lightDir);
@@ -111,13 +124,13 @@ Vector4f r::TracingRender::getRadiance(Ray &ray, int bounce) {
                 }
             }
 
-            Vector4f specularColor = light.intensity * std::pow(halfVector.dot(N),hitOBject.specularExponent); 
+            Vector4f specularColor = light.intensity * std::pow(halfVector.dot(N),hitOBject->specularExponent); 
 
             if (diffuseCoefficient == 0) {
                 Vector4f foo;
             }
-            Vector4f diffuseRadiance = hitOBject.kd * hitOBject.diffuseColor * diffuseCoefficient;
-            Vector4f specularRadiance = hitOBject.ks * specularColor;
+            Vector4f diffuseRadiance = hitOBject->kd * hitOBject->diffuseColor * diffuseCoefficient;
+            Vector4f specularRadiance = hitOBject->ks * specularColor;
             ret += diffuseRadiance + specularRadiance;
         }
     }
@@ -130,16 +143,25 @@ Vector4f r::TracingRender::getRadiance(Ray &ray, int bounce) {
 
 Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
     Vector4f ret(0.0);
+    
     Interaction interaction = castRay(ray);
 
     if (!interaction.flag) {
+        ret = background;
         return ret;
     }
 
-    Sphere hitObject = objects[interaction.hitObjectIndex];
+    Sphere* hitObject = interaction.hitObject;
+    // 打到光上了直接过
+    if (hitObject->hasEmit()){
+        return hitObject->emit;
+    }
+
+
+    Vector4f hitPoint = interaction.hitPoint;
     float rr = 0.8;
 
-    if (hitObject.reflectType == utils::DIFFUSE) {
+    if (hitObject->reflectType == utils::DIFFUSE) {
         // rr准入
         // if !rr return 0
         
@@ -148,31 +170,57 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
             return ret / rr;
         }
         float pdf;
-        Vector4f outputDir;
+        // 在光源上随机采个样
+        
+        Interaction lightInteraction;
         // 方位角随机数  pdf 就是整个面积的uniform没有特殊处理
-        hitObject.sampleSphereUniform(outputDir,pdf);
-        // 生产ray
         // 均匀对于半球进行采样 按照pdf 进行N次采样
-        Ray lightRay(interaction.hitPoint, outputDir);
+        sampleLight(lightInteraction,pdf);
         // castRay 看是否有intersection
-        Interaction lightInteraction = castRay(lightRay);
+        Vector4f lightHitPoint = lightInteraction.hitPoint;
+        Vector4f lightDir = hitPoint - lightHitPoint;
+        Vector4f lightN;
+        Sphere* LightObject = lightInteraction.hitObject;
+        LightObject->getSurfaceProperties(lightHitPoint,lightN);
+        // 直接光照，对area进行采样
         // brdf = fresnel ？  或者直接phone
-        Vector4f directRadiance = Lo * brdf * cos * (cos / distance * distance);
+        Vector4f Lo = hitObject->diffuseColor;
+        
+        float brdf = hitObject->evalBRDF();
+        Vector4f N;
+        hitObject->getSurfaceProperties(hitPoint, N);
+        float cosLightWo = std::max(0.f,N.dot(-lightDir)) ;
+        // printf("coslight wo %f", cosLightWo);
+        // 0就是光源照不到
+        // todo 直接光照中间被挡住
+
+        float cosDArea = std::max(0.f, lightN.dot(lightDir));
+        Vector4f lightDistance = lightHitPoint - hitPoint;
+        float distance2 = lightDistance.dot(lightDistance);
+        Vector4f directRadiance = Lo * brdf * cosLightWo * (cosDArea / distance2);
+
+        // 间接光照部分
         if (lightInteraction.flag){
             // is light 不算  根据material de emit
         }
 
         Vector4f indirectRadiance(0.0);
 
-        indirectRadiance = pathTracing(lightRay) * brdf * cos;
+        // indirectRadiance = pathTracing(lightRay) * brdf * cos;
         // 是其他东西 = indir
         // L = Lo * brdf * cos
 
         //L =  Ld + Lindir /n * 1/pdf * 1/rr
+        ret = directRadiance + indirectRadiance;
         // n在外面处理
+        if (ret.dot(ret) > 0) {
+            // printf("has color");
+        }
         return ret / pdf / rr;
 
     }
+
+    return ret;
 
 }
 
@@ -198,10 +246,10 @@ void r::TracingRender::render()
             int index = getIndex(i,j,width,height);
 
             for (int k = 0; k < samples; k++) {
-                Vector4f _radiance = getRadiance(ray,0);
-                radiance = radiance + _radiance;
+                // Vector4f _radiance = getRadiance(ray,0);
+                Vector4f _radiance = pathTracing(ray,0);
+                radiance += _radiance;
             }
-            int s = frameBuffer.size();
             frameBuffer[index] = radiance / samples;
         }
     }

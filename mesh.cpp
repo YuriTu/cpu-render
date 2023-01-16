@@ -55,15 +55,24 @@ void r::Sphere::getSurfaceProperties(Vector4f &hitPoint, Vector4f &N) {
     N = normalize(_N);
 }
 
-void r::Sphere::sampleSphereUniform(Vector4f& wo, float& pdf){
-    
+void r::Sphere::sampleSphereUniform(Interaction& ret, float& pdf){
     float phi =  getRandom(0,1) * 2 * PI;
     float theta = getRandom(0,1) * PI;
     float r = sin(theta);
     float z = cos(theta);
     float x = r * cos(phi);
     float y = r * sin(phi);
-    wo = Vector4f(x,y,z);
+    Vector4f wo = Vector4f(x,y,z);
+    ret.hitPoint = this->o + this->radius * wo;
+    
 
     pdf = 1/ area;
+}
+
+float r::Sphere::evalBRDF(){
+    return kd / (PI * 2.f);
+}
+
+bool r::Sphere::hasEmit(){
+    return (emit.dot(emit) > 0);
 }

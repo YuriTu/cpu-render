@@ -33,12 +33,13 @@ int main(int argc, char const *argv[])
     // );
     r::TracingRender r(WIDTH, HEIGHT);
     r::Sphere mesh(Vector4f(.15,.55, 6.15), 1, Vector4f(1),utils::DIFFUSE);
-    r::Sphere mesh2(Vector4f(-1.05,.35, 5.15), 1, Vector4f(1),utils::REFLECTION_AND_REFRACTION);
-    r::Light light(Vector4f(-15,15, 25), .5);
-    r::Light light2(Vector4f(15,15, 25), .5);
+    // r::Sphere mesh2(Vector4f(1.05,.35, 5.15), 1, Vector4f(1),utils::REFLECTION_AND_REFRACTION);
+    // r::Light light(Vector4f(-15,15, 25), .5);
+    r::Sphere light(Vector4f(0,2.f,8.f),1, Vector4f(),utils::DIFFUSE);
+    light.emit = Vector4f(1.0);
 
     r.add(mesh);
-    r.add(mesh2);
+    // r.add(mesh2);
     r.add(light);
     // r.add(light2);
     r.setModule(Vector4f(0));
