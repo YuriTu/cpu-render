@@ -10,8 +10,8 @@
 // subsurface
 // module loader
 
-constexpr int WIDTH = 800;
-constexpr int HEIGHT = 600;
+constexpr int WIDTH = 400;
+constexpr int HEIGHT = 300;
 
 std::vector<Vector4f> getPoints(){
     std::vector<Vector4f> ret = {
@@ -32,10 +32,10 @@ int main(int argc, char const *argv[])
     //     Vector4f(50.0, 100.0, -1.0)
     // );
     r::TracingRender r(WIDTH, HEIGHT);
-    r::Sphere mesh(Vector4f(.15,.55, 6.15), 1, Vector4f(1),utils::DIFFUSE);
+    r::Sphere mesh(Vector4f(27,-16.5, 47), 16.5, Vector4f(1),utils::DIFFUSE);
     // r::Sphere mesh2(Vector4f(1.05,.35, 5.15), 1, Vector4f(1),utils::REFLECTION_AND_REFRACTION);
     // r::Light light(Vector4f(-15,15, 25), .5);
-    r::Sphere light(Vector4f(0,2.f,8.f),1, Vector4f(),utils::DIFFUSE);
+    r::Sphere light(Vector4f(50,681.3,81.6),600, Vector4f(),utils::DIFFUSE);
     light.emit = Vector4f(1.0);
 
     r.add(mesh);
