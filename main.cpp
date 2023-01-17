@@ -26,6 +26,7 @@ std::vector<Vector4f> getPoints(){
 
 int main(int argc, char const *argv[])
 {
+    int samples = 3;
     // r::Render r(WIDTH, HEIGHT);
     // r::triangle tri(
     //     Vector4f(0.0, 50.0, -1.0),
@@ -33,8 +34,8 @@ int main(int argc, char const *argv[])
     //     Vector4f(50.0, 100.0, -1.0)
     // );
     r::TracingRender r(WIDTH, HEIGHT);
-    r::Sphere mesh(Vector4f(27,16.5,47), 16.5, Vector4f(1),utils::DIFFUSE);
-    r::Sphere light(Vector4f(50,681.6-.27,81.6),600, Vector4f(),utils::DIFFUSE);
+    r::Sphere mesh(Vector4f(27,16.5,47), 16.5, Vector4f(0.,1.0,0.0),utils::DIFFUSE);
+    r::Sphere light(Vector4f(50,1110+681.6-.27,81.6),600, Vector4f(),utils::DIFFUSE);
     light.emit = Vector4f(12.0);
     r::Sphere planes[] = {
         //left
@@ -44,7 +45,11 @@ int main(int argc, char const *argv[])
         // back
         r::Sphere(Vector4f(50,40.8, 1e5 + 200), 1e5, Vector4f(.75,.75,.75),utils::DIFFUSE),
         // front
-        // r::Sphere(Vector4f(50,40.8, -1e5+5900), 1e4, Vector4f(0.0),utils::DIFFUSE)
+        r::Sphere(Vector4f(50,40.8, -1e5-200), 1e5, Vector4f(0.0),utils::DIFFUSE),
+        // top
+        r::Sphere(Vector4f(50, 1e5 + 200, 81.6), 1e5, Vector4f(.75,.75,.75),utils::DIFFUSE),
+        // bottom
+        r::Sphere(Vector4f(50,-1e5 - 200,81.6), 1e5, Vector4f(.75,.75,.75),utils::DIFFUSE),
         light
     };
 
@@ -63,10 +68,10 @@ int main(int argc, char const *argv[])
     r.setView(Vector4f(0,0,-1));
     r.setPerspectiveProjection(0.01, 1000, WIDTH / HEIGHT , 45);
 
-    auto start = std::chrono::system_clock::now();
-    r.render();
-    auto end = std::chrono::system_clock::now();
+    // auto start = std::chrono::system_clock::now();
+    r.render(samples);
+    // auto end = std::chrono::system_clock::now();
     printf("render complete: ");
-    std::cout << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << " s\n" ;
+    // std::cout << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << " s\n" ;
     return 0;
 }

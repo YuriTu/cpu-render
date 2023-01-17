@@ -18,7 +18,7 @@ namespace r
         void add(Sphere &m);
         void add(Light &l);
         void sampleLight(Interaction& light,float& pdf);
-        void render();
+        void render(int samples);
         Vector4f getRadiance(Ray &ray, int bounce);
         Vector4f pathTracing(Ray &ray, int depth);
 

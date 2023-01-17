@@ -230,11 +230,10 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
 
 }
 
-void r::TracingRender::render()
+void r::TracingRender::render(int samples)
 {
-    int samples = 15;
 
-    Vector4f cam(0, 0, -100);
+    Vector4f cam(10, 10, -100);
     float scale = tan(deg2rad(fov * 0.5));  
     float imageRadio = width / (float)height;
     #pragma omp parallel for schedule(dynamic, 1) private(r)
