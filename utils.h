@@ -230,6 +230,7 @@ inline void exportImg(std::vector<Vector4f> frameBuffer,int width, int height)
     }
 
     fclose(fp);
+    
 }
 
 inline float fresnel(Vector4f I, Vector4f N, float ior) {

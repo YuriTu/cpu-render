@@ -70,7 +70,7 @@ void r::Sphere::sampleSphereUniform(Interaction& ret, float& pdf){
 }
 
 float r::Sphere::evalBRDF(){
-    return kd / (PI * 2.f);
+    return kd / (PI * 1.f);
 }
 
 bool r::Sphere::hasEmit(){

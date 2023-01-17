@@ -6,4 +6,4 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-add_executable(cpu_render main.cpp render.h render.cpp)
+add_executable(cpu_render main.cpp render.h render.cpp mesh.h mesh.cpp tracingRender.h tracingRender.cpp utils.h)

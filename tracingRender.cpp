@@ -165,7 +165,7 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
 
 
     Vector4f hitPoint = interaction.hitPoint;
-    float rr = 0.3;
+    float rr = 0.8;
 
     if (hitObject->reflectType == utils::DIFFUSE) {
         // rr准入
@@ -233,7 +233,7 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
 void r::TracingRender::render(int samples)
 {
 
-    Vector4f cam(10, 10, -100);
+    Vector4f cam(10, 10, -150);
     float scale = tan(deg2rad(fov * 0.5));  
     float imageRadio = width / (float)height;
     #pragma omp parallel for schedule(dynamic, 1) private(r)
@@ -251,10 +251,11 @@ void r::TracingRender::render(int samples)
 
             for (int k = 0; k < samples; k++) {
                 // Vector4f _radiance = getRadiance(ray,0);
+                // todo gama normliaz
                 Vector4f _radiance = pathTracing(ray,0);
                 radiance += _radiance;
             }
-            frameBuffer[index] = radiance;
+            frameBuffer[index] = radiance / samples;
         }
     }
     exportImg(frameBuffer, width,height);
