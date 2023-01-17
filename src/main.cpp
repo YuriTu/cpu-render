@@ -6,7 +6,6 @@
 #include <chrono>
 
 //todo 
-// path
 // denoise
 // subsurface
 // module loader
@@ -26,7 +25,7 @@ std::vector<Vector4f> getPoints(){
 
 int main(int argc, char const *argv[])
 {
-    int samples = 30;
+    int samples = 5;
     // r::Render r(WIDTH, HEIGHT);
     // r::triangle tri(
     //     Vector4f(0.0, 50.0, -1.0),
@@ -34,7 +33,7 @@ int main(int argc, char const *argv[])
     //     Vector4f(50.0, 100.0, -1.0)
     // );
     r::TracingRender r(WIDTH, HEIGHT);
-    r::Sphere mesh(Vector4f(27,0.5,47), 16.5, Vector4f(0.,1.0,0.0),utils::DIFFUSE);
+    r::Sphere mesh(Vector4f(27,-20.5,47), 26.5, Vector4f(0.,1.0,0.0),utils::DIFFUSE);
     r::Sphere light(Vector4f(50,118+681.6-.27,81.6),600, Vector4f(),utils::DIFFUSE);
     light.emit = Vector4f(12.0);
     r::Sphere planes[] = {

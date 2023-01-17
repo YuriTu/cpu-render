@@ -255,7 +255,8 @@ void r::TracingRender::render(int samples)
                 Vector4f _radiance = pathTracing(ray,0);
                 radiance += _radiance;
             }
-            frameBuffer[index] = radiance / samples;
+            frameBuffer[index] = radiance;
+            //  / samples;
         }
     }
     exportImg(frameBuffer, width,height);
