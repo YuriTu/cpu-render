@@ -41,10 +41,11 @@ namespace r
         bool intersect(Ray &r, float& tNear);
         void getSurfaceProperties(Vector4f &hitPoint, Vector4f &N);
         void sampleSphereUniform(Interaction& ret, float& pdf);
-        float evalBRDF();
+        Vector4f evalBRDF();
         bool hasEmit();
         Vector4f o;
         float radius;
+        float radius2;
         Vector4f color;
         utils::reflectType reflectType;
         // b-phone mode

@@ -189,10 +189,11 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
         Sphere* LightObject = lightInteraction.hitObject;
         LightObject->getSurfaceProperties(lightHitPoint,lightN);
         // 直接光照，对area进行采样
-        // brdf = fresnel ？  或者直接phone
-        Vector4f Lo = hitObject->diffuseColor;
+        // Lo是直接光照的irradiance
         
-        float brdf = hitObject->evalBRDF();
+        
+        
+        Vector4f brdf = hitObject->evalBRDF();
         Vector4f N;
         hitObject->getSurfaceProperties(hitPoint, N);
         float cosLightWo = std::max(0.f,N.dot(-lightDir)) ;
@@ -203,7 +204,9 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
         float cosDArea = std::max(0.f, lightN.dot(lightDir));
         Vector4f lightDistance = lightHitPoint - hitPoint;
         float distance2 = lightDistance.dot(lightDistance);
-        Vector4f directRadiance = Lo * brdf * cosLightWo * (cosDArea / distance2);
+        // fixme 不知道为啥Lo会被改掉
+        Vector4f Lo = LightObject->emit;
+        Vector4f directRadiance = Vector4f(12.f) * brdf * cosLightWo * (cosDArea / distance2);
 
         // 间接光照部分
         if (lightInteraction.flag){
@@ -253,10 +256,12 @@ void r::TracingRender::render(int samples)
                 // Vector4f _radiance = getRadiance(ray,0);
                 // todo gama normliaz
                 Vector4f _radiance = pathTracing(ray,0);
+                if (_radiance.x > 0) {
+                    radiance;
+                }
                 radiance += _radiance;
             }
-            frameBuffer[index] = radiance;
-            //  / samples;
+            frameBuffer[index] = radiance / samples;
         }
     }
     exportImg(frameBuffer, width,height);

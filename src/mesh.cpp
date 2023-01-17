@@ -24,6 +24,8 @@ r::Sphere::Sphere(Vector4f _o, float _r, Vector4f _c, utils::reflectType _t):o(_
     ks = 0.2;
     specularExponent = 25;
     ior = 0.8;
+    radius2 = radius * radius;
+    // area = 4 * PI * radius2;
     area = 2 * PI;
 };
 
@@ -65,12 +67,12 @@ void r::Sphere::sampleSphereUniform(Interaction& ret, float& pdf){
     Vector4f wo = Vector4f(x,y,z);
     ret.hitPoint = this->o + this->radius * wo;
     
-
     pdf = 1/ area;
 }
 
-float r::Sphere::evalBRDF(){
-    return kd / (PI * 1.f);
+Vector4f r::Sphere::evalBRDF(){
+    kd = 1.f;
+    return (diffuseColor * kd) / (PI * 2.f);
 }
 
 bool r::Sphere::hasEmit(){
