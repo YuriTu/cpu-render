@@ -19,7 +19,7 @@ void r::triangle::setColor(Vector4f c1, Vector4f c2, Vector4f c3){
 }
 
 r::Sphere::Sphere(Vector4f _o, float _r, Vector4f _c, utils::reflectType _t):o(_o), radius(_r), color(_c), reflectType(_t) {
-    diffuseColor = Vector4f(0.0,1.0,1.0);
+    diffuseColor = _c;
     kd = 0.8;
     ks = 0.2;
     specularExponent = 25;

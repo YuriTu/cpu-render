@@ -46,21 +46,27 @@ void r::TracingRender::sampleLight(Interaction& light ,float& pdf) {
 Interaction r::TracingRender::castRay(Ray &ray) {
     // ray 
     Interaction ret;
-    float t = -1;
+    
+    float t = 1e10;
+    float tMin = t;
     float index = 0;
     for (int i = 0; i < objects.size(); i++) {
         bool flag = objects[i].intersect(ray, t);
-        if (flag) {
+        
+        if (flag && t < tMin) {
+            
             index = i;
+            tMin = t;
         }
     }
 
-    if (t < 0) {
+    if (tMin == 1e10) {
         ret.flag = false;
         return ret;
     }
     ret.flag = true;
-    ret.hitPoint = ray.o + ray.dir * t;
+    ret.hitPoint = ray.o + ray.dir * tMin;
+    // printf("index %d", index);
     ret.hitObject = &objects[index];
     return ret;
 }
@@ -159,7 +165,7 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
 
 
     Vector4f hitPoint = interaction.hitPoint;
-    float rr = 0.8;
+    float rr = 0.3;
 
     if (hitObject->reflectType == utils::DIFFUSE) {
         // rr准入
@@ -226,19 +232,19 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
 
 void r::TracingRender::render()
 {
-    int samples = 1;
+    int samples = 15;
 
-    Vector4f cam(50,52,295.6);
+    Vector4f cam(0, 0, -100);
     float scale = tan(deg2rad(fov * 0.5));  
     float imageRadio = width / (float)height;
-    #pragma omp parallel
+    #pragma omp parallel for schedule(dynamic, 1) private(r)
     for (int i = 0; i < width; i++) {
         for(int j = 0; j < height; j++) {
             Vector4f radiance;
 
-            float x = 1.0 * (((i + 0.5f) / width) - .5f) * imageRadio * scale;
-            float y = 1.0 * (((j + 0.5f) / height) - .5f) * scale;
-            Vector4f _dir(x,y,-1);
+            float x = 2.0 * (((i + 0.5f) / width) - .5f) * imageRadio * scale;
+            float y = 2.0 * (((j + 0.5f) / height) - .5f) * scale;
+            Vector4f _dir(x,y,1);
             Vector4f dir = normalize(_dir);
             Ray ray(cam,dir);
 
@@ -249,7 +255,7 @@ void r::TracingRender::render()
                 Vector4f _radiance = pathTracing(ray,0);
                 radiance += _radiance;
             }
-            frameBuffer[index] = radiance / samples;
+            frameBuffer[index] = radiance;
         }
     }
     exportImg(frameBuffer, width,height);
