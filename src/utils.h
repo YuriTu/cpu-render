@@ -261,3 +261,13 @@ inline float getRandom(float min, float max) {
     std::uniform_real_distribution<float> range(min,max);
     return range(dev);
 }
+
+inline Vector4f getVecFromSampleSphereUniform(){
+    float phi =  getRandom(0,1) * 2 * PI;
+    float theta = getRandom(0,1) * PI;
+    float r = sin(theta);
+    float z = cos(theta);
+    float x = r * cos(phi);
+    float y = r * sin(phi);
+    return Vector4f(x,y,z);
+}

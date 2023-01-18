@@ -149,6 +149,8 @@ Vector4f r::TracingRender::getRadiance(Ray &ray, int bounce) {
 
 Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
     Vector4f ret(0.0);
+    Vector4f indirectRadiance(0.0);
+    Vector4f directRadiance(0.0);
     
     Interaction interaction = castRay(ray);
 
@@ -165,16 +167,13 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
 
 
     Vector4f hitPoint = interaction.hitPoint;
-    float rr = 0.8;
+    float rr = 0.5;
 
     if (hitObject->reflectType == utils::DIFFUSE) {
         // rr准入
         // if !rr return 0
         
-        float randomValue = getRandom(0,1);
-        if (randomValue > rr) {
-            return ret / rr;
-        }
+        
         float pdf;
         // 在光源上随机采个样
         
@@ -189,10 +188,6 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
         Sphere* LightObject = lightInteraction.hitObject;
         LightObject->getSurfaceProperties(lightHitPoint,lightN);
         // 直接光照，对area进行采样
-        // Lo是直接光照的irradiance
-        
-        
-        
         Vector4f brdf = hitObject->evalBRDF();
         Vector4f N;
         hitObject->getSurfaceProperties(hitPoint, N);
@@ -200,33 +195,44 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
         // printf("coslight wo %f", cosLightWo);
         // 0就是光源照不到
         // todo 直接光照中间被挡住
-
         float cosDArea = std::max(0.f, lightN.dot(lightDir));
         Vector4f lightDistance = lightHitPoint - hitPoint;
         float distance2 = lightDistance.dot(lightDistance);
         // fixme 不知道为啥Lo会被改掉
         Vector4f Lo = LightObject->emit;
-        Vector4f directRadiance = Vector4f(12.f) * brdf * cosLightWo * (cosDArea / distance2);
+        directRadiance = Vector4f(24.f) * brdf * cosLightWo * (cosDArea / distance2) / pdf;
 
+        
         // 间接光照部分
-        if (lightInteraction.flag){
-            // is light 不算  根据material de emit
+        
+        float rr =0.5f;
+        float randomValue = getRandom(0,1);
+        if (randomValue > rr) {
+            ret = directRadiance + indirectRadiance;
+            return ret;
         }
 
-        Vector4f indirectRadiance(0.0);
+        float pdf_indir;
+        Vector4f indir_wo = hitPoint + getVecFromSampleSphereUniform();
+        Ray indir_ray(hitPoint, indir_wo);
+        Interaction indir_interaction = castRay(ray);
 
-        // indirectRadiance = pathTracing(lightRay) * brdf * cos;
+        Sphere* indir_hitObject = indir_interaction.hitObject;
+        Vector4f indir_hitPoint = indir_interaction.hitPoint;
+        // 打到光上了直接过
+        if (hitObject->hasEmit()){
+            return ret;
+        }
+
+        Vector4f indir_N;
+        indir_hitObject->getSurfaceProperties(indir_hitPoint, indir_N);
+        float indir_cosWiN = indir_wo.dot(indir_N);
+        Vector4f indir_brdf = indir_hitObject->evalBRDF();
+        Ray sec_indir_wi(indir_hitPoint, -indir_wo);
+        indirectRadiance = pathTracing(sec_indir_wi, depth++) * indir_brdf * indir_cosWiN / pdf_indir / rr;
         // 是其他东西 = indir
-        // L = Lo * brdf * cos
-
-        //L =  Ld + Lindir /n * 1/pdf * 1/rr
         ret = directRadiance + indirectRadiance;
-        // n在外面处理
-        if (ret.dot(ret) > 0) {
-            // printf("has color");
-        }
-        return ret / pdf / rr;
-
+        return ret;
     }
 
     return ret;
