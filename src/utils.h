@@ -47,6 +47,10 @@ class Vector4f {
             return x*v.x + y*v.y + z*v.z;
         }
 
+        float norm() {
+            return std::sqrt(x * x + y * y + z * z);
+        }
+
         Vector4f operator+(const Vector4f &v) const{
             return Vector4f(x + v.x, y + v.y, z + v.z);
         }
@@ -269,5 +273,5 @@ inline Vector4f getVecFromSampleSphereUniform(){
     float z = cos(theta);
     float x = r * cos(phi);
     float y = r * sin(phi);
-    return Vector4f(x,y,z);
+    return normalize(Vector4f(x,y,z));
 }

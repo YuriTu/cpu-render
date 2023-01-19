@@ -58,15 +58,30 @@ void r::Sphere::getSurfaceProperties(Vector4f &hitPoint, Vector4f &N) {
 }
 
 void r::Sphere::sampleSphereUniform(Interaction& ret, float& pdf){
-    Vector4f wo = getVecFromSampleSphereUniform();
-    ret.hitPoint = this->o + this->radius * wo;
+    Vector4f dir = getVecFromSampleSphereUniform();
+    ret.hitPoint = this->o + this->radius * dir;
+    ret.hitObject = this;
+    ret.emit = this->emit;
+    ret.normal = dir;
     
-    pdf = 1/ area;
+    pdf = 1.f/ area;
 }
 
-Vector4f r::Sphere::evalBRDF(){
-    kd = 1.f;
-    return (diffuseColor * kd) / (PI * 2.f);
+Vector4f r::Sphere::evalBRDF(const Vector4f& wo, const Vector4f& N){
+
+    // kd = 1.f;
+    // return (diffuseColor * kd) / (PI * 2.f);
+
+    Vector4f ret(0.f);
+    if (reflectType == utils::DIFFUSE) {
+        float cos = std::max(0.f, wo.dot(N));
+        if (cos > EPS) {
+            kd = 1.f;
+            // fixme我理解这里应该是半球2pi
+            ret = (diffuseColor * kd) / (PI);
+        }
+    }
+    return ret;
 }
 
 bool r::Sphere::hasEmit(){

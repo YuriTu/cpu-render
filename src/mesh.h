@@ -41,7 +41,7 @@ namespace r
         bool intersect(Ray &r, float& tNear);
         void getSurfaceProperties(Vector4f &hitPoint, Vector4f &N);
         void sampleSphereUniform(Interaction& ret, float& pdf);
-        Vector4f evalBRDF();
+        Vector4f evalBRDF(const Vector4f& wo, const Vector4f& N);
         bool hasEmit();
         Vector4f o;
         float radius;
@@ -83,8 +83,11 @@ struct Interaction
     }
     bool flag;
     Vector4f hitPoint;
+    Vector4f normal;
     float t;
     r::Sphere* hitObject;
+    float distance;
+    Vector4f emit;
 
 };
 

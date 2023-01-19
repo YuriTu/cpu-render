@@ -10,9 +10,9 @@
 // subsurface
 // module loader
 
-constexpr int WIDTH = 400;
-constexpr int HEIGHT = 300;
-constexpr int sampleCount = 5;
+constexpr int WIDTH = 200;
+constexpr int HEIGHT = 150;
+constexpr int sampleCount = 50;
 
 std::vector<Vector4f> getPoints(){
     std::vector<Vector4f> ret = {
@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
     r::TracingRender r(WIDTH, HEIGHT);
     r::Sphere mesh(Vector4f(27,-20.5,47), 26.5, Vector4f(0.,1.0,0.0),utils::DIFFUSE);
     r::Sphere light(Vector4f(50,118+681.6-.27,81.6),600, Vector4f(),utils::DIFFUSE);
-    light.emit = Vector4f(24.f);
+    light.emit = Vector4f(1e18f);
     r::Sphere planes[] = {
         //left
         r::Sphere(Vector4f(1e5+200, 40.8, 81.6), 1e5, Vector4f(.75,.25,.25),utils::DIFFUSE),

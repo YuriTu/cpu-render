@@ -35,9 +35,7 @@ void r::TracingRender::sampleLight(Interaction& light ,float& pdf) {
     
     for (int i=0; i < objects.size(); i++) {
         if (objects[i].hasEmit()) {
-            Sphere lightObject = objects[i];
-            lightObject.sampleSphereUniform(light,pdf);
-            light.hitObject = &lightObject;
+            objects[i].sampleSphereUniform(light,pdf);
         }
     }
     
@@ -66,8 +64,10 @@ Interaction r::TracingRender::castRay(Ray &ray) {
     }
     ret.flag = true;
     ret.hitPoint = ray.o + ray.dir * tMin;
-    // printf("index %d", index);
     ret.hitObject = &objects[index];
+    ret.normal = normalize(ret.hitPoint - ret.hitObject->o);
+    ret.distance = tMin;
+    
     return ret;
 }
 
@@ -164,73 +164,61 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
     if (hitObject->hasEmit()){
         return hitObject->emit;
     }
-
-
-    Vector4f hitPoint = interaction.hitPoint;
-    float rr = 0.5;
-
+    // p incident point
+    Vector4f p = interaction.hitPoint;
+    Vector4f N = interaction.normal;
+    Vector4f L_wo = normalize(-ray.dir);
     if (hitObject->reflectType == utils::DIFFUSE) {
-        // rr准入
-        // if !rr return 0
-        
-        
-        float pdf;
+
+        float pdf_light;
         // 在光源上随机采个样
-        
-        Interaction lightInteraction;
+        Interaction inter_light;
         // 方位角随机数  pdf 就是整个面积的uniform没有特殊处理
         // 均匀对于半球进行采样 按照pdf 进行N次采样
-        sampleLight(lightInteraction,pdf);
+        this->sampleLight(inter_light,pdf_light);
         // castRay 看是否有intersection
-        Vector4f lightHitPoint = lightInteraction.hitPoint;
-        Vector4f lightDir = hitPoint - lightHitPoint;
-        Vector4f lightN;
-        Sphere* LightObject = lightInteraction.hitObject;
-        LightObject->getSurfaceProperties(lightHitPoint,lightN);
-        // 直接光照，对area进行采样
-        Vector4f brdf = hitObject->evalBRDF();
-        Vector4f N;
-        hitObject->getSurfaceProperties(hitPoint, N);
-        float cosLightWo = std::max(0.f,N.dot(-lightDir)) ;
-        // printf("coslight wo %f", cosLightWo);
-        // 0就是光源照不到
-        // todo 直接光照中间被挡住
-        float cosDArea = std::max(0.f, lightN.dot(lightDir));
-        Vector4f lightDistance = lightHitPoint - hitPoint;
-        float distance2 = lightDistance.dot(lightDistance);
-        // fixme 不知道为啥Lo会被改掉
-        Vector4f Lo = LightObject->emit;
-        directRadiance = Vector4f(24.f) * brdf * cosLightWo * (cosDArea / distance2) / pdf;
+        // 随机采样出来的射线 从p点到x 方向
+        Vector4f x = inter_light.hitPoint;
+        Vector4f L_wi_origin = x - p;
+        Vector4f L_wi = normalize(L_wi_origin);
+        Vector4f L_wi_N = normalize(inter_light.normal);
 
+        // 直接光照，对area进行采样
+        Vector4f L_dir_Li = inter_light.emit;
+        Vector4f brdf = hitObject->evalBRDF(L_wo,N);
+        // 0就是光源照不到
+        float cosIncidentPoint = std::max(0.f, N.dot(L_wi));
+        // 光源转到正向
+        float cosLight = std::max(0.f, L_wi_N.dot(-L_wi));
+
+        if (cosLight > 0.f && cosIncidentPoint > 0.f) {
+            //  printf("%f",cosLight);
+        }
+
+        float daTodw = (cosLight) / (L_wi_origin.norm() * L_wi_origin.norm()) / pdf_light;
+        
+        // todo 直接光照中间被挡住
+        Ray testShadowray(p,L_wi);
+        Interaction shadowray = castRay(testShadowray);
+        if (shadowray.flag && (shadowray.hitPoint - inter_light.hitPoint).norm() < EPS) {
+            directRadiance = L_dir_Li * brdf * cosIncidentPoint * daTodw;
+        }
         
         // 间接光照部分
         
-        float rr =0.5f;
-        float randomValue = getRandom(0,1);
-        if (randomValue > rr) {
-            ret = directRadiance + indirectRadiance;
-            return ret;
-        }
+        // float rr =0.8f;
+        // float randomValue = getRandom(0,1);
+        // if (randomValue > rr) {
 
-        float pdf_indir;
-        Vector4f indir_wo = hitPoint + getVecFromSampleSphereUniform();
-        Ray indir_ray(hitPoint, indir_wo);
-        Interaction indir_interaction = castRay(ray);
+        //     float pdf_indir = 1 / (PI * 2);
+        //     Vector4f L_indir_wo = p + getVecFromSampleSphereUniform();
+        //     Ray indir_ray(p, L_indir_wo);
+        //     Vector4f indir_brdf = hitObject->evalBRDF(L_indir_wo,N);
+        //     float indir_cosWiN = std::max(0.f, (L_indir_wo).dot(N));
 
-        Sphere* indir_hitObject = indir_interaction.hitObject;
-        Vector4f indir_hitPoint = indir_interaction.hitPoint;
-        // 打到光上了直接过
-        if (hitObject->hasEmit()){
-            return ret;
-        }
-
-        Vector4f indir_N;
-        indir_hitObject->getSurfaceProperties(indir_hitPoint, indir_N);
-        float indir_cosWiN = indir_wo.dot(indir_N);
-        Vector4f indir_brdf = indir_hitObject->evalBRDF();
-        Ray sec_indir_wi(indir_hitPoint, -indir_wo);
-        indirectRadiance = pathTracing(sec_indir_wi, depth++) * indir_brdf * indir_cosWiN / pdf_indir / rr;
-        // 是其他东西 = indir
+        //     indirectRadiance = pathTracing(indir_ray, depth++) * indir_brdf * indir_cosWiN / pdf_indir / rr;
+        // }
+        
         ret = directRadiance + indirectRadiance;
         return ret;
     }
