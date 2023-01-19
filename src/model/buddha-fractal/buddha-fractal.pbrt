@@ -1,0 +1,73 @@
+Scale -1 1 1
+LookAt 22.9312 -41.4082985 17.5893993
+        22.5900002 -40.4709015 17.5195999
+        -0.0238581002 0.0655495971 0.997564018
+Camera "perspective" 
+        "float fov" [ 30.2642 ] 
+Film "image" 
+        "integer xresolution" [ 750 ] 
+        "integer yresolution" [ 1200 ] 
+        "string filename" [ "buddha-fractal.exr" ] 
+Sampler "sobol" 
+        "integer pixelsamples" [ 128 ] 
+
+#############################################
+
+WorldBegin
+
+AttributeBegin
+    LightSource "infinite" 
+            "rgb L" [ 0.94509798 0.98431402 1 ] 
+            "rgb scale" [ 1.1 1.1 1.1 ] 
+AttributeEnd
+
+# Materials
+MakeNamedMaterial "Buda" 
+        "string type" [ "matte" ] 
+        "rgb Kd" [ 0.81176502 0.81176502 0.81176502 ] 
+MakeNamedMaterial "Floor" 
+        "string type" [ "matte" ] 
+        "rgb Kd" [ 0.70196098 0.68627501 0.662745 ] 
+
+
+AttributeBegin 
+	 NamedMaterial "Floor" 
+
+Shape "trianglemesh" "integer indices"
+[
+	0 1 2
+	3 4 5
+]
+"point P" 
+[ 
+	-150.0 150.0 0.0
+	-150.0 -150.0 0.0
+	150.0 150.0 0.0
+	150.0 -150.0 0.0
+	150.0 150.0 0.0
+	-150.0 -150.0 0.0
+]
+"float uv"  
+[
+	0.0 1.0
+	0.0 0.0
+	1.0 1.0
+	1.0 0.0
+	1.0 1.0
+	0.0 0.0
+]
+"normal N" 
+[
+	0.0 1.0 0.0
+	0.0 1.0 0.0
+	0.0 1.0 0.0
+	0.0 1.0 0.0
+	0.0 1.0 0.0
+	0.0 1.0 0.0
+]
+
+AttributeEnd 
+
+Include "geometry.pbrt"
+
+WorldEnd
