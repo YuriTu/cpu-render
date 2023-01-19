@@ -191,10 +191,6 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
         // 光源转到正向
         float cosLight = std::max(0.f, L_wi_N.dot(-L_wi));
 
-        if (cosLight > 0.f && cosIncidentPoint > 0.f) {
-            //  printf("%f",cosLight);
-        }
-
         float daTodw = (cosLight) / (L_wi_origin.norm() * L_wi_origin.norm()) / pdf_light;
         
         // todo 直接光照中间被挡住
@@ -206,18 +202,18 @@ Vector4f r::TracingRender::pathTracing(Ray &ray, int depth) {
         
         // 间接光照部分
         
-        // float rr =0.8f;
-        // float randomValue = getRandom(0,1);
-        // if (randomValue > rr) {
+        float rr =0.8f;
+        float randomValue = getRandom(0,1);
+        if (randomValue > rr) {
 
-        //     float pdf_indir = 1 / (PI * 2);
-        //     Vector4f L_indir_wo = p + getVecFromSampleSphereUniform();
-        //     Ray indir_ray(p, L_indir_wo);
-        //     Vector4f indir_brdf = hitObject->evalBRDF(L_indir_wo,N);
-        //     float indir_cosWiN = std::max(0.f, (L_indir_wo).dot(N));
+            float pdf_indir = 1 / (PI * 2);
+            Vector4f L_indir_wo = p + getVecFromSampleSphereUniform();
+            Ray indir_ray(p, L_indir_wo);
+            Vector4f indir_brdf = hitObject->evalBRDF(L_indir_wo,N);
+            float indir_cosWiN = std::max(0.f, (L_indir_wo).dot(N));
 
-        //     indirectRadiance = pathTracing(indir_ray, depth++) * indir_brdf * indir_cosWiN / pdf_indir / rr;
-        // }
+            indirectRadiance = pathTracing(indir_ray, depth++) * indir_brdf * indir_cosWiN / pdf_indir / rr;
+        }
         
         ret = directRadiance + indirectRadiance;
         return ret;
