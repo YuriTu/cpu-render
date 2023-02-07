@@ -13,25 +13,25 @@ namespace r
         ~TracingRender() = default;
 
         void setPerspectiveProjection(float near, float far, float aspect, float fov);
-        void setModule(Vector4f position);
-        void setView(Vector4f position);
+        void setModule(Vector3f position);
+        void setView(Vector3f position);
         void add(Sphere &m);
         void add(Light &l);
         void sampleLight(Interaction& light,float& pdf);
         void render(int samples);
-        Vector4f getRadiance(Ray &ray, int bounce);
-        Vector4f pathTracing(Ray &ray, int depth);
+        Vector3f getRadiance(Ray &ray, int bounce);
+        Vector3f pathTracing(Ray &ray, int depth);
 
 
         int width;
         int height;
         int maxBounce;
         float fov;
-        std::vector<Vector4f> frameBuffer;
+        std::vector<Vector3f> frameBuffer;
         std::vector<float> depthBuffer;
         std::vector<Sphere> objects;
         std::vector<Light> lights;
-        Vector4f background;
+        Vector3f background;
         
         
     private:
