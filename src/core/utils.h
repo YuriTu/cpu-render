@@ -157,11 +157,6 @@ inline void exportImg(std::vector<Vector3f> frameBuffer,int width, int height)
         color[0] = (char)(255 * clamp(1.0,0., pixel.x));
         color[1] = (char)(255 * clamp(1.0,0., pixel.y));
         color[2] = (char)(255 * clamp(1.0,0., pixel.z));
-        // if (pixel.x > 0 || pixel.y > 0) {
-        //     std::cout << " frame: x:" << pixel.x << "y:" << pixel.y << 255.0 * clamp(1.0,0., pixel.x) << std::endl;
-        //     std::cout << " frame: index:" << i << std::endl;
-        //     std::cout << " color: x:" << color[0] << "y:" << color[1] << std::endl;
-        // }
         
         fwrite(color, 1, 3, fp);
     }

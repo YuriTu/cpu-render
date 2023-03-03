@@ -66,8 +66,12 @@ class Vector3
 typedef Vector3<float> Vector3f;
 typedef Vector3<int> Vector3i;
 
-template <typename T,typename U>
-inline Vector3<T> operator*(U n, Vector3<T>& v) {
+// template <typename T,typename U, typename=float>
+// inline Vector3<T> operator*(U n, Vector3<T>& v) {
+//     return v * n;
+// }
+template <typename T>
+inline Vector3<T> operator*(float n, Vector3<T>& v) {
     return v * n;
 }
 
