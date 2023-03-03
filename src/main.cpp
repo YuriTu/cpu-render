@@ -14,24 +14,10 @@ constexpr int WIDTH = 200;
 constexpr int HEIGHT = 150;
 constexpr int sampleCount = 50;
 
-std::vector<Vector3f> getPoints(){
-    std::vector<Vector3f> ret = {
-        Vector3f(0.0, 50.0, -1.0),
-        Vector3f(100.0, 50.0, -1.0),
-        Vector3f(50.0, 100.0, -1.0),
-    };
-    return ret;
-}
-
 
 int main(int argc, char const *argv[])
 {
-    // r::Render r(WIDTH, HEIGHT);
-    // r::triangle tri(
-    //     Vector3f(0.0, 50.0, -1.0),
-    //     Vector3f(100.0, 50.0, -1.0),
-    //     Vector3f(50.0, 100.0, -1.0)
-    // );
+    
     r::TracingRender r(WIDTH, HEIGHT);
     r::Sphere mesh(Vector3f(27,-20.5,47), 26.5, Vector3f(0.,1.0,0.0),utils::DIFFUSE);
     r::Sphere light(Vector3f(50,118+681.6-.27,81.6),600, Vector3f(),utils::DIFFUSE);

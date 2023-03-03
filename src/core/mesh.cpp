@@ -2,23 +2,23 @@
 #include "utils.h"
 const int channel = 3;
 
-std::vector<Vector4f> r::triangle::getData(){
+std::vector<Vector3f> r::triangle::getData(){
     return data;
 }
 
-std::vector<Vector4f> r::triangle::getColor(){
+std::vector<Vector3f> r::triangle::getColor(){
     return color;
 }
 
-void r::triangle::setColor(Vector4f c1){
+void r::triangle::setColor(Vector3f c1){
     color = {c1, c1, c1};
 }
 
-void r::triangle::setColor(Vector4f c1, Vector4f c2, Vector4f c3){
+void r::triangle::setColor(Vector3f c1, Vector3f c2, Vector3f c3){
     color = {c1, c2, c3};
 }
 
-r::Sphere::Sphere(Vector4f _o, float _r, Vector4f _c, utils::reflectType _t):o(_o), radius(_r), color(_c), reflectType(_t) {
+r::Sphere::Sphere(Vector3f _o, float _r, Vector3f _c, utils::reflectType _t):o(_o), radius(_r), color(_c), reflectType(_t) {
     diffuseColor = _c;
     kd = 0.8;
     ks = 0.2;
@@ -32,10 +32,10 @@ r::Sphere::Sphere(Vector4f _o, float _r, Vector4f _c, utils::reflectType _t):o(_
 // 单点算相交
 // todo: float的比较精度
 bool r::Sphere::intersect(Ray &r, float &tNear) {
-    float a = r.dir.dot(r.dir);
-    Vector4f o2o = r.o - o;
-    float b = (r.dir * 2).dot(o2o);
-    float c = o2o.dot(o2o) - (radius * radius);
+    float a = Dot(r.dir,r.dir);
+    Vector3f o2o = r.o - o;
+    float b = Dot(r.dir * 2,o2o);
+    float c = Dot(o2o,o2o) - (radius * radius);
     float safeQuad = b*b - 4 * a * c;
     if (safeQuad < 0) {
         return false;
@@ -52,13 +52,13 @@ bool r::Sphere::intersect(Ray &r, float &tNear) {
     return true;
 }
 
-void r::Sphere::getSurfaceProperties(Vector4f &hitPoint, Vector4f &N) {
-    Vector4f _N = hitPoint - o;
+void r::Sphere::getSurfaceProperties(Vector3f &hitPoint, Vector3f &N) {
+    Vector3f _N = hitPoint - o;
     N = normalize(_N);
 }
 
 void r::Sphere::sampleSphereUniform(Interaction& ret, float& pdf){
-    Vector4f dir = getVecFromSampleSphereUniform();
+    Vector3f dir = getVecFromSampleSphereUniform();
     ret.hitPoint = this->o + this->radius * dir;
     ret.hitObject = this;
     ret.emit = this->emit;
@@ -67,14 +67,14 @@ void r::Sphere::sampleSphereUniform(Interaction& ret, float& pdf){
     pdf = 1.f/ area;
 }
 
-Vector4f r::Sphere::evalBRDF(const Vector4f& wo, const Vector4f& N){
+Vector3f r::Sphere::evalBRDF(const Vector3f& wo, const Vector3f& N){
 
     // kd = 1.f;
     // return (diffuseColor * kd) / (PI * 2.f);
 
-    Vector4f ret(0.f);
+    Vector3f ret(0.f);
     if (reflectType == utils::DIFFUSE) {
-        float cos = std::max(0.f, wo.dot(N));
+        float cos = std::max(0.f, Dot(wo,N));
         if (cos > EPS) {
             kd = 1.f;
             // fixme我理解这里应该是半球2pi
@@ -85,5 +85,5 @@ Vector4f r::Sphere::evalBRDF(const Vector4f& wo, const Vector4f& N){
 }
 
 bool r::Sphere::hasEmit(){
-    return (emit.dot(emit) > 0);
+    return ( Dot(emit, emit) > 0);
 }
