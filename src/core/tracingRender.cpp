@@ -4,6 +4,8 @@
 
 #include <omp.h>
 
+namespace r{
+
 r::TracingRender::TracingRender(int w, int h): width(w),height(h) {
     frameBuffer.resize(width * height);
     background = Vector3f(0.3);
@@ -258,4 +260,6 @@ void r::TracingRender::render(int samples)
         }
     }
     exportImg(frameBuffer, width,height);
+}
+
 }

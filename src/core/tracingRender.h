@@ -30,7 +30,7 @@ namespace r
         float fov;
         std::vector<Vector3f> frameBuffer;
         std::vector<float> depthBuffer;
-        std::vector<Sphere> objects;
+        // std::vector<Sphere> objects;
         std::vector<Light> lights;
         Vector3f background;
         

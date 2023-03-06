@@ -2,6 +2,8 @@
 #include <cassert>
 #include "BVH.h"
 
+namespace r{
+
 BVHAccel::BVHAccel(std::vector<Mesh*> p, int maxPrimsInNode,
                    SplitMethod splitMethod)
     : maxPrimsInNode(std::min(255, maxPrimsInNode)), splitMethod(splitMethod),
@@ -25,7 +27,7 @@ BVHAccel::BVHAccel(std::vector<Mesh*> p, int maxPrimsInNode,
         hrs, mins, secs);
 }
 
-BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Object*> objects)
+BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Mesh*> objects)
 {
     BVHBuildNode* node = new BVHBuildNode();
 
@@ -81,8 +83,8 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Object*> objects)
         auto middling = objects.begin() + (objects.size() / 2);
         auto ending = objects.end();
 
-        auto leftshapes = std::vector<Object*>(beginning, middling);
-        auto rightshapes = std::vector<Object*>(middling, ending);
+        auto leftshapes = std::vector<Mesh*>(beginning, middling);
+        auto rightshapes = std::vector<Mesh*>(middling, ending);
 
         assert(objects.size() == (leftshapes.size() + rightshapes.size()));
 
@@ -96,27 +98,27 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Object*> objects)
     return node;
 }
 
-Intersection BVHAccel::Intersect(const Ray& ray) const
+Interaction BVHAccel::Intersect(const Ray& ray) const
 {
-    Intersection isect;
+    Interaction isect;
     if (!root)
         return isect;
     isect = BVHAccel::getIntersection(root, ray);
     return isect;
 }
 
-Intersection BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
+Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
 {
     // TODO Traverse the BVH to find intersection
 
-    Intersection rs = Intersection();
+    Interaction rs = Interaction();
 
     std::array<int, 3> dirIsNeg;
-    dirIsNeg[0] = int(ray.direction.x >= 0);
-    dirIsNeg[1] = int(ray.direction.y >= 0);
-    dirIsNeg[2] = int(ray.direction.z >= 0);
+    dirIsNeg[0] = int(ray.d.x >= 0);
+    dirIsNeg[1] = int(ray.d.y >= 0);
+    dirIsNeg[2] = int(ray.d.z >= 0);
 
-    bool flag = node->bounds.IntersectP(ray,ray.direction_inv,dirIsNeg);
+    bool flag = node->bounds.IntersectP(ray,ray.d_inv,dirIsNeg);
     if (!flag) {
         // bounds 没交点，过
         return rs;
@@ -125,8 +127,8 @@ Intersection BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
     if (node->object) {
         rs = node->object->getIntersection(ray);
     } else {
-        Intersection left = getIntersection(node->left, ray);
-        Intersection right = getIntersection(node->right, ray);
+        Interaction left = getIntersection(node->left, ray);
+        Interaction right = getIntersection(node->right, ray);
 
         // 谁距离仅用谁
         if (left.distance < right.distance) {
@@ -140,9 +142,9 @@ Intersection BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
 }
 
 
-void BVHAccel::getSample(BVHBuildNode* node, float p, Intersection &pos, float &pdf){
+void BVHAccel::getSample(BVHBuildNode* node, float p, Interaction &pos, float &pdf){
     if(node->left == nullptr || node->right == nullptr){
-        node->object->Sample(pos, pdf);
+        node->object->sample(pos, pdf);
         pdf *= node->area;
         return;
     }
@@ -150,8 +152,10 @@ void BVHAccel::getSample(BVHBuildNode* node, float p, Intersection &pos, float &
     else getSample(node->right, p - node->left->area, pos, pdf);
 }
 
-void BVHAccel::Sample(Intersection &pos, float &pdf){
-    float p = std::sqrt(get_random_float()) * root->area;
+void BVHAccel::Sample(Interaction &pos, float &pdf){
+    float p = std::sqrt(getRandom()) * root->area;
     getSample(root, p, pos, pdf);
     pdf /= root->area;
+}
+
 }

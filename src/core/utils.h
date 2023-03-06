@@ -12,6 +12,9 @@
 #define EPS 1e-4
 #define EPSILON 1e-4
 
+namespace r
+{
+
 inline float clamp(float max, float min, float v) {
     return std::min(max, std::max(min,v));
 }
@@ -20,14 +23,13 @@ inline float deg2rad(float deg) {
     return deg / 180.0 * PI;
 }
 
-namespace utils
-{
+
     enum reflectType {
         DIFFUSE,
         REFLECTION,
         REFLECTION_AND_REFRACTION
     };
-} // namespace utils
+
 
 
 
@@ -199,4 +201,5 @@ inline Vector3f getVecFromSampleSphereUniform(){
     return normalize(Vector3f(x,y,z));
 }
 
+} // namespace r
 #endif //RT_UTILS_H

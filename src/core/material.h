@@ -5,6 +5,9 @@
 #include "utils.h"
 // handle bsdf eg
 
+namespace r
+{
+
 enum MaterialType { DIFFUSE};
 
 class Material{
@@ -105,4 +108,5 @@ Vector3f Material::eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &
     return Vector3f(0.0);
 }
 
+}
 #endif //RT_MATERIAL_H

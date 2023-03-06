@@ -4,8 +4,12 @@
 #include "material.h"
 #include "mesh.h"
 
-struct Interaction
+namespace r
 {
+
+class Interaction
+{
+public:
     Interaction(){
         happened=false;
         coords=Vector3f();
@@ -53,5 +57,5 @@ struct SurfaceInteraction
     }
 };
 
-
+}
 #endif //RAYTRACING_INTERACTION_H

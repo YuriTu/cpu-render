@@ -1,9 +1,5 @@
-//
-// Created by LEI XU on 5/16/19.
-//
-
-#ifndef RAYTRACING_BVH_H
-#define RAYTRACING_BVH_H
+#ifndef RT_BVH_H
+#define RT_BVH_H
 
 #include <atomic>
 #include <vector>
@@ -15,6 +11,9 @@
 #include "geometry.h"
 #include "mesh.h"
 
+namespace r
+{
+
 struct BVHBuildNode;
 // BVHAccel Forward Declarations
 struct BVHPrimitiveInfo;
@@ -25,10 +24,8 @@ public:
     // BVHAccel Public Types
     enum class SplitMethod { NAIVE, SAH };
 
-    // BVHAccel Public Methods
     BVHAccel(std::vector<Mesh*> p, int maxPrimsInNode = 1, SplitMethod splitMethod = SplitMethod::NAIVE);
-    // Bounds3 WorldBound() const;
-    // ~BVHAccel();
+
 
     Interaction Intersect(const Ray &ray) const;
     Interaction getIntersection(BVHBuildNode* node, const Ray& ray)const;
@@ -36,7 +33,7 @@ public:
     BVHBuildNode* root;
 
     // BVHAccel Private Methods
-    BVHBuildNode* recursiveBuild(std::vector<Mesh*>objects);
+    BVHBuildNode* recursiveBuild(std::vector<Mesh*> objects);
 
     // BVHAccel Private Data
     const int maxPrimsInNode;
@@ -65,6 +62,6 @@ public:
 };
 
 
+}
 
-
-#endif //RAYTRACING_BVH_H
+#endif //RT_BVH_H

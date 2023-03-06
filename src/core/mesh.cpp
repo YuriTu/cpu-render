@@ -32,9 +32,9 @@ r::Sphere::Sphere(Vector3f _o, float _r, Vector3f _c, utils::reflectType _t):o(_
 // 单点算相交
 // todo: float的比较精度
 bool r::Sphere::intersect(Ray &r, float &tNear) {
-    float a = Dot(r.dir,r.dir);
+    float a = Dot(r.d,r.d);
     Vector3f o2o = r.o - o;
-    float b = Dot(r.dir * 2,o2o);
+    float b = Dot(r.d * 2,o2o);
     float c = Dot(o2o,o2o) - (radius * radius);
     float safeQuad = b*b - 4 * a * c;
     if (safeQuad < 0) {

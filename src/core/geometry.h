@@ -1,6 +1,8 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+namespace r
+{
 
 template <typename T>
 class Vector3
@@ -113,10 +115,11 @@ Vector3<T> Max(const Vector3<T> &v1, const Vector3<T> &v2) {
 struct Ray
 {
     
-    Ray(Vector3f _o,Vector3f _d):o(_o),dir(_d) {};
+    Ray(Vector3f _o,Vector3f _d):o(_o),d(_d) {};
     Vector3f o;
-    Vector3f dir;
+    Vector3f d;
+    Vector3f d_inv;
 };
 
-
+}
 #endif

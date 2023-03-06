@@ -5,6 +5,9 @@
 #include <limits>
 #include <array>
 
+namespace r
+{
+
 class Bounds3
 {
   public:
@@ -154,6 +157,8 @@ inline Bounds3 Union(const Bounds3& b, const Vector3f& p)
     ret.pMin = Min(b.pMin, p);
     ret.pMax = Max(b.pMax, p);
     return ret;
+}
+
 }
 
 #endif // RT_BOUNDS3_H

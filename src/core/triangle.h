@@ -5,9 +5,12 @@
 #include "interaction.h"
 #include "material.h"
 #include "OBJ_Loader.h"
-#include "shape.h"
+#include "mesh.h"
 #include <cassert>
 #include <array>
+
+namespace r
+{
 
 bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1,
                           const Vector3f& v2, const Vector3f& orig,
@@ -39,7 +42,7 @@ bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1,
     return true;
 }
 
-class Triangle : public Object
+class Triangle : public Mesh
 {
 public:
     Vector3f v0, v1, v2; // vertices A, B ,C , counter-clockwise order
@@ -61,7 +64,7 @@ public:
     bool intersect(const Ray& ray) override;
     bool intersect(const Ray& ray, float& tnear,
                    uint32_t& index) const override;
-    Intersection getIntersection(Ray ray) override;
+    Interaction getIntersection(Ray ray) override;
     void getSurfaceProperties(const Vector3f& P, const Vector3f& I,
                               const uint32_t& index, const Vector2f& uv,
                               Vector3f& N, Vector2f& st) const override
@@ -72,7 +75,7 @@ public:
     }
     Vector3f evalDiffuseColor(const Vector2f&) const override;
     Bounds3 getBounds() override;
-    void Sample(Intersection &pos, float &pdf){
+    void Sample(Interaction &pos, float &pdf){
         float x = std::sqrt(get_random_float()), y = get_random_float();
         pos.coords = v0 * (1.0f - x) + v1 * (x * (1.0f - y)) + v2 * (x * y);
         pos.normal = this->normal;
@@ -184,9 +187,9 @@ public:
                     Vector3f(0.937, 0.937, 0.231), pattern);
     }
 
-    Intersection getIntersection(Ray ray)
+    Interaction getIntersection(Ray ray)
     {
-        Intersection intersec;
+        Interaction intersec;
 
         if (bvh) {
             intersec = bvh->Intersect(ray);
@@ -195,7 +198,7 @@ public:
         return intersec;
     }
     
-    void Sample(Intersection &pos, float &pdf){
+    void Sample(Interaction &pos, float &pdf){
         bvh->Sample(pos, pdf);
         pos.emit = m->getEmission();
     }
@@ -229,10 +232,10 @@ inline bool Triangle::intersect(const Ray& ray, float& tnear,
 
 inline Bounds3 Triangle::getBounds() { return Union(Bounds3(v0, v1), v2); }
 
-inline Intersection Triangle::getIntersection(Ray ray)
+inline Interaction Triangle::getIntersection(Ray ray)
 {
     // 这里写的有问题，导致光源没有被判断到相交
-    Intersection inter;
+    Interaction inter;
 
     if (dotProduct(ray.direction, normal) > 0)
         return inter;
@@ -253,7 +256,7 @@ inline Intersection Triangle::getIntersection(Ray ray)
         return inter;
     t_tmp = dotProduct(e2, qvec) * det_inv;
 
-    // TODO find ray triangle intersection
+    // TODO find ray triangle Interaction
     inter.happened = (t_tmp>0) && (u>0) && (v>0) && (1-u-v>0);
     inter.coords = ray(t_tmp); // 
     inter.normal = this->normal;
@@ -270,5 +273,6 @@ inline Vector3f Triangle::evalDiffuseColor(const Vector2f&) const
     return Vector3f(0.5, 0.5, 0.5);
 }
 
+}
 
 #endif //RT_TRIANGLE_H

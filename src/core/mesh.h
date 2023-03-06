@@ -3,6 +3,7 @@
 
 #include "utils.h"
 #include "interaction.h"
+#include "bounds3.h"
 
 namespace r
 {
@@ -10,7 +11,12 @@ namespace r
     {
     public:
         Mesh() = default;
-        ~Mesh() = default;
+        virtual ~Mesh() = default;
+        virtual Bounds3 getBounds() = 0;
+        // virtual void sample(Interaction &interaction, float &pdf) = 0;
+        virtual bool getIntersection(Ray ray);
+        virtual float getArea();
+        float area;
     private:
         std::vector<Vector3f> data;
     };
@@ -35,7 +41,7 @@ namespace r
     class Sphere
     {
     public:
-        Sphere(Vector3f _o, float _r, Vector3f _c, utils::reflectType _t);
+        Sphere(Vector3f _o, float _r, Vector3f _c, reflectType _t);
         bool intersect(Ray &r, float& tNear);
         void getSurfaceProperties(Vector3f &hitPoint, Vector3f &N);
         // void sampleSphereUniform(Interaction& ret, float& pdf);
@@ -45,7 +51,7 @@ namespace r
         float radius;
         float radius2;
         Vector3f color;
-        utils::reflectType reflectType;
+        reflectType reflectType;
         // b-phone mode
         Vector3f diffuseColor;
         float kd;
