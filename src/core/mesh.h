@@ -2,24 +2,22 @@
 #define RT_MESH_H
 
 #include "utils.h"
-
-struct Interaction;
-
+#include "interaction.h"
 
 namespace r
 {
-    class mesh
+    class Mesh
     {
     public:
-        mesh() = default;
-        ~mesh() = default;
+        Mesh() = default;
+        ~Mesh() = default;
     private:
         std::vector<Vector3f> data;
     };
     
     
     
-    class triangle: public mesh
+    class triangle: public Mesh
     {
     public:
         triangle(Vector3f a, Vector3f b, Vector3f c): data({a,b,c}){};
@@ -40,7 +38,7 @@ namespace r
         Sphere(Vector3f _o, float _r, Vector3f _c, utils::reflectType _t);
         bool intersect(Ray &r, float& tNear);
         void getSurfaceProperties(Vector3f &hitPoint, Vector3f &N);
-        void sampleSphereUniform(Interaction& ret, float& pdf);
+        // void sampleSphereUniform(Interaction& ret, float& pdf);
         Vector3f evalBRDF(const Vector3f& wo, const Vector3f& N);
         bool hasEmit();
         Vector3f o;

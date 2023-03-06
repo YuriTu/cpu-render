@@ -98,6 +98,17 @@ Vector3<T> Cross(const Vector3<T> &v1,const Vector3<T> &v2){
     return Vector3<T>(x,y,z);
 }
 
+template <typename T>
+Vector3<T> Min(const Vector3<T> &v1, const Vector3<T> &v2) {
+    return Vector3<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y),
+                      std::min(v1.z, v2.z));
+}
+
+template <typename T>
+Vector3<T> Max(const Vector3<T> &v1, const Vector3<T> &v2) {
+    return Vector3<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y),
+                      std::max(v1.z, v2.z));
+}
 
 struct Ray
 {

@@ -2,8 +2,7 @@
 #define RAYTRACING_INTERACTION_H
 #include "geometry.h"
 #include "material.h"
-class Object;
-class Sphere;
+#include "mesh.h"
 
 struct Interaction
 {
@@ -12,7 +11,6 @@ struct Interaction
         coords=Vector3f();
         normal=Vector3f();
         distance= std::numeric_limits<double>::max();
-        obj =nullptr;
         m=nullptr;
     }
     bool happened;
@@ -21,7 +19,6 @@ struct Interaction
     Vector3f normal;
     Vector3f emit;
     double distance;
-    Object* obj;
     Material* m;
 };
 
@@ -54,7 +51,7 @@ struct SurfaceInteraction
     SurfaceInteraction(){
 
     }
-}
+};
 
 
 #endif //RAYTRACING_INTERACTION_H

@@ -1,6 +1,5 @@
 #include "mesh.h"
 #include "utils.h"
-#include "interaction.h"
 const int channel = 3;
 
 std::vector<Vector3f> r::triangle::getData(){
@@ -58,15 +57,15 @@ void r::Sphere::getSurfaceProperties(Vector3f &hitPoint, Vector3f &N) {
     N = normalize(_N);
 }
 
-void r::Sphere::sampleSphereUniform(Interaction& ret, float& pdf){
-    Vector3f dir = getVecFromSampleSphereUniform();
-    ret.hitPoint = this->o + this->radius * dir;
-    ret.hitObject = this;
-    ret.emit = this->emit;
-    ret.normal = dir;
+// void r::Sphere::sampleSphereUniform(Interaction& ret, float& pdf){
+//     // Vector3f dir = getVecFromSampleSphereUniform();
+//     // ret.hitPoint = this->o + this->radius * dir;
+//     // ret.hitObject = this;
+//     // ret.emit = this->emit;
+//     // ret.normal = dir;
     
-    pdf = 1.f/ area;
-}
+//     // pdf = 1.f/ area;
+// }
 
 Vector3f r::Sphere::evalBRDF(const Vector3f& wo, const Vector3f& N){
 
