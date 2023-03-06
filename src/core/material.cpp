@@ -75,4 +75,8 @@ Vector3f Material::eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &
     return Vector3f(0.0);
 }
 
+void Material::setKd(const Vector3f &v) {
+    this->Kd = v;
+}
+
 }

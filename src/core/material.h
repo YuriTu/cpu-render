@@ -32,6 +32,7 @@ class Material{
         inline Vector3f getColorAt(double u, double v);
         Vector3f getEmission() {return m_emission;};
         inline bool hasEmission();
+        void setKd(const Vector3f &v);
 
         // sample a ray by Material properties
         inline Vector3f sample(const Vector3f &wi, const Vector3f &N);
