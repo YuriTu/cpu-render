@@ -15,7 +15,7 @@ namespace r
         void setPerspectiveProjection(float near, float far, float aspect, float fov);
         void setModule(Vector3f position);
         void setView(Vector3f position);
-        void add(Sphere &m);
+        // void add(Sphere &m);
         void add(Light &l);
         void sampleLight(Interaction& light,float& pdf);
         void render(int samples);

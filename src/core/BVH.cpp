@@ -45,8 +45,8 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Mesh*> objects)
         return node;
     }
     else if (objects.size() == 2) {
-        node->left = recursiveBuild(std::vector{objects[0]});
-        node->right = recursiveBuild(std::vector{objects[1]});
+        node->left = recursiveBuild(std::vector<Mesh *>{objects[0]});
+        node->right = recursiveBuild(std::vector<Mesh *>{objects[1]});
 
         node->bounds = Union(node->left->bounds, node->right->bounds);
         node->area = node->left->area + node->right->area;
@@ -125,7 +125,7 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
     }
 
     if (node->object) {
-        rs = node->object->getIntersection(ray);
+        // rs = node->object->getIntersection(ray);
     } else {
         Interaction left = getIntersection(node->left, ray);
         Interaction right = getIntersection(node->right, ray);
@@ -144,7 +144,7 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
 
 void BVHAccel::getSample(BVHBuildNode* node, float p, Interaction &pos, float &pdf){
     if(node->left == nullptr || node->right == nullptr){
-        node->object->sample(pos, pdf);
+        // node->object->sample(pos, pdf);
         pdf *= node->area;
         return;
     }

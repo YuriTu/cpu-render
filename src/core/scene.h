@@ -24,7 +24,4 @@ class Scene
 
 }
 
-
-
-
 #endif //RT_SCENE_H

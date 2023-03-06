@@ -23,16 +23,6 @@ inline float deg2rad(float deg) {
     return deg / 180.0 * PI;
 }
 
-
-    enum reflectType {
-        DIFFUSE,
-        REFLECTION,
-        REFLECTION_AND_REFRACTION
-    };
-
-
-
-
 class Matrix4x4 {
     public:
         float m[4][4];

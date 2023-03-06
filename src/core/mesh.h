@@ -15,6 +15,7 @@ namespace r
         virtual Bounds3 getBounds() = 0;
         // virtual void sample(Interaction &interaction, float &pdf) = 0;
         virtual bool getIntersection(Ray ray);
+        virtual bool intersect(const Ray& ray, Interaction *interaction) = 0;
         virtual float getArea();
         float area;
     private:
@@ -22,47 +23,32 @@ namespace r
     };
     
     
-    
-    class triangle: public Mesh
-    {
-    public:
-        triangle(Vector3f a, Vector3f b, Vector3f c): data({a,b,c}){};
-        // ~triangle();
-        std::vector<Vector3f> getData();
-        std::vector<Vector3f> getColor();
-        void setColor(Vector3f c1);
-        void setColor(Vector3f c1, Vector3f c2, Vector3f c3);
-        
-    private:
-        std::vector<Vector3f> data;
-        std::vector<Vector3f> color = {Vector3f(1),Vector3f(1),Vector3f(1)};
-    };
 
-    class Sphere
-    {
-    public:
-        Sphere(Vector3f _o, float _r, Vector3f _c, reflectType _t);
-        bool intersect(Ray &r, float& tNear);
-        void getSurfaceProperties(Vector3f &hitPoint, Vector3f &N);
-        // void sampleSphereUniform(Interaction& ret, float& pdf);
-        Vector3f evalBRDF(const Vector3f& wo, const Vector3f& N);
-        bool hasEmit();
-        Vector3f o;
-        float radius;
-        float radius2;
-        Vector3f color;
-        reflectType reflectType;
-        // b-phone mode
-        Vector3f diffuseColor;
-        float kd;
-        float ks;
-        float specularExponent;
-        // reflect
-        float ior;
-        float area;
-        Vector3f emit;
+    // class Sphere
+    // {
+    // public:
+    //     Sphere(Vector3f _o, float _r, Vector3f _c, reflectType _t);
+    //     bool intersect(Ray &r, float& tNear);
+    //     void getSurfaceProperties(Vector3f &hitPoint, Vector3f &N);
+    //     // void sampleSphereUniform(Interaction& ret, float& pdf);
+    //     Vector3f evalBRDF(const Vector3f& wo, const Vector3f& N);
+    //     bool hasEmit();
+    //     Vector3f o;
+    //     float radius;
+    //     float radius2;
+    //     Vector3f color;
+    //     reflectType reflectType;
+    //     // b-phone mode
+    //     Vector3f diffuseColor;
+    //     float kd;
+    //     float ks;
+    //     float specularExponent;
+    //     // reflect
+    //     float ior;
+    //     float area;
+    //     Vector3f emit;
 
-    };
+    // };
 
     class Light
     {

@@ -1,8 +1,8 @@
-#ifndef RAYTRACING_INTERACTION_H
-#define RAYTRACING_INTERACTION_H
+#ifndef RT_INTERACTION_H
+#define RT_INTERACTION_H
 #include "geometry.h"
 #include "material.h"
-#include "mesh.h"
+// #include "mesh.h"
 
 namespace r
 {
@@ -10,13 +10,7 @@ namespace r
 class Interaction
 {
 public:
-    Interaction(){
-        happened=false;
-        coords=Vector3f();
-        normal=Vector3f();
-        distance= std::numeric_limits<double>::max();
-        m=nullptr;
-    }
+    Interaction();
     bool happened;
     Vector3f coords;
     Vector3f tcoords;
@@ -43,19 +37,19 @@ public:
 
 // };
 
-struct MediumInteraction
-{
-    MediumInteraction(){
+// struct MediumInteraction
+// {
+//     MediumInteraction(){
         
-    }
-};
+//     }
+// };
 
-struct SurfaceInteraction 
-{
-    SurfaceInteraction(){
+// struct SurfaceInteraction 
+// {
+//     SurfaceInteraction(){
 
-    }
-};
+//     }
+// };
 
 }
 #endif //RAYTRACING_INTERACTION_H
