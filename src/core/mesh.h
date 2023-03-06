@@ -70,25 +70,8 @@ namespace r
 
         float intensity;
     };
-
-    
 } // namespace r
 
-struct Interaction
-{
-    Interaction() {
-        flag = false;
-        hitPoint = Vector3f();
-        hitObject = nullptr;
-    }
-    bool flag;
-    Vector3f hitPoint;
-    Vector3f normal;
-    float t;
-    r::Sphere* hitObject;
-    float distance;
-    Vector3f emit;
 
-};
 
 #endif

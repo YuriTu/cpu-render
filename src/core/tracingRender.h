@@ -19,6 +19,7 @@ namespace r
         void add(Light &l);
         void sampleLight(Interaction& light,float& pdf);
         void render(int samples);
+        bool intersect(Ray &ray);
         Vector3f getRadiance(Ray &ray, int bounce);
         Vector3f pathTracing(Ray &ray, int depth);
 
@@ -35,6 +36,6 @@ namespace r
         
         
     private:
-        Interaction castRay(Ray &ray);
+        
     };
 }

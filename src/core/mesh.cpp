@@ -1,5 +1,6 @@
 #include "mesh.h"
 #include "utils.h"
+#include "interaction.h"
 const int channel = 3;
 
 std::vector<Vector3f> r::triangle::getData(){

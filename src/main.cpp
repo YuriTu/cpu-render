@@ -6,7 +6,7 @@
 
 int main(int argc, char const *argv[])
 {
-    SceneBasic scene;
+    SceneBasic sceneTemplate;
     r::TracingRender r(scene.width,scene.height);
     
     r.setModule(scene.transition);

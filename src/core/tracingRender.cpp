@@ -1,5 +1,6 @@
 #include "tracingRender.h"
 #include "utils.h"
+#include "interaction.h"
 
 #include <omp.h>
 
@@ -40,35 +41,37 @@ void r::TracingRender::sampleLight(Interaction& light ,float& pdf) {
     }
     
 }
+// scene::intersect
+bool r::TracingRender::intersect(Ray &ray) {
 
-Interaction r::TracingRender::castRay(Ray &ray) {
-    // ray 
-    Interaction ret;
+    return this->bvh->Intersect(ray);
+    // // ray 
+    // Interaction ret;
     
-    float t = 1e10;
-    float tMin = t;
-    float index = 0;
-    for (int i = 0; i < objects.size(); i++) {
-        bool flag = objects[i].intersect(ray, t);
+    // float t = 1e10;
+    // float tMin = t;
+    // float index = 0;
+    // for (int i = 0; i < objects.size(); i++) {
+    //     bool flag = objects[i].intersect(ray, t);
         
-        if (flag && t < tMin) {
+    //     if (flag && t < tMin) {
             
-            index = i;
-            tMin = t;
-        }
-    }
+    //         index = i;
+    //         tMin = t;
+    //     }
+    // }
 
-    if (tMin == 1e10) {
-        ret.flag = false;
-        return ret;
-    }
-    ret.flag = true;
-    ret.hitPoint = ray.o + ray.dir * tMin;
-    ret.hitObject = &objects[index];
-    ret.normal = normalize(ret.hitPoint - ret.hitObject->o);
-    ret.distance = tMin;
+    // if (tMin == 1e10) {
+    //     ret.flag = false;
+    //     return ret;
+    // }
+    // ret.flag = true;
+    // ret.hitPoint = ray.o + ray.dir * tMin;
+    // ret.hitObject = &objects[index];
+    // ret.normal = normalize(ret.hitPoint - ret.hitObject->o);
+    // ret.distance = tMin;
     
-    return ret;
+    // return ret;
 }
 
 Vector3f r::TracingRender::getRadiance(Ray &ray, int bounce) {

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RT_UTILS_H
+#define RT_UTILS_H
 
 #include <complex>
 #include <vector>
@@ -7,7 +8,9 @@
 #include "geometry.h"
 
 #define PI 3.1415926f
+#define M_PI 3.1415926f
 #define EPS 1e-4
+#define EPSILON 1e-4
 
 inline float clamp(float max, float min, float v) {
     return std::min(max, std::max(min,v));
@@ -81,14 +84,6 @@ class Matrix4x4 {
             Vector3f _v = v * -1;
             setPos(_v);
         }
-};
-
-struct Ray
-{
-    
-    Ray(Vector3f _o,Vector3f _d):o(_o),dir(_d) {};
-    Vector3f o;
-    Vector3f dir;
 };
 
 
@@ -187,7 +182,7 @@ inline float fresnel(Vector3f I, Vector3f N, float ior) {
     return (rs*rs + rp*rp) / 2;
 }
 
-inline float getRandom(float min, float max) {
+inline float getRandom(float min = 0.f, float max = 1.f) {
     std::random_device rd;
     std::mt19937 dev(rd());
     std::uniform_real_distribution<float> range(min,max);
@@ -203,3 +198,5 @@ inline Vector3f getVecFromSampleSphereUniform(){
     float y = r * sin(phi);
     return normalize(Vector3f(x,y,z));
 }
+
+#endif //RT_UTILS_H
