@@ -5,6 +5,7 @@
 #include "mesh.h"
 #include "basic.h"
 
+
 namespace r
 {
 
@@ -12,8 +13,7 @@ class Scene
 {
     public:
         Scene(int w,int h);
-        
-        bool intersect(const Ray& ray) const;
+        bool intersect(const Ray& ray,Interaction *isect ) const;
         void buildBVH();
         void add(Mesh * obj);
         void add(std::vector<Mesh *> lists);
@@ -29,6 +29,7 @@ class Scene
         float samples;
         Vector3f background;
         float maxDepth;
+        Vector3f camPos;
 };
 
 }

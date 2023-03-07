@@ -26,8 +26,7 @@ public:
 
     BVHAccel(std::vector<Mesh*> p, int maxPrimsInNode = 1, SplitMethod splitMethod = SplitMethod::NAIVE);
 
-
-    Interaction Intersect(const Ray &ray) const;
+    bool intersect(const Ray& ray, Interaction *isect) const;
     Interaction getIntersection(BVHBuildNode* node, const Ray& ray)const;
     // bool IntersectP(const Ray &ray) const;
     BVHBuildNode* root;

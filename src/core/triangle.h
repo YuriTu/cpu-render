@@ -53,24 +53,12 @@ public:
     float area;
     Material* m;
 
-    Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2, Material* _m = nullptr)
-        : v0(_v0), v1(_v1), v2(_v2), m(_m)
-    {
-        e1 = v1 - v0;
-        e2 = v2 - v0;
-        normal = normalize(Cross(e1, e2));
-        area =  Cross(e1, e2).length()*0.5f;
-    }
+    Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2, Material* _m = nullptr);
 
     bool intersect(const Ray& ray, Interaction *interaction) override;
     // Vector3f evalDiffuseColor(const Vector2f&) const override;
     Bounds3 getBounds() override;
-    void Sample(Interaction &pos, float &pdf){
-        float x = std::sqrt(getRandom()), y = getRandom();
-        pos.coords = v0 * (1.0f - x) + v1 * (x * (1.0f - y)) + v2 * (x * y);
-        pos.normal = this->normal;
-        pdf = 1.0f / area;
-    }
+    void Sample(Interaction &pos, float &pdf);
     float getArea();
     bool hasEmit(){
         return m->hasEmission();

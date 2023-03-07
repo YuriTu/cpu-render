@@ -21,7 +21,7 @@ namespace r
         void sampleLight(Interaction& light,float& pdf);
         void render(const Scene &scene);
         bool intersect(Ray &ray);
-        Vector3f getRadiance(Ray &ray, int bounce);
+        Vector3f Li(Ray &ray, const Scene &scene);
         Vector3f pathTracing(Ray &ray, int depth);
 
 

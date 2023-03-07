@@ -3,6 +3,15 @@
 namespace r
 {
 
+Triangle::Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2, Material* _m)
+: v0(_v0), v1(_v1), v2(_v2), m(_m)
+{
+    e1 = v1 - v0;
+    e2 = v2 - v0;
+    normal = normalize(Cross(e1, e2));
+    area =  Cross(e1, e2).length()*0.5f;
+}
+
 float Triangle::getArea() {
     return area;
 }
@@ -12,38 +21,45 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
     // 这里写的有问题，导致光源没有被判断到相交
     Interaction inter;
 
-    // if (Dot(ray.d, normal) > 0)
-    //     return inter;
-    // double u, v, t_tmp = 0;
-    // Vector3f pvec = Cross(ray.d, e2);
-    // double det = Dot(e1, pvec);
-    // if (fabs(det) < EPSILON)
-    //     return inter;
+    if (Dot(ray.d, normal) > 0)
+        return inter.happened;
+    double u, v, t_tmp = 0;
+    Vector3f pvec = Cross(ray.d, e2);
+    double det = Dot(e1, pvec);
+    if (fabs(det) < EPSILON)
+        return inter.happened;
 
-    // double det_inv = 1. / det;
-    // Vector3f tvec = ray.origin - v0;
-    // u = Dot(tvec, pvec) * det_inv;
-    // if (u < 0 || u > 1)
-    //     return inter;
-    // Vector3f qvec = Cross(tvec, e1);
-    // v = Dot(ray.direction, qvec) * det_inv;
-    // if (v < 0 || u + v > 1)
-    //     return inter;
-    // t_tmp = Dot(e2, qvec) * det_inv;
+    double det_inv = 1. / det;
+    Vector3f tvec = ray.o - v0;
+    u = Dot(tvec, pvec) * det_inv;
+    if (u < 0 || u > 1)
+        return inter.happened;
+    Vector3f qvec = Cross(tvec, e1);
+    v = Dot(ray.d, qvec) * det_inv;
+    if (v < 0 || u + v > 1)
+        return inter.happened;
+    t_tmp = Dot(e2, qvec) * det_inv;
 
-    // // TODO find ray triangle Interaction
-    // inter.happened = (t_tmp>0) && (u>0) && (v>0) && (1-u-v>0);
-    // // inter.coords = ray(t_tmp); // 
-    // // inter.normal = this->normal;
-    // inter.distance = t_tmp;
-    // // inter.obj = this;
-    // inter.m = m;
-    // inter.emit = m->getEmission();
+    // TODO find ray triangle Interaction
+    inter.happened = (t_tmp>0) && (u>0) && (v>0) && (1-u-v>0);
+    // inter.coords = ray(t_tmp); // 
+    inter.normal = this->normal;
+    inter.distance = t_tmp;
+    // inter.obj = this;
+    inter.m = m;
+    inter.emit = m->getEmission();
 
-    // interaction = &inter;
+    interaction = &inter;
 
     return inter.happened;
 }
+
+void Triangle::Sample(Interaction &pos, float &pdf){
+        float x = std::sqrt(getRandom()), y = getRandom();
+        pos.coords = v0 * (1.0f - x) + v1 * (x * (1.0f - y)) + v2 * (x * y);
+        pos.normal = this->normal;
+        pdf = 1.0f / area;
+    }
 
 MeshTriangle::MeshTriangle(const std::string& filename, Material *mt) 
 {

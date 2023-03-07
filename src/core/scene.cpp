@@ -22,14 +22,16 @@ void Scene::applyTemplate(const SceneBasic temp) {
     samples = temp.sampleCount;
     background = temp.background;
     maxDepth = temp.maxDepth;
+    camPos = temp.camPos;
 }
+
+bool Scene::intersect(const Ray& ray,Interaction *isect ) const {
+    return this->bvh->intersect(ray, isect);
+};
 
 void Scene::buildBVH() {
     this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::NAIVE);
 }
 
-bool intersect(const Ray& ray) {
-    return true;
-}
 
 }

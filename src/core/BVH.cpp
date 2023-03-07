@@ -98,13 +98,13 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Mesh*> objects)
     return node;
 }
 
-Interaction BVHAccel::Intersect(const Ray& ray) const
+bool BVHAccel::intersect(const Ray& ray, Interaction *isect) const
 {
-    Interaction isect;
-    if (!root)
-        return isect;
-    isect = BVHAccel::getIntersection(root, ray);
-    return isect;
+    if (!root) return false;
+    bool hit = false;
+    *isect = BVHAccel::getIntersection(root, ray);
+    hit = isect->happened;
+    return hit;
 }
 
 Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
@@ -125,7 +125,9 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
     }
 
     if (node->object) {
-        // rs = node->object->getIntersection(ray);
+        Interaction *tempIsect;
+        node->object->intersect(ray, tempIsect);
+        rs = *tempIsect;
     } else {
         Interaction left = getIntersection(node->left, ray);
         Interaction right = getIntersection(node->right, ray);

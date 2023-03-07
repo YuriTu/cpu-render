@@ -25,6 +25,7 @@ struct SceneBasic
     float aspect = width / (float)height;
     float maxDepth = 3;
     Vector3f background = Vector3f(0.3);
+    Vector3f camPos = Vector3f(278, 273, -800);
     std::vector<Mesh*> lists = createObject();
 
     std::vector<Mesh*> createObject() {
