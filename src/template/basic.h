@@ -26,7 +26,6 @@ struct SceneBasic
     float maxDepth = 3;
     Vector3f background = Vector3f(0.3);
     std::vector<Mesh*> lists = createObject();
-    // std::vector<Mesh*> lists;
 
     std::vector<Mesh*> createObject() {
         Material* red = new Material(DIFFUSE, Vector3f(0.0f));
@@ -40,12 +39,12 @@ struct SceneBasic
         light->Kd = Vector3f(0.65f);
 
         
-        MeshTriangle floor("D:\\workspace\\games101-hw\\pa7\\models\\cornellbox\\floor.obj", white);
-        MeshTriangle shortbox("D:\\workspace\\games101-hw\\pa7\\models\\cornellbox\\shortbox.obj", white);
-        MeshTriangle tallbox("D:\\workspace\\games101-hw\\pa7\\models\\fo\\foo_update_1.obj", white);
-        MeshTriangle left("D:\\workspace\\games101-hw\\pa7\\models\\cornellbox\\left.obj", red);
-        MeshTriangle right("D:\\workspace\\games101-hw\\pa7\\models\\cornellbox\\right.obj", green);
-        MeshTriangle light_("D:\\workspace\\games101-hw\\pa7\\models\\cornellbox\\light.obj", light);
+        MeshTriangle floor("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white);
+        MeshTriangle shortbox("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", white);
+        MeshTriangle tallbox("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
+        MeshTriangle left("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
+        MeshTriangle right("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
+        MeshTriangle light_("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
         std::vector<Mesh *> rs = {&floor, &left, &right ,&light_};
         return rs;
     }
