@@ -9,7 +9,7 @@ namespace r
 {
 
 
-inline void createObject() {
+inline std::vector<Mesh*> createObject() {
     Material* red = new Material(DIFFUSE, Vector3f(0.0f));
     red->Kd = Vector3f();
     
@@ -26,6 +26,8 @@ inline void createObject() {
     MeshTriangle left("D:\\workspace\\games101-hw\\pa7\\models\\cornellbox\\left.obj", red);
     MeshTriangle right("D:\\workspace\\games101-hw\\pa7\\models\\cornellbox\\right.obj", green);
     MeshTriangle light_("D:\\workspace\\games101-hw\\pa7\\models\\cornellbox\\light.obj", light);
+    std::vector<Mesh *> rs = {&floor, &left, &right ,&light_};
+    return rs;
 }
 
 struct SceneBasic
@@ -41,13 +43,13 @@ struct SceneBasic
     Vector3f transition = Vector3f(0,0,0);
     float near = .01;
     float far = 1000.f;
-    float fov = 45;
-    float aspect = width / height;
+    float fov = 90.f;
+    float aspect = width / (float)height;
+    float maxDepth = 3;
+    Vector3f background = Vector3f(0.3);
+    std::vector<Mesh*> lists = createObject();
     
 };
 
 }
-
-
-
 #endif //RT_TEMPLATE_BASIC_H

@@ -7,10 +7,6 @@
 namespace r{
 
 TracingRender::TracingRender(int w, int h): width(w),height(h) {
-    frameBuffer.resize(width * height);
-    background = Vector3f(0.3);
-    maxBounce = 3;
-    fov = 90.f;
 }
 
 void TracingRender::setPerspectiveProjection(float near, float far, float aspect, float fov) {
@@ -228,12 +224,18 @@ Vector3f TracingRender::pathTracing(Ray &ray, int depth) {
 
 }
 
-void TracingRender::render(int samples)
+void TracingRender::render(const Scene &scene)
 {
-
+    
+    
+    int width = scene.width;
+    int height = scene.height;
+    int depth = 0;
+    std::vector<Vector3f> frameBuffer(width * height);
     Vector3f cam(10, 10, -150);
-    float scale = tan(deg2rad(fov * 0.5));  
-    float imageRadio = width / (float)height;
+    float scale = tan(deg2rad(scene.fov * 0.5));  
+    float imageRadio = scene.aspect;
+
     #pragma omp parallel for schedule(dynamic, 1) private(r)
     for (int i = 0; i < width; i++) {
         for(int j = 0; j < height; j++) {
@@ -247,16 +249,13 @@ void TracingRender::render(int samples)
 
             int index = getIndex(i,j,width,height);
 
-            for (int k = 0; k < samples; k++) {
+            for (int k = 0; k < scene.samples; k++) {
                 // Vector3f _radiance = getRadiance(ray,0);
                 // todo gama normliaz
-                Vector3f _radiance = pathTracing(ray,0);
-                if (_radiance.x > 0) {
-                    radiance;
-                }
+                Vector3f _radiance =  pathTracing(ray,depth);
                 radiance += _radiance;
             }
-            frameBuffer[index] = radiance / samples;
+            frameBuffer[index] = radiance / scene.samples;
         }
     }
     exportImg(frameBuffer, width,height);

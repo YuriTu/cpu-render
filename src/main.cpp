@@ -3,20 +3,17 @@
 #include <chrono>
 #include "basic.h"
 #include "tracingRender.h"
-#include "scene.h"
 
 int main(int argc, char const *argv[])
 {
     r::SceneBasic sceneTemplate;
     r::Scene scene(sceneTemplate.width,sceneTemplate.height);
-    r::TracingRender r;
-    
-    // r.setModule(scene.transition);
-    // r.setView(scene.lookAt);
-    // r.setPerspectiveProjection(scene.near,scene.far,scene.aspect,scene.fov);
+    scene.add(sceneTemplate.lists);
+    scene.applyTemplate(sceneTemplate);
 
+    r::TracingRender r;
     auto start = std::chrono::system_clock::now();
-    r.render(sceneTemplate.sampleCount);
+    r.render(scene);
     auto end = std::chrono::system_clock::now();
     printf("render complete: ");
     std::cout << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << " s\n" ;

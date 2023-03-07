@@ -3,7 +3,10 @@
 // https://github.com/Bly7/OBJ-Loader
 // Use the MIT license.
 
-#pragma once
+// #pragma once
+#ifndef RT_LOADER_H
+#define RT_LOADER_H
+
 
 #include <optional>
 #include <iostream>
@@ -1160,3 +1163,5 @@ namespace objl
         }
     };
 }
+
+#endif // RT_LOADER_H
