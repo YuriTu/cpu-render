@@ -28,4 +28,8 @@ void Scene::buildBVH() {
     this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::NAIVE);
 }
 
+bool intersect(const Ray& ray) {
+    return true;
+}
+
 }

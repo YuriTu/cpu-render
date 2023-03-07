@@ -13,7 +13,7 @@ int main(int argc, char const *argv[])
 
     r::TracingRender r;
     auto start = std::chrono::system_clock::now();
-    r.render(scene);
+    // r.render(scene);
     auto end = std::chrono::system_clock::now();
     printf("render complete: ");
     std::cout << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << " s\n" ;
