@@ -26,7 +26,7 @@ struct SceneBasic
     float aspect = width / (float)height;
     float maxDepth = 3;
     Vector3f background = Vector3f(0.3);
-    Vector3f camPos = Vector3f(278, 273, -1800);
+    Vector3f camPos = Vector3f(278, 273, -800);
     std::vector<std::shared_ptr<Mesh>> lists = createObject();
 
     std::vector<std::shared_ptr<Mesh>> createObject() {
@@ -40,17 +40,17 @@ struct SceneBasic
         Material* light = new Material(DIFFUSE, (8.0f * Vector3f(0.747f+0.058f, 0.747f+0.258f, 0.747f) + 15.6f * Vector3f(0.740f+0.287f,0.740f+0.160f,0.740f) + 18.4f *Vector3f(0.737f+0.642f,0.737f+0.159f,0.737f)));
         light->Kd = Vector3f(0.65f);
         
-        auto floor = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white);
+        // auto floor = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white);
         auto left = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
-        auto right = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
+        // auto right = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
         // MeshTriangle shortbox("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", white);
         // MeshTriangle tallbox("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
-        
-        // MeshTriangle light_("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
+        auto light_ = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
         // std::vector<Mesh *> rs = {&floor, &left, &right ,&light_};
         // std::shared_ptr<Mesh> leftptr(left);
         
-        std::vector<std::shared_ptr<Mesh>> rs = {floor,left, right};
+        // std::vector<std::shared_ptr<Mesh>> rs = {floor,left, right};
+        std::vector<std::shared_ptr<Mesh>> rs = {left, light_};
         return rs;
     }
     

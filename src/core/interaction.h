@@ -12,6 +12,10 @@ class Interaction
 public:
     Interaction();
     Interaction(bool h);
+
+    Vector3f Le() const;
+    void ComputeScatteringFunction(const Ray &ray);
+
     bool happened;
     Vector3f coords;
     Vector3f tcoords;
@@ -19,7 +23,17 @@ public:
     Vector3f emit;
     double distance;
     Material* m;
+    const Mesh* primitive;
+    Vector3f bsdf;
+    
 };
+
+// struct SurfaceInteraction 
+// {
+//     SurfaceInteraction(){
+
+//     }
+// };
 
 // struct Interaction
 // {
@@ -45,12 +59,7 @@ public:
 //     }
 // };
 
-// struct SurfaceInteraction 
-// {
-//     SurfaceInteraction(){
 
-//     }
-// };
 
 }
 #endif //RAYTRACING_INTERACTION_H

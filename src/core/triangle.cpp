@@ -4,7 +4,7 @@ namespace r
 {
 
 Triangle::Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2, Material* _m)
-: v0(_v0), v1(_v1), v2(_v2), m(_m)
+: v0(_v0), v1(_v1), v2(_v2), material(_m)
 {
     e1 = v1 - v0;
     e2 = v2 - v0;
@@ -45,7 +45,7 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
     // inter.coords = ray(t_tmp); // 
     inter.normal = this->normal;
     inter.distance = t_tmp;
-    // inter.obj = this;
+    inter.primitive = this;
     inter.m = m;
     inter.emit = m->getEmission();
 
@@ -62,12 +62,13 @@ void Triangle::Sample(Interaction &pos, float &pdf){
         pdf = 1.0f / area;
     }
 
-MeshTriangle::MeshTriangle(const std::string& filename, Material *mt) 
-{
+
+
+MeshTriangle::MeshTriangle(const std::string& filename, Material *mt) {
     objl::Loader loader;
     loader.LoadFile(filename);
     area = 0;
-    m = mt;
+    material = mt;
     assert(loader.LoadedMeshes.size() == 1);
     auto mesh = loader.LoadedMeshes[0];
 
@@ -113,5 +114,18 @@ MeshTriangle::MeshTriangle(const std::string& filename, Material *mt)
 float MeshTriangle::getArea() {
     return area;
 }
+
+bool MeshTriangle::intersect(const Ray& ray, Interaction *interaction){
+    bool hit = false;
+    if (this->bvh) {
+        hit = bvh->intersect(ray, interaction);
+    }
+
+    return hit;
+};
+
+void MeshTriangle::ComputeScatteringFunction(Interaction *isect) const {
+    return this->material->ComputeScatteringFunction(isect);
+};
 
 }

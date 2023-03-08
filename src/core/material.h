@@ -3,6 +3,7 @@
 
 #include "geometry.h"
 #include "utils.h"
+#include "interaction.h"
 // handle bsdf eg
 
 namespace r
@@ -40,6 +41,8 @@ class Material{
         inline float pdf(const Vector3f &wi, const Vector3f &wo, const Vector3f &N);
         // given a ray, calculate the contribution of this ray
         inline Vector3f eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &N);
+
+        void ComputeScatteringFunction(Interaction *isect) const ;
 };
 
 

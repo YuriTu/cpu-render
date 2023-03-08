@@ -5,7 +5,7 @@ namespace r{
 
 const int channel = 3;
 
-
+// void Mesh::ComputeScatteringFunction(Interaction *isect) const = 0;
 // Sphere::Sphere(Vector3f _o, float _r, Vector3f _c, utils::reflectType _t):o(_o), radius(_r), color(_c), reflectType(_t) {
 //     diffuseColor = _c;
 //     kd = 0.8;

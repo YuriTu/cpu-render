@@ -51,7 +51,7 @@ public:
     Vector3f t0, t1, t2; // texture coords
     Vector3f normal;
     float area;
-    Material* m;
+    Material* material;
 
     Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2, Material* _m = nullptr);
 
@@ -60,30 +60,19 @@ public:
     Bounds3 getBounds() override;
     void Sample(Interaction &pos, float &pdf);
     float getArea();
-    bool hasEmit(){
-        return m->hasEmission();
-    }
 };
 
 class MeshTriangle : public Mesh
 {
 public:
     MeshTriangle(const std::string& filename, Material *mt);
-    
-    bool intersect(const Ray& ray) { return true; }
 
-    bool intersect(const Ray& ray, Interaction *interaction){
-        bool hit = false;
-        if (this->bvh) {
-            hit = bvh->intersect(ray, interaction);
-        }
-
-        return hit;
-    };
+    bool intersect(const Ray& ray, Interaction *interaction);
 
     bool intersect(const Ray& ray, float& tnear, uint32_t& index) const
     {
         bool intersect = false;
+        printf("illegal function triangle");
         // for (uint32_t k = 0; k < numTriangles; ++k) {
         //     const Vector3f& v0 = vertices[vertexIndex[k * 3]];
         //     const Vector3f& v1 = vertices[vertexIndex[k * 3 + 1]];
@@ -129,15 +118,15 @@ public:
     // }
 
 
+    void ComputeScatteringFunction(Interaction *isect) const override;
+
+
     
     void Sample(Interaction &pos, float &pdf){
         bvh->Sample(pos, pdf);
         pos.emit = m->getEmission();
     }
     float getArea();
-    bool hasEmit(){
-        return m->hasEmission();
-    }
 
     Bounds3 bounding_box;
     std::unique_ptr<Vector3f[]> vertices;
@@ -150,7 +139,7 @@ public:
     BVHAccel* bvh;
     float area;
 
-    Material* m;
+    Material* material;
 };
 
 inline Bounds3 Triangle::getBounds() { return Union(Bounds3(v0, v1), v2); }

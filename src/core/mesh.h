@@ -16,6 +16,7 @@ namespace r
         // virtual void sample(Interaction &interaction, float &pdf) = 0;
         virtual bool intersect(const Ray& ray, Interaction *interaction) = 0;
         virtual float getArea() = 0;
+        virtual void ComputeScatteringFunction(Interaction *isect) const = 0;
         float area;
     };
     

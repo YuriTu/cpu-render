@@ -79,4 +79,9 @@ void Material::setKd(const Vector3f &v) {
     this->Kd = v;
 }
 
+void Material::ComputeScatteringFunction(Interaction *isect) const {
+    // todo compute bsdf 
+    isect->bsdf = Vector3f(0.2f);
+}
+
 }

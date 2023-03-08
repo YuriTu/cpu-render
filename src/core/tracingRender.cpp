@@ -22,12 +22,6 @@ void TracingRender::setView(Vector3f position) {
     // set camera pos
 }
 
-// void TracingRender::add(Sphere &m) {
-//     objects.push_back(m);
-// }
-void TracingRender::add(Light &l) {
-    lights.push_back(l);
-}
 
 void TracingRender::sampleLight(Interaction& light ,float& pdf) {
     // todo 仅考虑一个光源
@@ -39,39 +33,6 @@ void TracingRender::sampleLight(Interaction& light ,float& pdf) {
     // }
     
 }
-// scene::intersect
-// bool TracingRender::intersect(Ray &ray) {
-
-//     return this->bvh->Intersect(ray);
-    // // ray 
-    // Interaction ret;
-    
-    // float t = 1e10;
-    // float tMin = t;
-    // float index = 0;
-    // for (int i = 0; i < objects.size(); i++) {
-    //     bool flag = objects[i].intersect(ray, t);
-        
-    //     if (flag && t < tMin) {
-            
-    //         index = i;
-    //         tMin = t;
-    //     }
-    // }
-
-    // if (tMin == 1e10) {
-    //     ret.flag = false;
-    //     return ret;
-    // }
-    // ret.flag = true;
-    // ret.hitPoint = ray.o + ray.dir * tMin;
-    // ret.hitObject = &objects[index];
-    // ret.normal = normalize(ret.hitPoint - ret.hitObject->o);
-    // ret.distance = tMin;
-    
-    // return ret;
-// }
-
 
 Vector3f TracingRender::pathTracing(Ray &ray, int depth) {
     Vector3f ret(0.0);
@@ -154,17 +115,39 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
     Vector3f indirectRadiance(0.0);
     Vector3f directRadiance(0.0);
     int depth = 0;
+    int bounces;
+    // tr系数
+    Vector3f beta(1.f);
     //todo 根据radiacen 质量做terminal 去掉具体的samples
-    for (int k = 0; k < scene.samples; k++) {
+    for (bounces = 0; bounces < scene.samples; bounces++) {
         // scene.intersect(ray,)
         Interaction isect;
         bool foundIntersection = scene.intersect(ray, &isect);
+        bool foundMediumIntersection = false;
 
-        if (foundIntersection) {
-            directRadiance = Vector3f(1.f,0.f,0.f);
+        if (foundMediumIntersection) {
+
         } else {
-            return scene.background;
+            if (!foundIntersection) {
+                directRadiance = scene.background;
+                break;
+            }
+
+            // emission term
+            //  只考虑direct的情况
+            if (bounces == 0 ) {
+                directRadiance += isect.Le();
+            }
+
+            // 计算bsdf的情况
+            isect.ComputeScatteringFunction(ray);
+
+            // 对于光源进行采样
+                // 得到 emission 和 cos 
+            // 计算radiance 
+            directRadiance = isect.bsdf;
         }
+        // rr 只在indiecrt处理
     }
     radiance = directRadiance + indirectRadiance;
     printf("randiance ,x:%f",radiance.x);
@@ -186,11 +169,10 @@ void TracingRender::render(const Scene &scene)
     for (int i = 0; i < width; i++) {
         for(int j = 0; j < height; j++) {
             float x = (2.0 * (i + 0.5f) / (float)width - 1.f) * imageRadio * scale;
-            float y =(1.f - 2.0 * (j + 0.5f) / (float)height) * scale;
+            float y =(2.0 * (j + 0.5f) / (float)height - 1.f) * scale;
             Vector3f _dir(-x,y,1);
             Vector3f dir = normalize(_dir);
             Ray ray(cam,dir);
-                // printf("dir: %f %f %f \n",dir.x,dir.y,dir.z);
             int index = getIndex(i,j,width,height);
             Vector3f radiance = this->Li(ray,scene);
             frameBuffer[index] = radiance / scene.samples;
