@@ -34,8 +34,7 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<std::shared_ptr<Mesh>> object
     // Compute bounds of all primitives in BVH node
     Bounds3 bounds;
     for (int i = 0; i < objects.size(); ++i)
-        // const Bounds3 temp1 = objects[i]->getBounds();
-        bounds = objects[i]->getBounds();
+        bounds = Union(bounds, objects[i]->getBounds());
     if (objects.size() == 1) {
         // Create leaf _BVHBuildNode_
         node->bounds = objects[0]->getBounds();
@@ -126,11 +125,13 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
     }
 
     if (node->object) {
-        // Interaction *tempIsect;
-        bool temp = node->object->intersect(ray, &rs);
-        if (temp || rs.happened) {
-            printf("123");
+        Interaction tempIsect;
+        bool temp = node->object->intersect(ray, &tempIsect);
+        if (temp || tempIsect.happened) {
+            if (temp != tempIsect.happened)
+            printf("happend error！！");
         }
+        rs = tempIsect;
     } else {
         Interaction left = getIntersection(node->left, ray);
         Interaction right = getIntersection(node->right, ray);
@@ -149,6 +150,7 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
 
 void BVHAccel::getSample(BVHBuildNode* node, float p, Interaction &pos, float &pdf){
     if(node->left == nullptr || node->right == nullptr){
+        // fixme 这里需要实现
         // node->object->sample(pos, pdf);
         pdf *= node->area;
         return;

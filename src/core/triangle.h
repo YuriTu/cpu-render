@@ -73,7 +73,12 @@ public:
     bool intersect(const Ray& ray) { return true; }
 
     bool intersect(const Ray& ray, Interaction *interaction){
-        return false;
+        bool hit = false;
+        if (this->bvh) {
+            hit = bvh->intersect(ray, interaction);
+        }
+
+        return hit;
     };
 
     bool intersect(const Ray& ray, float& tnear, uint32_t& index) const
@@ -123,16 +128,7 @@ public:
     //                 Vector3f(0.937, 0.937, 0.231), pattern);
     // }
 
-    // Interaction getIntersection(Ray ray)
-    // {
-    //     Interaction intersec;
 
-    //     if (bvh) {
-    //         intersec = bvh->Intersect(ray);
-    //     }
-
-    //     return intersec;
-    // }
     
     void Sample(Interaction &pos, float &pdf){
         bvh->Sample(pos, pdf);

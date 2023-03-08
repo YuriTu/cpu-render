@@ -11,6 +11,7 @@ class Interaction
 {
 public:
     Interaction();
+    Interaction(bool h);
     bool happened;
     Vector3f coords;
     Vector3f tcoords;

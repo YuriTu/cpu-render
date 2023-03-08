@@ -190,7 +190,7 @@ void TracingRender::render(const Scene &scene)
             Vector3f _dir(-x,y,1);
             Vector3f dir = normalize(_dir);
             Ray ray(cam,dir);
-                printf("dir: %f %f %f \n",dir.x,dir.y,dir.z);
+                // printf("dir: %f %f %f \n",dir.x,dir.y,dir.z);
             int index = getIndex(i,j,width,height);
             Vector3f radiance = this->Li(ray,scene);
             frameBuffer[index] = radiance / scene.samples;

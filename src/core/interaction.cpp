@@ -10,6 +10,9 @@ Interaction::Interaction() {
     distance= std::numeric_limits<double>::max();
     m=nullptr;
 }
+Interaction::Interaction(bool h) {
+    happened = h;
+}
 
 
 }

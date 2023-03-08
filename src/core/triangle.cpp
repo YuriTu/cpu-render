@@ -49,7 +49,8 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
     inter.m = m;
     inter.emit = m->getEmission();
 
-    interaction = &inter;
+    // interaction = new Interaction();
+    *interaction = inter;
 
     return inter.happened;
 }
