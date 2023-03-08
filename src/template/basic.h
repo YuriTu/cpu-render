@@ -1,6 +1,7 @@
 #ifndef RT_TEMPLATE_BASIC_H
 #define RT_TEMPLATE_BASIC_H
 
+// #include <memory>
 #include "geometry.h"
 #include "material.h"
 #include "triangle.h"
@@ -38,15 +39,18 @@ struct SceneBasic
         white->Kd = Vector3f(0.725f, 0.71f, 0.68f);
         Material* light = new Material(DIFFUSE, (8.0f * Vector3f(0.747f+0.058f, 0.747f+0.258f, 0.747f) + 15.6f * Vector3f(0.740f+0.287f,0.740f+0.160f,0.740f) + 18.4f *Vector3f(0.737f+0.642f,0.737f+0.159f,0.737f)));
         light->Kd = Vector3f(0.65f);
-
         
         MeshTriangle floor("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white);
-        MeshTriangle shortbox("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", white);
-        MeshTriangle tallbox("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
-        MeshTriangle left("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
-        MeshTriangle right("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
-        MeshTriangle light_("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
-        std::vector<Mesh *> rs = {&floor, &left, &right ,&light_};
+        // MeshTriangle shortbox("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", white);
+        // MeshTriangle tallbox("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
+        // MeshTriangle left("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
+        // MeshTriangle right("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
+        // MeshTriangle light_("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
+        // std::vector<Mesh *> rs = {&floor, &left, &right ,&light_};
+        // std::shared_ptr<Mesh> leftptr(left);
+        // auto leftptr = std::make_shared<Mesh>(left);
+        // std::vector<std::shared_ptr<Mesh>> rs = {leftptr};
+        std::vector<Mesh*> rs = {&floor};
         return rs;
     }
     

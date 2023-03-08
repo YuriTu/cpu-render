@@ -23,7 +23,7 @@ class BVHAccel {
 public:
     // BVHAccel Public Types
     enum class SplitMethod { NAIVE, SAH };
-
+    // todo 原本用的share_prt
     BVHAccel(std::vector<Mesh*> p, int maxPrimsInNode = 1, SplitMethod splitMethod = SplitMethod::NAIVE);
 
     bool intersect(const Ray& ray, Interaction *isect) const;

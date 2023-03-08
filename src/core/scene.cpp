@@ -5,10 +5,9 @@ namespace r
 Scene::Scene(int w, int h) {
     width = w;
     height = h;
-    buildBVH();
 }
 
-void Scene::add(Mesh * obj) {
+void Scene::add(Mesh* const obj) {
     objects.push_back(obj);
 }
 
@@ -23,6 +22,7 @@ void Scene::applyTemplate(const SceneBasic temp) {
     background = temp.background;
     maxDepth = temp.maxDepth;
     camPos = temp.camPos;
+    buildBVH();
 }
 
 bool Scene::intersect(const Ray& ray,Interaction *isect ) const {

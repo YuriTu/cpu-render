@@ -70,7 +70,6 @@ class MeshTriangle : public Mesh
 public:
     MeshTriangle(const std::string& filename, Material *mt);
     
-
     bool intersect(const Ray& ray) { return true; }
 
     bool intersect(const Ray& ray, Interaction *interaction){
@@ -157,8 +156,6 @@ public:
 
     Material* m;
 };
-
-
 
 inline Bounds3 Triangle::getBounds() { return Union(Bounds3(v0, v1), v2); }
 

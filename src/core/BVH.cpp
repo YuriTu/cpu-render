@@ -34,7 +34,8 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Mesh*> objects)
     // Compute bounds of all primitives in BVH node
     Bounds3 bounds;
     for (int i = 0; i < objects.size(); ++i)
-        bounds = Union(bounds, objects[i]->getBounds());
+        // const Bounds3 temp1 = objects[i]->getBounds();
+        bounds = objects[i]->getBounds();
     if (objects.size() == 1) {
         // Create leaf _BVHBuildNode_
         node->bounds = objects[0]->getBounds();

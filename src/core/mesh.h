@@ -17,8 +17,6 @@ namespace r
         virtual bool intersect(const Ray& ray, Interaction *interaction) = 0;
         virtual float getArea() = 0;
         float area;
-    private:
-        std::vector<Vector3f> data;
     };
     
     
