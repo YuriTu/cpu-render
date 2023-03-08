@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
 {
     r::SceneBasic sceneTemplate;
     r::Scene scene(sceneTemplate.width,sceneTemplate.height);
-    scene.add(sceneTemplate.lists[0]);
+    scene.add(sceneTemplate.lists);
     scene.applyTemplate(sceneTemplate);
 
     r::TracingRender r;

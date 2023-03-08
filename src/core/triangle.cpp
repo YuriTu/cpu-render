@@ -99,9 +99,11 @@ MeshTriangle::MeshTriangle(const std::string& filename, Material *mt)
 
     bounding_box = Bounds3(min_vert, max_vert);
 
-    std::vector<Mesh*> ptrs;
+    std::vector<std::shared_ptr<Mesh>> ptrs;
     for (auto& tri : triangles){
-        ptrs.push_back(&tri);
+        // todo 这里需要和上面emplace 部分优化一下
+        auto ptr = std::make_shared<Triangle>(tri.v0,tri.v1,tri.v2,tri.m);
+        ptrs.push_back(ptr);
         area += tri.area;
     }
     bvh = new BVHAccel(ptrs);

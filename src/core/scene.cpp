@@ -7,11 +7,11 @@ Scene::Scene(int w, int h) {
     height = h;
 }
 
-void Scene::add(Mesh* const obj) {
+void Scene::add(std::shared_ptr<Mesh> obj) {
     objects.push_back(obj);
 }
 
-void Scene::add(std::vector<Mesh *> lists) {
+void Scene::add(std::vector<std::shared_ptr<Mesh>> lists) {
     objects.insert(objects.end(),lists.begin(),lists.end());
 }
 

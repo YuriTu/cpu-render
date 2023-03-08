@@ -4,7 +4,7 @@
 
 namespace r{
 
-BVHAccel::BVHAccel(std::vector<Mesh*> p, int maxPrimsInNode,
+BVHAccel::BVHAccel(std::vector<std::shared_ptr<Mesh>> p, int maxPrimsInNode,
                    SplitMethod splitMethod)
     : maxPrimsInNode(std::min(255, maxPrimsInNode)), splitMethod(splitMethod),
       primitives(std::move(p))
@@ -27,7 +27,7 @@ BVHAccel::BVHAccel(std::vector<Mesh*> p, int maxPrimsInNode,
         hrs, mins, secs);
 }
 
-BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Mesh*> objects)
+BVHBuildNode* BVHAccel::recursiveBuild(std::vector<std::shared_ptr<Mesh>> objects)
 {
     BVHBuildNode* node = new BVHBuildNode();
 
@@ -46,8 +46,8 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Mesh*> objects)
         return node;
     }
     else if (objects.size() == 2) {
-        node->left = recursiveBuild(std::vector<Mesh *>{objects[0]});
-        node->right = recursiveBuild(std::vector<Mesh *>{objects[1]});
+        node->left = recursiveBuild(std::vector<std::shared_ptr<Mesh>>{objects[0]});
+        node->right = recursiveBuild(std::vector<std::shared_ptr<Mesh>>{objects[1]});
 
         node->bounds = Union(node->left->bounds, node->right->bounds);
         node->area = node->left->area + node->right->area;
@@ -84,8 +84,8 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Mesh*> objects)
         auto middling = objects.begin() + (objects.size() / 2);
         auto ending = objects.end();
 
-        auto leftshapes = std::vector<Mesh*>(beginning, middling);
-        auto rightshapes = std::vector<Mesh*>(middling, ending);
+        auto leftshapes = std::vector<std::shared_ptr<Mesh>>(beginning, middling);
+        auto rightshapes = std::vector<std::shared_ptr<Mesh>>(middling, ending);
 
         assert(objects.size() == (leftshapes.size() + rightshapes.size()));
 
@@ -126,9 +126,11 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
     }
 
     if (node->object) {
-        Interaction *tempIsect;
-        node->object->intersect(ray, tempIsect);
-        rs = *tempIsect;
+        // Interaction *tempIsect;
+        bool temp = node->object->intersect(ray, &rs);
+        if (temp || rs.happened) {
+            printf("123");
+        }
     } else {
         Interaction left = getIntersection(node->left, ray);
         Interaction right = getIntersection(node->right, ray);

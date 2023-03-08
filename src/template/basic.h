@@ -1,7 +1,7 @@
 #ifndef RT_TEMPLATE_BASIC_H
 #define RT_TEMPLATE_BASIC_H
 
-// #include <memory>
+#include <memory>
 #include "geometry.h"
 #include "material.h"
 #include "triangle.h"
@@ -13,8 +13,8 @@ struct SceneBasic
 {
     // scene prototype;
     int width = 200;
-    int height = 150;
-    int sampleCount = 50;
+    int height = 200;
+    int sampleCount = 1;
     // primitive list  light
 
     // perspectiveProjection
@@ -22,14 +22,14 @@ struct SceneBasic
     Vector3f transition = Vector3f(0,0,0);
     float near = .01;
     float far = 1000.f;
-    float fov = 90.f;
+    float fov = 40.f;
     float aspect = width / (float)height;
     float maxDepth = 3;
     Vector3f background = Vector3f(0.3);
     Vector3f camPos = Vector3f(278, 273, -800);
-    std::vector<Mesh*> lists = createObject();
+    std::vector<std::shared_ptr<Mesh>> lists = createObject();
 
-    std::vector<Mesh*> createObject() {
+    std::vector<std::shared_ptr<Mesh>> createObject() {
         Material* red = new Material(DIFFUSE, Vector3f(0.0f));
         red->Kd = Vector3f();
         
@@ -40,17 +40,17 @@ struct SceneBasic
         Material* light = new Material(DIFFUSE, (8.0f * Vector3f(0.747f+0.058f, 0.747f+0.258f, 0.747f) + 15.6f * Vector3f(0.740f+0.287f,0.740f+0.160f,0.740f) + 18.4f *Vector3f(0.737f+0.642f,0.737f+0.159f,0.737f)));
         light->Kd = Vector3f(0.65f);
         
-        MeshTriangle floor("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white);
+        auto floor = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white);
+        auto left = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
+        auto right = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
         // MeshTriangle shortbox("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", white);
         // MeshTriangle tallbox("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
-        // MeshTriangle left("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
-        // MeshTriangle right("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
+        
         // MeshTriangle light_("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
         // std::vector<Mesh *> rs = {&floor, &left, &right ,&light_};
         // std::shared_ptr<Mesh> leftptr(left);
-        // auto leftptr = std::make_shared<Mesh>(left);
-        // std::vector<std::shared_ptr<Mesh>> rs = {leftptr};
-        std::vector<Mesh*> rs = {&floor};
+        
+        std::vector<std::shared_ptr<Mesh>> rs = {floor,left, right};
         return rs;
     }
     

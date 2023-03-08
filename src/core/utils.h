@@ -15,6 +15,7 @@
 namespace r
 {
 
+
 inline float clamp(float max, float min, float v) {
     return std::min(max, std::max(min,v));
 }

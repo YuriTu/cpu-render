@@ -1,8 +1,10 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
-
+#include <limits>
 namespace r
 {
+
+const double TMAX = std::numeric_limits<double>::max();
 
 template <typename T>
 class Vector3
@@ -113,12 +115,12 @@ Vector3<T> Max(const Vector3<T> &v1, const Vector3<T> &v2) {
 }
 
 struct Ray
-{
-    
-    Ray(Vector3f _o,Vector3f _d):o(_o),d(_d) {};
+{   
+    Ray(Vector3f _o,Vector3f _d);
     Vector3f o;
     Vector3f d;
     Vector3f d_inv;
+    float t,t_min,t_max;
 };
 
 }

@@ -167,6 +167,7 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
         }
     }
     radiance = directRadiance + indirectRadiance;
+    printf("randiance ,x:%f",radiance.x);
     return radiance;
 }
 
@@ -184,11 +185,12 @@ void TracingRender::render(const Scene &scene)
     #pragma omp parallel for schedule(dynamic, 1) private(r)
     for (int i = 0; i < width; i++) {
         for(int j = 0; j < height; j++) {
-            float x = 2.0 * (((i + 0.5f) / width) - .5f) * imageRadio * scale;
-            float y = 2.0 * (((j + 0.5f) / height) - .5f) * scale;
-            Vector3f _dir(x,y,1);
+            float x = (2.0 * (i + 0.5f) / (float)width - 1.f) * imageRadio * scale;
+            float y =(1.f - 2.0 * (j + 0.5f) / (float)height) * scale;
+            Vector3f _dir(-x,y,1);
             Vector3f dir = normalize(_dir);
             Ray ray(cam,dir);
+                printf("dir: %f %f %f \n",dir.x,dir.y,dir.z);
             int index = getIndex(i,j,width,height);
             Vector3f radiance = this->Li(ray,scene);
             frameBuffer[index] = radiance / scene.samples;
