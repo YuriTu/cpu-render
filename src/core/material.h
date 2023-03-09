@@ -1,7 +1,6 @@
 #ifndef RT_MATERIAL_H
 #define RT_MATERIAL_H
 
-#include "geometry.h"
 #include "utils.h"
 #include "interaction.h"
 // handle bsdf eg

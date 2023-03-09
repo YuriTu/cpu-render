@@ -146,11 +146,13 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
                 // 得到 emission 和 cos 
             // 计算radiance 
             directRadiance = isect.bsdf;
+
+            // 采样bsdf 准备下一次bounce
         }
         // rr 只在indiecrt处理
     }
     radiance = directRadiance + indirectRadiance;
-    printf("randiance ,x:%f",radiance.x);
+    printf("randiance ,x:%f \n",radiance.x);
     return radiance;
 }
 

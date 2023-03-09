@@ -5,12 +5,8 @@
 #include <vector>
 #include <cstring>
 #include <random>
+#include "r.h"
 #include "geometry.h"
-
-#define PI 3.1415926f
-#define M_PI 3.1415926f
-#define EPS 1e-4
-#define EPSILON 1e-4
 
 namespace r
 {

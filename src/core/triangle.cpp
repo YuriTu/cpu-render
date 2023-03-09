@@ -46,8 +46,7 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
     inter.normal = this->normal;
     inter.distance = t_tmp;
     inter.primitive = this;
-    inter.m = m;
-    inter.emit = m->getEmission();
+    inter.emit = material->getEmission();
 
     // interaction = new Interaction();
     *interaction = inter;
@@ -62,6 +61,9 @@ void Triangle::Sample(Interaction &pos, float &pdf){
         pdf = 1.0f / area;
     }
 
+void Triangle::ComputeScatteringFunction(Interaction *isect) const {
+    return this->material->ComputeScatteringFunction(isect);
+};
 
 
 MeshTriangle::MeshTriangle(const std::string& filename, Material *mt) {
@@ -104,7 +106,7 @@ MeshTriangle::MeshTriangle(const std::string& filename, Material *mt) {
     std::vector<std::shared_ptr<Mesh>> ptrs;
     for (auto& tri : triangles){
         // todo 这里需要和上面emplace 部分优化一下
-        auto ptr = std::make_shared<Triangle>(tri.v0,tri.v1,tri.v2,tri.m);
+        auto ptr = std::make_shared<Triangle>(tri.v0,tri.v1,tri.v2,tri.material);
         ptrs.push_back(ptr);
         area += tri.area;
     }

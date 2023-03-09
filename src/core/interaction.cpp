@@ -8,7 +8,6 @@ Interaction::Interaction() {
     coords=Vector3f();
     normal=Vector3f();
     distance= std::numeric_limits<double>::max();
-    m=nullptr;
     primitive = nullptr;
     bsdf = Vector3f(0.0);
 }

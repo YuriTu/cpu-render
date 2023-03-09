@@ -1,8 +1,9 @@
 #ifndef RT_INTERACTION_H
 #define RT_INTERACTION_H
+#include "r.h"
 #include "geometry.h"
 #include "material.h"
-// #include "mesh.h"
+#include "mesh.h"
 
 namespace r
 {
@@ -22,10 +23,8 @@ public:
     Vector3f normal;
     Vector3f emit;
     double distance;
-    Material* m;
     const Mesh* primitive;
     Vector3f bsdf;
-    
 };
 
 // struct SurfaceInteraction 

@@ -1,5 +1,7 @@
 #ifndef RT_SCENE_H
 #define RT_SCENE_H
+
+#include "r.h"
 #include "BVH.h"
 #include "geometry.h"
 #include "mesh.h"

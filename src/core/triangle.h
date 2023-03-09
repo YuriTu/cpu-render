@@ -57,6 +57,7 @@ public:
 
     bool intersect(const Ray& ray, Interaction *interaction) override;
     // Vector3f evalDiffuseColor(const Vector2f&) const override;
+    void ComputeScatteringFunction(Interaction *isect) const;
     Bounds3 getBounds() override;
     void Sample(Interaction &pos, float &pdf);
     float getArea();
@@ -124,7 +125,7 @@ public:
     
     void Sample(Interaction &pos, float &pdf){
         bvh->Sample(pos, pdf);
-        pos.emit = m->getEmission();
+        pos.emit = material->getEmission();
     }
     float getArea();
 

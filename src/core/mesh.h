@@ -1,9 +1,11 @@
 #ifndef RT_MESH_H
 #define RT_MESH_H
 
+#include "r.h"
 #include "utils.h"
 #include "interaction.h"
 #include "bounds3.h"
+
 
 namespace r
 {
@@ -18,6 +20,8 @@ namespace r
         virtual float getArea() = 0;
         virtual void ComputeScatteringFunction(Interaction *isect) const = 0;
         float area;
+        Material* material;
+        
     };
     
     
