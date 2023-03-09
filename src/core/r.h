@@ -21,6 +21,9 @@ class MeshTriangle;
 
 static constexpr float PI = 3.1415926f;
 static constexpr float M_PI = 3.1415926f;
+static constexpr float InvPi = 0.31830988618379067154;
+static constexpr float Inv2Pi = 0.15915494309189533577;
+static constexpr float Inv4Pi = 0.07957747154594766788;
 static constexpr float EPS = 1e-4;
 static constexpr float EPSILON = 1e-4;
 

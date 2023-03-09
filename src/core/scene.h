@@ -22,6 +22,7 @@ class Scene
         void applyTemplate(const SceneBasic temp);
         
         std::vector<std::shared_ptr<Mesh>> objects;
+        std::vector<std::shared_ptr<Mesh>> lights;
         BVHAccel *bvh;
         int depth;
         int height;
@@ -32,6 +33,8 @@ class Scene
         Vector3f background;
         float maxDepth;
         Vector3f camPos;
+    private:
+        void _initLightList();
 };
 
 }

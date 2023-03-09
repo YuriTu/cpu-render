@@ -22,16 +22,38 @@ void TracingRender::setView(Vector3f position) {
     // set camera pos
 }
 
+Vector3f TracingRender::uniformSampleOneLight(Interaction &isect,const Scene &scene) {\
+    // 先只考虑一个光源的标准情况
+    int nLight = 0;
+    return estimateDirect(isect, scene, scene.lights[nLight]);
+}
 
-void TracingRender::sampleLight(Interaction& light ,float& pdf) {
-    // todo 仅考虑一个光源
+Vector3f TracingRender::estimateDirect(Interaction &isect,const Scene &scene, std::shared_ptr<Mesh> light) {
+    // sample light
+    Vector3f L = Vector3f();
+    Vector3f Le = Vector3f();
+    float pdf;
+    Interaction light_isect;
+    light->Sample(light_isect, pdf);
+
+    Vector3f wi_origin = light_isect.p - isect.p;
+    Vector3f wi = normalize(wi_origin);
+    Vector3f light_normal = light_isect.n;
+    Vector3f p_normal = isect.n;
+    // todo 后面要考虑直接sample到light的情况
+
+    if (!light_isect.primitive) {
+        return L;
+    }
+    Le = light_isect.primitive->getMaterial()->getEmission();
+    // light 的cos ，反一下从light出发的向量
+    float light_cosTheta = Dot(-wi,light_normal);
+    float dw2da = light_cosTheta / wi_origin.lengthSquared();
+
+    float cosTheta = Dot(wi,p_normal);
     
-    // for (int i=0; i < objects.size(); i++) {
-    //     if (objects[i].hasEmit()) {
-    //         objects[i].sampleSphereUniform(light,pdf);
-    //     }
-    // }
-    
+    L = (Le *  dw2da / pdf) * cosTheta;
+    return L;
 }
 
 Vector3f TracingRender::pathTracing(Ray &ray, int depth) {
@@ -136,20 +158,33 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
             // emission term
             //  只考虑direct的情况
             if (bounces == 0 ) {
-                directRadiance += isect.Le();
+                directRadiance += beta * isect.Le();
+                // todo 先默认只有light 才有emission
+                if (directRadiance > Vector3f()){
+                    return directRadiance;
+                }
             }
 
             // 计算bsdf的情况
             isect.ComputeScatteringFunction(ray);
 
-            // 对于光源进行采样
-                // 得到 emission 和 cos 
+            // 对于光源进行采样 转化为p的da积分
+            Vector3f irradiance = this->uniformSampleOneLight(isect, scene);
             // 计算radiance 
-            directRadiance += isect.bsdf;
+            directRadiance += beta * irradiance * isect.bsdf;
 
             // 采样bsdf 准备下一次bounce
+            Vector3f wo = - ray.d;
+            float pdf;
+            // isect.bsdf sample(wi)
+            Vector3f wi =  isect.primitive->getMaterial()->sample(wo,isect.n,pdf);
+            float cosTheta = Dot(wi,isect.n);
+            // beta / pdf
+            beta = beta * cosTheta / pdf;
+            ray = isect.spawnRay(wi);
         }
-        // rr 只在indiecrt处理
+        // rr 
+        // beta = beta / rr
     }
     radiance = directRadiance + indirectRadiance;
     return radiance;
@@ -177,6 +212,9 @@ void TracingRender::render(const Scene &scene)
             int index = getIndex(i,j,width,height);
             Vector3f radiance = this->Li(ray,scene);
             // printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
+            // if (i == 5 && j == 28) {
+            //     printf("debug");
+            // }
             frameBuffer[index] = radiance / scene.samples;
         }
     }

@@ -27,17 +27,14 @@ class Material{
         float ior;
         Vector3f Kd, Ks;
         float specularExponent;
-        //Texture tex;
         MaterialType getType();
-        inline Vector3f getColorAt(double u, double v);
         Vector3f getEmission();
-        inline bool hasEmission();
+        bool hasEmission();
         void setKd(const Vector3f &v);
 
         // sample a ray by Material properties
-        inline Vector3f sample(const Vector3f &wi, const Vector3f &N);
-        // given a ray, calculate the PdF of this ray
-        inline float pdf(const Vector3f &wi, const Vector3f &wo, const Vector3f &N);
+        Vector3f sample(const Vector3f &wi, const Vector3f &N, float &pdf);
+
         // given a ray, calculate the contribution of this ray
         inline Vector3f eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &N);
 

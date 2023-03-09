@@ -59,6 +59,15 @@ class Vector3
             return Vector3<T>( x/f, y/f, z/f);
         }
 
+        template <typename U>
+        bool operator>(U f) const {
+            bool rs = false;
+            if (x > f.x && y > f.y && z > f.z) {
+                rs = true;
+            }
+            return rs;
+        }
+
         float lengthSquared() const { return x * x + y * y + z * z;}
         float length () const { return std::sqrt(lengthSquared());}
 

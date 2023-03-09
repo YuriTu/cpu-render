@@ -12,37 +12,6 @@
 
 namespace r
 {
-
-inline bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1,
-                          const Vector3f& v2, const Vector3f& orig,
-                          const Vector3f& dir, float& tnear, float& u, float& v)
-{
-    Vector3f edge1 = v1 - v0;
-    Vector3f edge2 = v2 - v0;
-    Vector3f pvec = Cross(dir, edge2);
-    float det = Dot(edge1, pvec);
-    if (det == 0 || det < 0)
-        return false;
-
-    Vector3f tvec = orig - v0;
-    u = Dot(tvec, pvec);
-    if (u < 0 || u > det)
-        return false;
-
-    Vector3f qvec = Cross(tvec, edge1);
-    v = Dot(dir, qvec);
-    if (v < 0 || u + v > det)
-        return false;
-
-    float invDet = 1 / det;
-
-    tnear = Dot(edge2, qvec) * invDet;
-    u *= invDet;
-    v *= invDet;
-
-    return true;
-}
-
 class Triangle : public Mesh
 {
 public:
@@ -56,10 +25,9 @@ public:
     Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2, Material* _m = nullptr);
 
     bool intersect(const Ray& ray, Interaction *interaction) override;
-    // Vector3f evalDiffuseColor(const Vector2f&) const override;
     void ComputeScatteringFunction(Interaction *isect) const;
     Bounds3 getBounds() override;
-    void Sample(Interaction &pos, float &pdf);
+    void Sample(Interaction &isect, float &pdf);
     float getArea();
     Material* getMaterial();
 };
@@ -93,47 +61,15 @@ public:
     }
 
     Bounds3 getBounds() { return bounding_box; }
-
-    // void getSurfaceProperties(const Vector3f& P, const Vector3f& I,
-    //                           const uint32_t& index, const Vector2f& uv,
-    //                           Vector3f& N, Vector2f& st) const
-    // {
-    //     const Vector3f& v0 = vertices[vertexIndex[index * 3]];
-    //     const Vector3f& v1 = vertices[vertexIndex[index * 3 + 1]];
-    //     const Vector3f& v2 = vertices[vertexIndex[index * 3 + 2]];
-    //     Vector3f e0 = normalize(v1 - v0);
-    //     Vector3f e1 = normalize(v2 - v1);
-    //     N = normalize(Cross(e0, e1));
-    //     const Vector2f& st0 = stCoordinates[vertexIndex[index * 3]];
-    //     const Vector2f& st1 = stCoordinates[vertexIndex[index * 3 + 1]];
-    //     const Vector2f& st2 = stCoordinates[vertexIndex[index * 3 + 2]];
-    //     st = st0 * (1 - uv.x - uv.y) + st1 * uv.x + st2 * uv.y;
-    // }
-
-    // Vector3f evalDiffuseColor(const Vector2f& st) const
-    // {
-    //     float scale = 5;
-    //     float pattern =
-    //         (fmodf(st.x * scale, 1) > 0.5) ^ (fmodf(st.y * scale, 1) > 0.5);
-    //     return lerp(Vector3f(0.815, 0.235, 0.031),
-    //                 Vector3f(0.937, 0.937, 0.231), pattern);
-    // }
-
-
     void ComputeScatteringFunction(Interaction *isect) const override;
     Material* getMaterial();
-
-    
-    void Sample(Interaction &pos, float &pdf){
-        bvh->Sample(pos, pdf);
-    }
+    void Sample(Interaction &isect, float &pdf);
     float getArea();
 
     Bounds3 bounding_box;
     std::unique_ptr<Vector3f[]> vertices;
     uint32_t numTriangles;
     std::unique_ptr<uint32_t[]> vertexIndex;
-    // std::unique_ptr<Vector2f[]> stCoordinates;
 
     std::vector<Triangle> triangles;
 
@@ -143,7 +79,35 @@ public:
     Material* material;
 };
 
-inline Bounds3 Triangle::getBounds() { return Union(Bounds3(v0, v1), v2); }
+inline bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1,
+                          const Vector3f& v2, const Vector3f& orig,
+                          const Vector3f& dir, float& tnear, float& u, float& v)
+{
+    Vector3f edge1 = v1 - v0;
+    Vector3f edge2 = v2 - v0;
+    Vector3f pvec = Cross(dir, edge2);
+    float det = Dot(edge1, pvec);
+    if (det == 0 || det < 0)
+        return false;
+
+    Vector3f tvec = orig - v0;
+    u = Dot(tvec, pvec);
+    if (u < 0 || u > det)
+        return false;
+
+    Vector3f qvec = Cross(tvec, edge1);
+    v = Dot(dir, qvec);
+    if (v < 0 || u + v > det)
+        return false;
+
+    float invDet = 1 / det;
+
+    tnear = Dot(edge2, qvec) * invDet;
+    u *= invDet;
+    v *= invDet;
+
+    return true;
+}
 
 }
 

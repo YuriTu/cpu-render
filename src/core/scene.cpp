@@ -23,6 +23,17 @@ void Scene::applyTemplate(const SceneBasic temp) {
     maxDepth = temp.maxDepth;
     camPos = temp.camPos;
     buildBVH();
+    _initLightList();
+}
+
+void Scene::_initLightList() {
+    int nLight = 0;
+    for (size_t i = 0; i < this->objects.size(); i++) {
+        Material* material = objects[i]->getMaterial();
+        if (material->hasEmission()) {
+            lights.push_back(objects[i]);
+        }
+    }
 }
 
 bool Scene::intersect(const Ray& ray,Interaction *isect ) const {

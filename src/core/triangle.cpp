@@ -8,8 +8,9 @@ Triangle::Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2, Material* _m)
 {
     e1 = v1 - v0;
     e2 = v2 - v0;
-    normal = normalize(Cross(e1, e2));
-    area =  Cross(e1, e2).length()*0.5f;
+    Vector3f square2 = Cross(e1, e2);
+    normal = normalize(square2);
+    area =  square2.length()*0.5f;
 }
 
 float Triangle::getArea() {
@@ -55,12 +56,14 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
     return inter.happened;
 }
 
-void Triangle::Sample(Interaction &pos, float &pdf){
-        float x = std::sqrt(getRandom()), y = getRandom();
-        pos.p = v0 * (1.0f - x) + v1 * (x * (1.0f - y)) + v2 * (x * y);
-        pos.n = this->normal;
-        pdf = 1.0f / area;
-    }
+void Triangle::Sample(Interaction &isect, float &pdf){
+    float x = std::sqrt(getRandom()), y = getRandom();
+    // 1-x + x - xy + xy = 1 所以不会超过重心坐标系
+    isect.p = v0 * (1.0f - x) + v1 * (x * (1.0f - y)) + v2 * (x * y);
+    isect.n = this->normal;
+    isect.primitive = this;
+    pdf = 1.0f / area;
+}
 
 void Triangle::ComputeScatteringFunction(Interaction *isect) const {
     return this->material->ComputeScatteringFunction(isect);
@@ -69,6 +72,10 @@ void Triangle::ComputeScatteringFunction(Interaction *isect) const {
 Material* Triangle::getMaterial() {
     return this->material;
 };
+
+Bounds3 Triangle::getBounds() {
+    return Union(Bounds3(v0, v1), v2);
+}
 
 
 MeshTriangle::MeshTriangle(const std::string& filename, Material *mt) {
@@ -138,5 +145,9 @@ void MeshTriangle::ComputeScatteringFunction(Interaction *isect) const {
 Material* MeshTriangle::getMaterial() {
     return this->material;
 };
+
+void MeshTriangle::Sample(Interaction &isect, float &pdf) {
+    this->bvh->Sample(isect, pdf);
+}
 
 }

@@ -151,7 +151,7 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
 void BVHAccel::getSample(BVHBuildNode* node, float p, Interaction &pos, float &pdf){
     if(node->left == nullptr || node->right == nullptr){
         // fixme 这里需要实现
-        // node->object->sample(pos, pdf);
+        node->object->Sample(pos, pdf);
         pdf *= node->area;
         return;
     }

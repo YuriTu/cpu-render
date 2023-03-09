@@ -20,6 +20,7 @@ namespace r
         virtual float getArea() = 0;
         virtual void ComputeScatteringFunction(Interaction *isect) const = 0;
         virtual Material* getMaterial() = 0;
+        virtual void Sample(Interaction &isect, float &pdf) =0;
     };
     
     

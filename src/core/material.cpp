@@ -30,12 +30,10 @@ MaterialType Material::getType() {
     return m_type;
 }
 
-Vector3f Material::getColorAt(double u, double v) {
-    return Vector3f();
-}
 
-
-Vector3f Material::sample(const Vector3f &wi, const Vector3f &N){
+Vector3f Material::sample(const Vector3f &wi, const Vector3f &N, float &pdf){
+    pdf = 0;
+    Vector3f rs = Vector3f();
     switch(m_type){
         case DIFFUSE:
         {
@@ -44,26 +42,16 @@ Vector3f Material::sample(const Vector3f &wi, const Vector3f &N){
             float z = std::fabs(1.0f - 2.0f * x_1);
             float r = std::sqrt(1.0f - z * z), phi = 2 * M_PI * x_2;
             Vector3f localRay(r*std::cos(phi), r*std::sin(phi), z);
-            return toWorld(localRay, N);
+            // pdf = 1 / 2pi
+            pdf = 0.5 / InvPi;
+            rs = toWorld(localRay, N);
             
             break;
         }
     }
+    return rs;
 }
 
-float Material::pdf(const Vector3f &wi, const Vector3f &wo, const Vector3f &N){
-    switch(m_type){
-        case DIFFUSE:
-        {
-            // uniform sample probability 1 / (2 * PI)
-            if (Dot(wo, N) > 0.0f)
-                return 0.5f / M_PI;
-            else
-                return 0.0f;
-            break;
-        }
-    }
-}
 
 Vector3f Material::eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &N){
     switch(m_type){
@@ -89,7 +77,7 @@ void Material::setKd(const Vector3f &v) {
 
 void Material::ComputeScatteringFunction(Interaction *isect) const {
     // todo compute bsdf 
-    isect->bsdf = Vector3f(0.f);
+    isect->bsdf = Vector3f(1.f);
     switch (m_type)
     {
     case DIFFUSE:

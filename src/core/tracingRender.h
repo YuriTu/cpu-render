@@ -16,14 +16,11 @@ namespace r
         void setPerspectiveProjection(float near, float far, float aspect, float fov);
         void setModule(Vector3f position);
         void setView(Vector3f position);
-        // void add(Sphere &m);
-        void add(Light &l);
-        void sampleLight(Interaction& light,float& pdf);
         void render(const Scene &scene);
-        bool intersect(Ray &ray);
         Vector3f Li(Ray &ray, const Scene &scene);
         Vector3f pathTracing(Ray &ray, int depth);
-
+        Vector3f uniformSampleOneLight(Interaction &isect,const Scene &scene);
+        Vector3f estimateDirect(Interaction &isect,const Scene &scene, std::shared_ptr<Mesh> light);
 
         int width;
         int height;

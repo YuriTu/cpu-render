@@ -16,6 +16,7 @@ public:
 
     Vector3f Le() const;
     void ComputeScatteringFunction(const Ray &ray);
+    Ray spawnRay(const Vector3f &d) const;
 
     bool happened;
     double distance;

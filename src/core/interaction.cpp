@@ -30,5 +30,10 @@ void Interaction::ComputeScatteringFunction(const Ray &ray) {
     return primitive->ComputeScatteringFunction(this);
 }
 
+Ray Interaction::spawnRay(const Vector3f &d) const {
+    Vector3f o = this->p;
+    return Ray(o,d);
+}
+
 
 }
