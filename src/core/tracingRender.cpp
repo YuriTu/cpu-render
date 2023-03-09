@@ -184,7 +184,12 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
             ray = isect.spawnRay(wi);
         }
         // rr 
-        // beta = beta / rr
+        float randomValue = getRandom();
+        if (randomValue < scene.rrThreshold) {
+            beta = beta / scene.rrThreshold;
+        } else {
+            break;
+        }
     }
     radiance = directRadiance + indirectRadiance;
     return radiance;

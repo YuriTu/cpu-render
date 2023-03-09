@@ -22,6 +22,7 @@ void Scene::applyTemplate(const SceneBasic temp) {
     background = temp.background;
     maxDepth = temp.maxDepth;
     camPos = temp.camPos;
+    rrThreshold = temp.rrThreshold;
     buildBVH();
     _initLightList();
 }

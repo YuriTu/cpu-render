@@ -32,6 +32,7 @@ class Scene
         float samples;
         Vector3f background;
         float maxDepth;
+        float rrThreshold;
         Vector3f camPos;
     private:
         void _initLightList();
