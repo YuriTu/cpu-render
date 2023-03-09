@@ -31,7 +31,7 @@ struct SceneBasic
 
     std::vector<std::shared_ptr<Mesh>> createObject() {
         Material* red = new Material(DIFFUSE, Vector3f(0.0f));
-        red->Kd = Vector3f();
+        red->Kd = Vector3f(0.63f, 0.065f, 0.05f);
         
         Material* green = new Material(DIFFUSE, Vector3f(0.0f));
         green->Kd = Vector3f(0.14f, 0.45f, 0.091f);
@@ -41,7 +41,7 @@ struct SceneBasic
         light->Kd = Vector3f(0.65f);
         
         // auto floor = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white);
-        // auto left = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
+        auto left = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
         // auto right = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
         // MeshTriangle shortbox("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", white);
         // MeshTriangle tallbox("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
@@ -51,7 +51,7 @@ struct SceneBasic
         
         // std::vector<std::shared_ptr<Mesh>> rs = {floor,left, right};
         std::vector<std::shared_ptr<Mesh>> rs = {
-            // left,
+            left,
          light_};
         return rs;
     }

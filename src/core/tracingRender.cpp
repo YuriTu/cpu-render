@@ -145,7 +145,7 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
             // 对于光源进行采样
                 // 得到 emission 和 cos 
             // 计算radiance 
-            // directRadiance += isect.bsdf;
+            directRadiance += isect.bsdf;
 
             // 采样bsdf 准备下一次bounce
         }

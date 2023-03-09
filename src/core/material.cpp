@@ -89,7 +89,24 @@ void Material::setKd(const Vector3f &v) {
 
 void Material::ComputeScatteringFunction(Interaction *isect) const {
     // todo compute bsdf 
-    isect->bsdf = Vector3f(0.2f);
+    isect->bsdf = Vector3f(0.f);
+    switch (m_type)
+    {
+    case DIFFUSE:
+        {
+            // WI WO n cos integrater 
+            float cosTheta = Dot(isect->n, isect->wo);
+            if (cosTheta > 0.f) {
+                // 半球cos积分pi 非面积积分（2pi）
+                isect->bsdf = this->Kd / PI;
+            }
+        }
+        break;
+    
+    default:
+         isect->bsdf;
+        break;
+    }
 }
 
 }

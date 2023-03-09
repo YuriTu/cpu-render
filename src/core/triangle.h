@@ -126,7 +126,6 @@ public:
     
     void Sample(Interaction &pos, float &pdf){
         bvh->Sample(pos, pdf);
-        pos.emit = material->getEmission();
     }
     float getArea();
 

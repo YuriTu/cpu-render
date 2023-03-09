@@ -18,11 +18,12 @@ public:
     void ComputeScatteringFunction(const Ray &ray);
 
     bool happened;
-    Vector3f coords;
-    Vector3f tcoords;
-    Vector3f normal;
-    Vector3f emit;
     double distance;
+
+    Vector3f p;
+    Vector3f n;
+    Vector3f wo;
+
     Mesh* primitive;
     Vector3f bsdf;
 };
@@ -34,22 +35,6 @@ public:
 //     }
 // };
 
-// struct Interaction
-// {
-//     Interaction() {
-//         flag = false;
-//         hitPoint = Vector3f();
-//         hitObject = nullptr;
-//     }
-//     bool flag;
-//     Vector3f hitPoint;
-//     Vector3f normal;
-//     float t;
-//     r::Sphere* hitObject;
-//     float distance;
-//     Vector3f emit;
-
-// };
 
 // struct MediumInteraction
 // {

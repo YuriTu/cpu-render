@@ -42,12 +42,13 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
 
     // TODO find ray triangle Interaction
     inter.happened = (t_tmp>0) && (u>0) && (v>0) && (1-u-v>0);
-    // inter.coords = ray(t_tmp); // 
-    inter.normal = this->normal;
-    inter.distance = t_tmp;
+    inter.p = ray.o + ray.d * t_tmp;
+    inter.n = this->normal;
+    inter.wo = -ray.d;
+    
     inter.primitive = this;
-    inter.emit = material->getEmission();
 
+    inter.distance = t_tmp;
     // interaction = new Interaction();
     *interaction = inter;
 
@@ -56,8 +57,8 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
 
 void Triangle::Sample(Interaction &pos, float &pdf){
         float x = std::sqrt(getRandom()), y = getRandom();
-        pos.coords = v0 * (1.0f - x) + v1 * (x * (1.0f - y)) + v2 * (x * y);
-        pos.normal = this->normal;
+        pos.p = v0 * (1.0f - x) + v1 * (x * (1.0f - y)) + v2 * (x * y);
+        pos.n = this->normal;
         pdf = 1.0f / area;
     }
 
