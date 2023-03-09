@@ -141,7 +141,7 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
     // tr系数
     Vector3f beta(1.f);
     //todo 根据radiacen 质量做terminal 去掉具体的samples
-    for (bounces = 0; bounces < scene.samples; bounces++) {
+    for (bounces = 0; bounces < scene.maxDepth; bounces++) {
         // scene.intersect(ray,)
         Interaction isect;
         bool foundIntersection = scene.intersect(ray, &isect);
@@ -215,12 +215,19 @@ void TracingRender::render(const Scene &scene)
             Vector3f dir = normalize(_dir);
             Ray ray(cam,dir);
             int index = getIndex(i,j,width,height);
-            Vector3f radiance = this->Li(ray,scene);
+            Vector3f radiance;
+            int spp = scene.samples;
+            
+            for (int k = 0; k < spp; k++) {
+                radiance = radiance + this->Li(ray,scene);
+            }
+
+            
             // printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
             // if (i == 5 && j == 28) {
             //     printf("debug");
             // }
-            frameBuffer[index] = radiance / scene.samples;
+            frameBuffer[index] = radiance / spp;
         }
     }
     exportImg(frameBuffer, width,height);

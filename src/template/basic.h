@@ -14,7 +14,7 @@ struct SceneBasic
     // scene prototype;
     int width = 200;
     int height = 200;
-    int sampleCount = 2;
+    int sampleCount = 3;
     // primitive list  light
 
     // perspectiveProjection
