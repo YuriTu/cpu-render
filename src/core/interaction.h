@@ -23,7 +23,7 @@ public:
     Vector3f normal;
     Vector3f emit;
     double distance;
-    const Mesh* primitive;
+    Mesh* primitive;
     Vector3f bsdf;
 };
 

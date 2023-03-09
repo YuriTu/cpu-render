@@ -61,6 +61,7 @@ public:
     Bounds3 getBounds() override;
     void Sample(Interaction &pos, float &pdf);
     float getArea();
+    Material* getMaterial();
 };
 
 class MeshTriangle : public Mesh
@@ -120,7 +121,7 @@ public:
 
 
     void ComputeScatteringFunction(Interaction *isect) const override;
-
+    Material* getMaterial();
 
     
     void Sample(Interaction &pos, float &pdf){

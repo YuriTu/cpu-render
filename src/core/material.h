@@ -28,9 +28,9 @@ class Material{
         Vector3f Kd, Ks;
         float specularExponent;
         //Texture tex;
-        MaterialType getType() {return m_type;};
+        MaterialType getType();
         inline Vector3f getColorAt(double u, double v);
-        Vector3f getEmission() {return m_emission;};
+        Vector3f getEmission();
         inline bool hasEmission();
         void setKd(const Vector3f &v);
 

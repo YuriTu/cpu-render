@@ -18,8 +18,8 @@ Interaction::Interaction(bool h) {
 
 Vector3f Interaction::Le() const{
     Vector3f rs(0.f);
-    if (primitive->material) {
-        rs = primitive->material->getEmission();
+    if (primitive->getMaterial()) {
+        rs = primitive->getMaterial()->getEmission();
     }
     return rs;
 }

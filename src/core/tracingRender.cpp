@@ -145,14 +145,13 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
             // 对于光源进行采样
                 // 得到 emission 和 cos 
             // 计算radiance 
-            directRadiance = isect.bsdf;
+            // directRadiance += isect.bsdf;
 
             // 采样bsdf 准备下一次bounce
         }
         // rr 只在indiecrt处理
     }
     radiance = directRadiance + indirectRadiance;
-    printf("randiance ,x:%f \n",radiance.x);
     return radiance;
 }
 
@@ -177,6 +176,7 @@ void TracingRender::render(const Scene &scene)
             Ray ray(cam,dir);
             int index = getIndex(i,j,width,height);
             Vector3f radiance = this->Li(ray,scene);
+            // printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
             frameBuffer[index] = radiance / scene.samples;
         }
     }

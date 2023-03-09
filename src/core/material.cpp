@@ -22,6 +22,14 @@ bool Material::hasEmission() {
     else return false;
 }
 
+Vector3f Material::getEmission() {
+    return this->m_emission;
+}
+
+MaterialType Material::getType() {
+    return m_type;
+}
+
 Vector3f Material::getColorAt(double u, double v) {
     return Vector3f();
 }

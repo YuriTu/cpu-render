@@ -19,9 +19,7 @@ namespace r
         virtual bool intersect(const Ray& ray, Interaction *interaction) = 0;
         virtual float getArea() = 0;
         virtual void ComputeScatteringFunction(Interaction *isect) const = 0;
-        float area;
-        Material* material;
-        
+        virtual Material* getMaterial() = 0;
     };
     
     

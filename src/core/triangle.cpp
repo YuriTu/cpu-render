@@ -65,6 +65,10 @@ void Triangle::ComputeScatteringFunction(Interaction *isect) const {
     return this->material->ComputeScatteringFunction(isect);
 };
 
+Material* Triangle::getMaterial() {
+    return this->material;
+};
+
 
 MeshTriangle::MeshTriangle(const std::string& filename, Material *mt) {
     objl::Loader loader;
@@ -128,6 +132,10 @@ bool MeshTriangle::intersect(const Ray& ray, Interaction *interaction){
 
 void MeshTriangle::ComputeScatteringFunction(Interaction *isect) const {
     return this->material->ComputeScatteringFunction(isect);
+};
+
+Material* MeshTriangle::getMaterial() {
+    return this->material;
 };
 
 }

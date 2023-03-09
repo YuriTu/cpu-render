@@ -41,7 +41,7 @@ struct SceneBasic
         light->Kd = Vector3f(0.65f);
         
         // auto floor = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white);
-        auto left = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
+        // auto left = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
         // auto right = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
         // MeshTriangle shortbox("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", white);
         // MeshTriangle tallbox("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
@@ -50,7 +50,9 @@ struct SceneBasic
         // std::shared_ptr<Mesh> leftptr(left);
         
         // std::vector<std::shared_ptr<Mesh>> rs = {floor,left, right};
-        std::vector<std::shared_ptr<Mesh>> rs = {left, light_};
+        std::vector<std::shared_ptr<Mesh>> rs = {
+            // left,
+         light_};
         return rs;
     }
     
