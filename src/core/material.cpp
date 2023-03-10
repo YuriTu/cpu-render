@@ -43,7 +43,7 @@ Vector3f Material::sample(const Vector3f &wi, const Vector3f &N, float &pdf){
             float r = std::sqrt(1.0f - z * z), phi = 2 * M_PI * x_2;
             Vector3f localRay(r*std::cos(phi), r*std::sin(phi), z);
             // pdf = 1 / 2pi
-            pdf = 0.5 / InvPi;
+            pdf = 1.f * Inv2Pi;
             rs = toWorld(localRay, N);
             
             break;

@@ -1,6 +1,9 @@
 #ifndef RT_R_H
 #define RT_R_H
 
+#include <limits>
+#include <iostream>
+
 namespace r 
 {
 class Scene;

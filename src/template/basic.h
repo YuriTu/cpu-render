@@ -12,8 +12,8 @@ namespace r
 struct SceneBasic
 {
     // scene prototype;
-    int width = 200;
-    int height = 200;
+    int width = 500;
+    int height = 500;
     int sampleCount = 3;
     // primitive list  light
 

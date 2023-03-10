@@ -1,6 +1,6 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
-#include <limits>
+#include "r.h"
 namespace r
 {
 
@@ -54,6 +54,14 @@ class Vector3
         }
 
         template <typename U>
+        Vector3<T> &operator*=(U s) {
+            x *= s;
+            y *= s;
+            z *= s;
+            return *this;
+        }
+
+        template <typename U>
         Vector3<T> operator/(U f) const {
             float inv = (float)1 / f;
             return Vector3<T>( x/f, y/f, z/f);
@@ -63,6 +71,14 @@ class Vector3
         bool operator>(U f) const {
             bool rs = false;
             if (x > f.x && y > f.y && z > f.z) {
+                rs = true;
+            }
+            return rs;
+        }
+
+        bool isBlack() const {
+            bool rs = false;
+            if (x == 0 && y == 0 && z == 0) {
                 rs = true;
             }
             return rs;
@@ -83,6 +99,14 @@ typedef Vector3<int> Vector3i;
 // inline Vector3<T> operator*(U n, Vector3<T>& v) {
 //     return v * n;
 // }
+
+template <typename T>
+inline std::ostream &operator<<(std::ostream &os, const Vector3<T> &v) {
+    os << "[ " << v.x << ", " << v.y << ", " << v.z << " ]";
+    return os;
+}
+
+
 template <typename T>
 inline Vector3<T> operator*(float n,const Vector3<T>& v) {
     return v * n;
@@ -101,6 +125,11 @@ inline Vector3<T> normalize(const Vector3<T> &v) {
 template <typename T>
 inline T Dot(const Vector3<T>v1, const Vector3<T>v2) {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+
+template <typename T>
+inline T AbsDot(const Vector3<T> &v1, const Vector3<T> &v2) {
+    return std::abs(Dot(v1, v2));
 }
 
 template <typename T>
