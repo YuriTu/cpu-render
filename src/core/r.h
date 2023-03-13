@@ -8,6 +8,7 @@ namespace r
 {
 class Scene;
 class Interaction;
+class SurfaceInteraction;
 class Mesh;
 class Material;
 class Bounds3;

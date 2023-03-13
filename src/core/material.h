@@ -38,7 +38,7 @@ class Material{
         // given a ray, calculate the contribution of this ray
         inline Vector3f eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &N);
 
-        void ComputeScatteringFunction(Interaction *isect) const ;
+        void ComputeScatteringFunction(SurfaceInteraction *isect) const ;
 };
 
 

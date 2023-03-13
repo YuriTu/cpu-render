@@ -15,8 +15,8 @@ namespace r
         
         void render(const Scene &scene);
         Vector3f Li(Ray &ray, const Scene &scene);
-        Vector3f uniformSampleOneLight(Interaction &isect,const Scene &scene);
-        Vector3f estimateDirect(Interaction &isect,const Scene &scene, std::shared_ptr<Mesh> light);
+        Vector3f uniformSampleOneLight(SurfaceInteraction &isect,const Scene &scene);
+        Vector3f estimateDirect(SurfaceInteraction &isect,const Scene &scene, std::shared_ptr<Mesh> light);
 
         int width;
         int height;

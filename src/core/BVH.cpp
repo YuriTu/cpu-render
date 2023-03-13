@@ -98,20 +98,17 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<std::shared_ptr<Mesh>> object
     return node;
 }
 
-bool BVHAccel::intersect(const Ray& ray, Interaction *isect) const
+bool BVHAccel::intersect(const Ray& ray, SurfaceInteraction *isect) const
 {
-    if (!root) return false;
     bool hit = false;
-    *isect = BVHAccel::getIntersection(root, ray);
-    hit = isect->happened;
+    if (!root) return hit;
+    hit = BVHAccel::getIntersection(root, ray, isect);
     return hit;
 }
 
-Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
+bool BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray, SurfaceInteraction *isect) const
 {
-    // TODO Traverse the BVH to find intersection
-
-    Interaction rs = Interaction();
+    SurfaceInteraction rs = SurfaceInteraction();
 
     std::array<int, 3> dirIsNeg;
     dirIsNeg[0] = int(ray.d.x >= 0);
@@ -121,20 +118,18 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
     bool flag = node->bounds.IntersectP(ray,ray.d_inv,dirIsNeg);
     if (!flag) {
         // bounds 没交点，过
-        return rs;
+        return flag;
     }
 
     if (node->object) {
-        Interaction tempIsect;
+        SurfaceInteraction tempIsect;
         bool temp = node->object->intersect(ray, &tempIsect);
-        if (temp || tempIsect.happened) {
-            if (temp != tempIsect.happened)
-            printf("error!");
-        }
         rs = tempIsect;
     } else {
-        Interaction left = getIntersection(node->left, ray);
-        Interaction right = getIntersection(node->right, ray);
+        SurfaceInteraction left = SurfaceInteraction();
+        SurfaceInteraction right = SurfaceInteraction();
+        bool b_left = getIntersection(node->left, ray,&left);
+        bool b_right = getIntersection(node->right, ray, &right);
 
         // 谁距离仅用谁
         if (left.distance < right.distance) {
@@ -143,12 +138,18 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
             rs = right;
         }
     }
-    return rs;
+    *isect = rs;
+    // 检查一下insect bound 但是没有insect到 primitive的情况
+    if (rs.primitive == nullptr) {
+        flag = false;
+    }
+
+    return flag;
     
 }
 
 
-void BVHAccel::getSample(BVHBuildNode* node, float p, Interaction &pos, float &pdf){
+void BVHAccel::getSample(BVHBuildNode* node, float p, SurfaceInteraction &pos, float &pdf){
     if(node->left == nullptr || node->right == nullptr){
         node->object->Sample(pos, pdf);
         pdf *= node->area;
@@ -164,7 +165,7 @@ void BVHAccel::getSample(BVHBuildNode* node, float p, Interaction &pos, float &p
     return ;
 }
 
-void BVHAccel::Sample(Interaction &pos, float &pdf){
+void BVHAccel::Sample(SurfaceInteraction &pos, float &pdf){
     float p = std::sqrt(getRandom()) * root->area;
     getSample(root, p, pos, pdf);
     // printf("bvh:sample pdf %f  \n", pdf);

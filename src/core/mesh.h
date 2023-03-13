@@ -15,12 +15,12 @@ namespace r
         Mesh() = default;
         virtual ~Mesh() = default;
         virtual Bounds3 getBounds() = 0;
-        // virtual void sample(Interaction &interaction, float &pdf) = 0;
-        virtual bool intersect(const Ray& ray, Interaction *interaction) = 0;
+        // virtual void sample(SurfaceInteraction &interaction, float &pdf) = 0;
+        virtual bool intersect(const Ray& ray, SurfaceInteraction *interaction) = 0;
         virtual float getArea() = 0;
-        virtual void ComputeScatteringFunction(Interaction *isect) const = 0;
+        virtual void ComputeScatteringFunction(SurfaceInteraction *isect) const = 0;
         virtual Material* getMaterial() = 0;
-        virtual void Sample(Interaction &isect, float &pdf) =0;
+        virtual void Sample(SurfaceInteraction &isect, float &pdf) =0;
     };
     
     
@@ -31,7 +31,7 @@ namespace r
     //     Sphere(Vector3f _o, float _r, Vector3f _c, reflectType _t);
     //     bool intersect(Ray &r, float& tNear);
     //     void getSurfaceProperties(Vector3f &hitPoint, Vector3f &N);
-    //     // void sampleSphereUniform(Interaction& ret, float& pdf);
+    //     // void sampleSphereUniform(SurfaceInteraction& ret, float& pdf);
     //     Vector3f evalBRDF(const Vector3f& wo, const Vector3f& N);
     //     bool hasEmit();
     //     Vector3f o;

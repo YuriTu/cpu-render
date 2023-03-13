@@ -17,30 +17,30 @@ float Triangle::getArea() {
     return area;
 }
 
-bool Triangle::intersect(const Ray& ray,Interaction *interaction)
+bool Triangle::intersect(const Ray& ray,SurfaceInteraction *interaction)
 {
-    // 这里写的有问题，导致光源没有被判断到相交
-    Interaction inter;
+    SurfaceInteraction inter;
+    bool hit = false;
     if (Dot(ray.d, normal) > 0)
-        return inter.happened;
+        return hit;
     double u, v, t_tmp = 0;
     Vector3f pvec = Cross(ray.d, e2);
     double det = Dot(e1, pvec);
     if (fabs(det) < EPSILON)
-        return inter.happened;
+        return hit;
 
     double det_inv = 1. / det;
     Vector3f tvec = ray.o - v0;
     u = Dot(tvec, pvec) * det_inv;
     if (u < 0 || u > 1)
-        return inter.happened;
+        return hit;
     Vector3f qvec = Cross(tvec, e1);
     v = Dot(ray.d, qvec) * det_inv;
     if (v < 0 || u + v > 1)
-        return inter.happened;
+        return hit;
     t_tmp = Dot(e2, qvec) * det_inv;
 
-    inter.happened = (t_tmp>0) && (u>0) && (v>0) && (1-u-v>0);
+    hit = (t_tmp>0) && (u>0) && (v>0) && (1-u-v>0);
     inter.p = ray.o + ray.d * t_tmp;
     inter.n = this->normal;
     inter.wo = -ray.d;
@@ -50,10 +50,10 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
     inter.distance = t_tmp;
     *interaction = inter;
 
-    return inter.happened;
+    return hit;
 }
 
-void Triangle::Sample(Interaction &isect, float &pdf){
+void Triangle::Sample(SurfaceInteraction &isect, float &pdf){
     float x = std::sqrt(getRandom()), y = getRandom();
     // 1-x + x - xy + xy = 1 所以不会超过重心坐标系
     isect.p = v0 * (1.0f - x) + v1 * (x * (1.0f - y)) + v2 * (x * y);
@@ -63,7 +63,7 @@ void Triangle::Sample(Interaction &isect, float &pdf){
     // printf("triangle:sample pdf %f  \n", pdf);
 }
 
-void Triangle::ComputeScatteringFunction(Interaction *isect) const {
+void Triangle::ComputeScatteringFunction(SurfaceInteraction *isect) const {
     return this->material->ComputeScatteringFunction(isect);
 };
 
@@ -127,7 +127,7 @@ float MeshTriangle::getArea() {
     return area;
 }
 
-bool MeshTriangle::intersect(const Ray& ray, Interaction *interaction){
+bool MeshTriangle::intersect(const Ray& ray, SurfaceInteraction *interaction){
     bool hit = false;
     if (this->bvh) {
         hit = bvh->intersect(ray, interaction);
@@ -136,7 +136,7 @@ bool MeshTriangle::intersect(const Ray& ray, Interaction *interaction){
     return hit;
 };
 
-void MeshTriangle::ComputeScatteringFunction(Interaction *isect) const {
+void MeshTriangle::ComputeScatteringFunction(SurfaceInteraction *isect) const {
     return this->material->ComputeScatteringFunction(isect);
 };
 
@@ -144,7 +144,7 @@ Material* MeshTriangle::getMaterial() {
     return this->material;
 };
 
-void MeshTriangle::Sample(Interaction &isect, float &pdf) {
+void MeshTriangle::Sample(SurfaceInteraction &isect, float &pdf) {
     this->bvh->Sample(isect, pdf);
 }
 

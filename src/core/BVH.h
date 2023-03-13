@@ -5,9 +5,9 @@
 #include <vector>
 #include <memory>
 #include <ctime>
+#include "r.h"
 #include "shape.h"
 #include "Bounds3.h"
-#include "interaction.h"
 #include "geometry.h"
 #include "mesh.h"
 
@@ -26,8 +26,8 @@ public:
     // todo 原本用的share_prt
     BVHAccel(std::vector<std::shared_ptr<Mesh>> p, int maxPrimsInNode = 1, SplitMethod splitMethod = SplitMethod::NAIVE);
 
-    bool intersect(const Ray& ray, Interaction *isect) const;
-    Interaction getIntersection(BVHBuildNode* node, const Ray& ray)const;
+    bool intersect(const Ray& ray, SurfaceInteraction *isect) const;
+    bool getIntersection(BVHBuildNode* node, const Ray& ray, SurfaceInteraction *isect)const;
     // bool IntersectP(const Ray &ray) const;
     BVHBuildNode* root;
 
@@ -39,8 +39,8 @@ public:
     const SplitMethod splitMethod;
     std::vector<std::shared_ptr<Mesh>> primitives;
 
-    void getSample(BVHBuildNode* node, float p, Interaction &pos, float &pdf);
-    void Sample(Interaction &pos, float &pdf);
+    void getSample(BVHBuildNode* node, float p, SurfaceInteraction &pos, float &pdf);
+    void Sample(SurfaceInteraction &pos, float &pdf);
 };
 
 struct BVHBuildNode {

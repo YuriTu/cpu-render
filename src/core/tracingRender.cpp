@@ -9,18 +9,18 @@ namespace r{
 TracingRender::TracingRender(int w, int h): width(w),height(h) {
 }
 
-Vector3f TracingRender::uniformSampleOneLight(Interaction &isect,const Scene &scene) {\
+Vector3f TracingRender::uniformSampleOneLight(SurfaceInteraction &isect,const Scene &scene) {\
     // 先只考虑一个光源的标准情况
     int nLight = 0;
     return estimateDirect(isect, scene, scene.lights[nLight]);
 }
 
-Vector3f TracingRender::estimateDirect(Interaction &isect,const Scene &scene, std::shared_ptr<Mesh> light) {
+Vector3f TracingRender::estimateDirect(SurfaceInteraction &isect,const Scene &scene, std::shared_ptr<Mesh> light) {
     // sample light
     Vector3f L = Vector3f();
     Vector3f Le = Vector3f();
     float pdf;
-    Interaction light_isect;
+    SurfaceInteraction light_isect;
     light->Sample(light_isect, pdf);
 
     Vector3f wi_origin = light_isect.p - isect.p;
@@ -55,7 +55,7 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
     //todo 根据radiacen 质量做terminal 去掉具体的samples
     for (bounces = 0; bounces < scene.maxDepth; bounces++) {
         // scene.intersect(ray,)
-        Interaction isect;
+        SurfaceInteraction isect;
         bool foundIntersection = scene.intersect(ray, &isect);
         bool foundMediumIntersection = false;
 
@@ -146,7 +146,7 @@ void TracingRender::render(const Scene &scene)
             }
             
             // printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
-            // if (i == 5 && j == 28) {
+            // if (i == 5 && j == 5) {
             //     printf("debug");
             // }
             frameBuffer[index] = radiance / spp;

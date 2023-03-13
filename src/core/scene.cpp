@@ -37,7 +37,7 @@ void Scene::_initLightList() {
     }
 }
 
-bool Scene::intersect(const Ray& ray,Interaction *isect ) const {
+bool Scene::intersect(const Ray& ray,SurfaceInteraction *isect ) const {
     return this->bvh->intersect(ray, isect);
 };
 

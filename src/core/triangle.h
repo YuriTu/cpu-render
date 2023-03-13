@@ -24,10 +24,10 @@ public:
 
     Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2, Material* _m = nullptr);
 
-    bool intersect(const Ray& ray, Interaction *interaction) override;
-    void ComputeScatteringFunction(Interaction *isect) const;
+    bool intersect(const Ray& ray, SurfaceInteraction *interaction) override;
+    void ComputeScatteringFunction(SurfaceInteraction *isect) const;
     Bounds3 getBounds() override;
-    void Sample(Interaction &isect, float &pdf);
+    void Sample(SurfaceInteraction &isect, float &pdf);
     float getArea();
     Material* getMaterial();
 };
@@ -37,7 +37,7 @@ class MeshTriangle : public Mesh
 public:
     MeshTriangle(const std::string& filename, Material *mt);
 
-    bool intersect(const Ray& ray, Interaction *interaction);
+    bool intersect(const Ray& ray, SurfaceInteraction *interaction);
 
     bool intersect(const Ray& ray, float& tnear, uint32_t& index) const
     {
@@ -61,9 +61,9 @@ public:
     }
 
     Bounds3 getBounds() { return bounding_box; }
-    void ComputeScatteringFunction(Interaction *isect) const override;
+    void ComputeScatteringFunction(SurfaceInteraction *isect) const override;
     Material* getMaterial();
-    void Sample(Interaction &isect, float &pdf);
+    void Sample(SurfaceInteraction &isect, float &pdf);
     float getArea();
 
     Bounds3 bounding_box;

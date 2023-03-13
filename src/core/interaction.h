@@ -12,29 +12,26 @@ class Interaction
 {
 public:
     Interaction();
-    Interaction(bool h);
-
-    Vector3f Le() const;
-    void ComputeScatteringFunction(const Ray &ray);
     Ray spawnRay(const Vector3f &d) const;
 
-    bool happened;
     double distance;
 
     Vector3f p;
     Vector3f n;
     Vector3f wo;
 
+};
+
+class SurfaceInteraction : public Interaction
+{   
+public:
+    SurfaceInteraction();
+    SurfaceInteraction(const Vector3f &p, const Vector3f &n,const Vector3f &wo);
+    Vector3f Le() const;
+    void ComputeScatteringFunction(const Ray &ray);
     Mesh* primitive;
     Vector3f bsdf;
 };
-
-// struct SurfaceInteraction 
-// {
-//     SurfaceInteraction(){
-
-//     }
-// };
 
 
 // struct MediumInteraction

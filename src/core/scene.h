@@ -15,7 +15,7 @@ class Scene
 {
     public:
         Scene(int w,int h);
-        bool intersect(const Ray& ray,Interaction *isect ) const;
+        bool intersect(const Ray& ray,SurfaceInteraction *isect ) const;
         void buildBVH();
         void add(std::shared_ptr<Mesh> obj);
         void add(std::vector<std::shared_ptr<Mesh>> lists);

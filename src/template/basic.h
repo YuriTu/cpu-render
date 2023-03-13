@@ -47,12 +47,9 @@ struct SceneBasic
         auto left = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
         auto right = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
         auto shortbox = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", green);
-        // auto fo = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
+        auto fo = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
         auto light_ = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
-        // std::vector<Mesh *> rs = {&floor, &left, &right ,&light_};
-        // std::shared_ptr<Mesh> leftptr(left);
         
-        // std::vector<std::shared_ptr<Mesh>> rs = {floor,left, right};
         std::vector<std::shared_ptr<Mesh>> rs = {
             left,right,floor,
             shortbox,
@@ -60,9 +57,6 @@ struct SceneBasic
          light_};
         return rs;
     }
-    
-    
 };
-
 }
 #endif //RT_TEMPLATE_BASIC_H

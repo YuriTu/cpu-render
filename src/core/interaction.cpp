@@ -4,7 +4,18 @@ namespace r
 {
 
 Interaction::Interaction() {
-    happened=false;
+    p = Vector3f();
+    n = Vector3f();
+    wo = Vector3f();
+    distance= std::numeric_limits<double>::max();
+}
+
+Ray Interaction::spawnRay(const Vector3f &d) const {
+    Vector3f o = this->p;
+    return Ray(o,d);
+}
+
+SurfaceInteraction::SurfaceInteraction() {
     p = Vector3f();
     n = Vector3f();
     wo = Vector3f();
@@ -12,12 +23,14 @@ Interaction::Interaction() {
     primitive = nullptr;
     bsdf = Vector3f(0.0);
 }
-
-Interaction::Interaction(bool h) {
-    happened = h;
+SurfaceInteraction::SurfaceInteraction(const Vector3f &_p, const Vector3f &_n,const Vector3f &_wo) {
+    p = _p;
+    n = _n;
+    wo = _wo;
+    distance= std::numeric_limits<double>::max();
 }
 
-Vector3f Interaction::Le() const{
+Vector3f SurfaceInteraction::Le() const{
     Vector3f rs(0.f);
     if (primitive->getMaterial()) {
         // todo 这里要考虑一下cos 背面insect light 不能贡献能量
@@ -26,13 +39,8 @@ Vector3f Interaction::Le() const{
     return rs;
 }
 
-void Interaction::ComputeScatteringFunction(const Ray &ray) {
+void SurfaceInteraction::ComputeScatteringFunction(const Ray &ray) {
     return primitive->ComputeScatteringFunction(this);
-}
-
-Ray Interaction::spawnRay(const Vector3f &d) const {
-    Vector3f o = this->p;
-    return Ray(o,d);
 }
 
 
