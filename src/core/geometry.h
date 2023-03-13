@@ -4,8 +4,6 @@
 namespace r
 {
 
-const double TMAX = std::numeric_limits<double>::max();
-
 template <typename T>
 class Vector3
 {
@@ -157,13 +155,22 @@ Vector3<T> Max(const Vector3<T> &v1, const Vector3<T> &v2) {
                       std::max(v1.z, v2.z));
 }
 
-struct Ray
+template <typename T>
+Vector3<T> EXP(const Vector3<T> &v) {
+    return Vector3<T>(std::exp(v.x),std::exp(v.y),std::exp(v.z));
+}
+
+class Ray
 {   
+public:
     Ray(Vector3f _o,Vector3f _d);
+    Ray(const Vector3f _o,const Vector3f _d, float tMax,const Medium *medium = nullptr);
+
     Vector3f o;
     Vector3f d;
     Vector3f d_inv;
-    float t,t_min,t_max;
+    float t,tMax;
+    const Medium *medium;
 };
 
 }

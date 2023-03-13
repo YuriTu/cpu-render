@@ -9,11 +9,14 @@ namespace r
 class Scene;
 class Interaction;
 class SurfaceInteraction;
+class MediumInteraction;
+class Medium;
+class HomogeneousMedium;
 class Mesh;
 class Material;
 class Bounds3;
 class BVHAccel;
-struct Ray;
+class Ray;
 template <typename T>
 class Vector3;
 class Shape;
@@ -22,6 +25,9 @@ class Triangle;
 class MeshTriangle;
 }
 
+
+static constexpr float MAXFloat = std::numeric_limits<float>::max();
+static constexpr float Infinity = std::numeric_limits<float>::infinity();
 
 static constexpr float PI = 3.1415926f;
 static constexpr float M_PI = 3.1415926f;

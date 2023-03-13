@@ -15,6 +15,8 @@ Ray Interaction::spawnRay(const Vector3f &d) const {
     return Ray(o,d);
 }
 
+// ------------ SurfaceInteraction -------------
+
 SurfaceInteraction::SurfaceInteraction() {
     p = Vector3f();
     n = Vector3f();
@@ -23,6 +25,7 @@ SurfaceInteraction::SurfaceInteraction() {
     primitive = nullptr;
     bsdf = Vector3f(0.0);
 }
+
 SurfaceInteraction::SurfaceInteraction(const Vector3f &_p, const Vector3f &_n,const Vector3f &_wo) {
     p = _p;
     n = _n;
@@ -43,5 +46,13 @@ void SurfaceInteraction::ComputeScatteringFunction(const Ray &ray) {
     return primitive->ComputeScatteringFunction(this);
 }
 
+// ------------ MediumInteraction -------------
+
+MediumInteraction::MediumInteraction() {
+    p = Vector3f();
+    n = Vector3f();
+    wo = Vector3f();
+    distance= std::numeric_limits<double>::max();
+}
 
 }

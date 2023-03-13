@@ -19,7 +19,6 @@ public:
     Vector3f p;
     Vector3f n;
     Vector3f wo;
-
 };
 
 class SurfaceInteraction : public Interaction
@@ -33,15 +32,12 @@ public:
     Vector3f bsdf;
 };
 
-
-// struct MediumInteraction
-// {
-//     MediumInteraction(){
-        
-//     }
-// };
-
-
+class MediumInteraction : public Interaction
+{
+public:
+    MediumInteraction();
+    // phase 
+};
 
 }
 #endif //RAYTRACING_INTERACTION_H
