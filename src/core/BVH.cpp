@@ -155,13 +155,20 @@ void BVHAccel::getSample(BVHBuildNode* node, float p, Interaction &pos, float &p
         pdf *= node->area;
         return;
     }
-    if(p < node->left->area) getSample(node->left, p, pos, pdf);
-    else getSample(node->right, p - node->left->area, pos, pdf);
+    if(p < node->left->area){
+        getSample(node->left, p, pos, pdf);
+        
+    } else {
+        getSample(node->right, p - node->left->area, pos, pdf);
+    } 
+    // printf("bvh:getsample pdf %f \n", pdf);
+    return ;
 }
 
 void BVHAccel::Sample(Interaction &pos, float &pdf){
     float p = std::sqrt(getRandom()) * root->area;
     getSample(root, p, pos, pdf);
+    // printf("bvh:sample pdf %f  \n", pdf);
     pdf /= root->area;
 }
 

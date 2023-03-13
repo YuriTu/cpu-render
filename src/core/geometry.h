@@ -133,6 +133,11 @@ inline T AbsDot(const Vector3<T> &v1, const Vector3<T> &v2) {
 }
 
 template <typename T>
+inline T SafeDot(const Vector3<T>v1, const Vector3<T>v2) {
+    return std::max(0.f,Dot(v1,v2));
+}
+
+template <typename T>
 Vector3<T> Cross(const Vector3<T> &v1,const Vector3<T> &v2){
     T x = v1.y * v2.z - v1.z*v2.y;
     T y = v1.z * v2.x - v1.x*v2.z;

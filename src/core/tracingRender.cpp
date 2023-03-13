@@ -34,10 +34,10 @@ Vector3f TracingRender::estimateDirect(Interaction &isect,const Scene &scene, st
     }
     Le = light_isect.primitive->getMaterial()->getEmission();
     // light 的cos ，反一下从light出发的向量
-    float light_cosTheta = Dot(-wi,light_normal);
+    float light_cosTheta = AbsDot(-wi,light_normal);
     float dw2da = light_cosTheta / wi_origin.lengthSquared();
 
-    float cosTheta = Dot(wi,p_normal);
+    float cosTheta = SafeDot(wi,p_normal);
     
     L = (Le *  dw2da / pdf) * cosTheta;
     return L;
@@ -64,6 +64,8 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
 
         } else {
             if (!foundIntersection) {
+                // 1. 边缘部分的intersect false的情况 未免太多了，
+                // 着色感觉差不多了，应该还有一些精度的问题
                 directRadiance = scene.background;
                 break;
             }
@@ -92,8 +94,10 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
             // isect.bsdf sample(wi)
             Vector3f wi =  isect.primitive->getMaterial()->sample(wo,isect.n,pdf);
             float cosTheta = AbsDot(wi,isect.n);
+            // 这里还要算 间接光照的brdf 反射能量，先用之前的撮合一个
             // beta / pdf
-            beta *= cosTheta / pdf;
+            Vector3f temp = isect.bsdf * ( cosTheta / pdf );
+            beta = temp * beta;
             ray = isect.spawnRay(wi);
         }
         // rr 

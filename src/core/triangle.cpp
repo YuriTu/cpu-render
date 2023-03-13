@@ -63,6 +63,7 @@ void Triangle::Sample(Interaction &isect, float &pdf){
     isect.n = this->normal;
     isect.primitive = this;
     pdf = 1.0f / area;
+    // printf("triangle:sample pdf %f  \n", pdf);
 }
 
 void Triangle::ComputeScatteringFunction(Interaction *isect) const {
