@@ -129,7 +129,7 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
         bool temp = node->object->intersect(ray, &tempIsect);
         if (temp || tempIsect.happened) {
             if (temp != tempIsect.happened)
-            printf("happend error！！");
+            printf("error!");
         }
         rs = tempIsect;
     } else {
@@ -150,7 +150,6 @@ Interaction BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
 
 void BVHAccel::getSample(BVHBuildNode* node, float p, Interaction &pos, float &pdf){
     if(node->left == nullptr || node->right == nullptr){
-        // fixme 这里需要实现
         node->object->Sample(pos, pdf);
         pdf *= node->area;
         return;

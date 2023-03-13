@@ -12,9 +12,9 @@ namespace r
 struct SceneBasic
 {
     // scene prototype;
-    int width = 500;
-    int height = 500;
-    int sampleCount = 1;
+    int width = 200;
+    int height = 200;
+    int sampleCount = 2;
     // primitive list  light
 
     // perspectiveProjection
@@ -24,9 +24,9 @@ struct SceneBasic
     float far = 1000.f;
     float fov = 40.f;
     float aspect = width / (float)height;
-    float maxDepth = 5;
+    float maxDepth = 2;
     Vector3f background = Vector3f(0.235294, 0.67451, 0.843137);
-    Vector3f camPos = Vector3f(278, 273, -800);
+    Vector3f camPos = Vector3f(278, 273, -600);
     float rrThreshold = 0.8;
     std::vector<std::shared_ptr<Mesh>> lists = createObject();
 

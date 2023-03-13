@@ -21,7 +21,6 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
 {
     // 这里写的有问题，导致光源没有被判断到相交
     Interaction inter;
-
     if (Dot(ray.d, normal) > 0)
         return inter.happened;
     double u, v, t_tmp = 0;
@@ -41,7 +40,6 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
         return inter.happened;
     t_tmp = Dot(e2, qvec) * det_inv;
 
-    // TODO find ray triangle Interaction
     inter.happened = (t_tmp>0) && (u>0) && (v>0) && (1-u-v>0);
     inter.p = ray.o + ray.d * t_tmp;
     inter.n = this->normal;
@@ -50,7 +48,6 @@ bool Triangle::intersect(const Ray& ray,Interaction *interaction)
     inter.primitive = this;
 
     inter.distance = t_tmp;
-    // interaction = new Interaction();
     *interaction = inter;
 
     return inter.happened;

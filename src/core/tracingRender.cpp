@@ -49,6 +49,7 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
     Vector3f directRadiance(0.0);
     int depth = 0;
     int bounces;
+    
     // tr系数
     Vector3f beta(1.f);
     //todo 根据radiacen 质量做terminal 去掉具体的samples
@@ -63,22 +64,27 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
         if (foundMediumIntersection) {
 
         } else {
-            if (!foundIntersection) {
-                // 1. 边缘部分的intersect false的情况 未免太多了，
-                // 着色感觉差不多了，应该还有一些精度的问题
-                directRadiance = scene.background;
-                break;
-            }
-
             // emission term
             //  只考虑direct的情况
             if (bounces == 0 ) {
-                directRadiance += beta * isect.Le();
-                // todo 先默认只有light 才有emission
-                if (directRadiance > Vector3f()){
-                    return directRadiance;
+                if (foundIntersection) {
+                    directRadiance += beta * isect.Le();
+                    // todo 先默认只有light 才有emission
+                    if (directRadiance > Vector3f()){
+                        return directRadiance;
+                    }    
+                } else {
+                    directRadiance = scene.background;
+                    printf("bound 0 not found!");
+                    break;
                 }
+                
             }
+
+            if (!foundIntersection) {
+                break;
+            }
+
 
             // 计算bsdf的情况
             isect.ComputeScatteringFunction(ray);
@@ -131,12 +137,12 @@ void TracingRender::render(const Scene &scene)
             float y =(2.0 * (j + 0.5f) / (float)height - 1.f) * scale;
             Vector3f _dir(-x,y,1);
             Vector3f dir = normalize(_dir);
-            Ray ray(cam,dir);
             int index = getIndex(i,j,width,height);
             Vector3f radiance;
             int spp = scene.samples;
             
             for (int k = 0; k < spp; k++) {
+                Ray ray(cam,dir);
                 radiance += this->Li(ray,scene);
             }
             
