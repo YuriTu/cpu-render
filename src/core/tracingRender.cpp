@@ -75,7 +75,6 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
                     }    
                 } else {
                     directRadiance = scene.background;
-                    printf("bound 0 not found!");
                     break;
                 }
                 
