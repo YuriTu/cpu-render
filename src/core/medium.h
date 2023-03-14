@@ -8,6 +8,7 @@ namespace r {
 
 class Medium {
 public:
+    Medium() = default;
     virtual ~Medium(){}
     virtual Vector3f Tr(const Ray &ray) const = 0;
     virtual Vector3f Sample(const Ray &ray,MediumInteraction *mi) const = 0;

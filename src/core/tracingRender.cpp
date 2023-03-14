@@ -9,13 +9,13 @@ namespace r{
 TracingRender::TracingRender(int w, int h): width(w),height(h) {
 }
 
-Vector3f TracingRender::uniformSampleOneLight(SurfaceInteraction &isect,const Scene &scene) {\
+Vector3f TracingRender::uniformSampleOneLight(const Interaction &isect,const Scene &scene) {\
     // 先只考虑一个光源的标准情况
     int nLight = 0;
     return estimateDirect(isect, scene, scene.lights[nLight]);
 }
 
-Vector3f TracingRender::estimateDirect(SurfaceInteraction &isect,const Scene &scene, std::shared_ptr<Mesh> light) {
+Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &scene, std::shared_ptr<Mesh> light) {
     // sample light
     Vector3f L = Vector3f();
     Vector3f Le = Vector3f();
@@ -53,6 +53,7 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
     // tr系数
     Vector3f beta(1.f);
     //todo 根据radiacen 质量做terminal 去掉具体的samples
+    // todo 这种for的方法复合材质不好弄
     for (bounces = 0; bounces < scene.maxDepth; bounces++) {
         // scene.intersect(ray,)
         SurfaceInteraction isect;
@@ -64,6 +65,14 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
 
         if (mi.isVaild()) {
             // medium term
+            Vector3f irradiance = this->uniformSampleOneLight(isect, scene);
+
+            // 采样phase 准备下次bounce
+            Vector3f wo = -ray.d;
+            Vector3f wi;
+            Vector3f u = Vector3f(getRandom(), getRandom(),0.f);
+            mi.phase->Sample_p(wo, &wi, u);
+            ray = mi.spawnRay(wi);
 
         } else {
             // emission term
@@ -79,13 +88,11 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
                     directRadiance = scene.background;
                     break;
                 }
-                
             }
 
             if (!foundIntersection) {
                 break;
             }
-
 
             // 计算bsdf的情况
             isect.ComputeScatteringFunction(ray);
@@ -99,6 +106,7 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
             Vector3f wo = - ray.d;
             float pdf;
             // isect.bsdf sample(wi)
+            //warning 如果是medium材质，这里要做处理 
             Vector3f wi =  isect.primitive->getMaterial()->sample(wo,isect.n,pdf);
             float cosTheta = AbsDot(wi,isect.n);
             // 这里还要算 间接光照的brdf 反射能量，先用之前的撮合一个

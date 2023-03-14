@@ -74,6 +74,13 @@ class Vector3
             return rs;
         }
 
+        bool operator==(const Vector3<T> &v) const {
+            return x == v.x && y == v.y && z == v.z;
+        }
+        bool operator!=(const Vector3<T> &v) const {
+            return x != v.x || y != v.y || z != v.z;
+        }
+
         bool isBlack() const {
             bool rs = false;
             if (x == 0 && y == 0 && z == 0) {
@@ -109,6 +116,9 @@ template <typename T>
 inline Vector3<T> operator*(float n,const Vector3<T>& v) {
     return v * n;
 }
+
+
+
 
 template <typename T>
 inline Vector3<T> normalize(const Vector3<T> &v) {

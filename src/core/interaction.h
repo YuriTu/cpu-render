@@ -15,7 +15,12 @@ public:
     Interaction();
     Interaction(const Vector3f &p, const Vector3f &wo, 
         const MediumInterface &mediumInterface);
+
     Ray spawnRay(const Vector3f &d) const;
+    bool isSurfaceInteraction() const;
+    bool isMediumInteraction() const;
+    const Medium* getMedium(const Vector3f &w) const;
+    const Medium* getMedium() const;
 
     double distance;
 

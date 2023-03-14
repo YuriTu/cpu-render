@@ -13,12 +13,33 @@ Interaction::Interaction() {
 Interaction::Interaction(const Vector3f &p, const Vector3f &wo, const MediumInterface &mediumInterface)
     :p(p), wo(wo), mediumInterface(mediumInterface)
 {
+    n = Vector3f();
+    distance= std::numeric_limits<double>::max();
+}
 
+bool Interaction::isSurfaceInteraction() const {
+    return n != Vector3f();
+}
+
+bool Interaction::isMediumInteraction() const {
+    return !isSurfaceInteraction();
+}
+
+const Medium* Interaction::getMedium(const Vector3f &w) const {
+    if (Dot(w,n) > 0) {
+        return mediumInterface.outside;
+    } else {
+        return mediumInterface.inside;
+    }
+}
+
+const Medium* Interaction::getMedium() const {
+    return mediumInterface.inside;
 }
 
 Ray Interaction::spawnRay(const Vector3f &d) const {
     Vector3f o = this->p;
-    return Ray(o,d);
+    return Ray(o,d, Infinity, getMedium(d));
 }
 
 // ------------ SurfaceInteraction -------------
@@ -53,7 +74,5 @@ void SurfaceInteraction::ComputeScatteringFunction(const Ray &ray) {
 }
 
 // ------------ MediumInteraction -------------
-
-
 
 }
