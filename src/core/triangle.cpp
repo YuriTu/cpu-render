@@ -41,7 +41,7 @@ bool Triangle::intersect(const Ray& ray,SurfaceInteraction *interaction)
     t_tmp = Dot(e2, qvec) * det_inv;
 
     hit = (t_tmp>0) && (u>0) && (v>0) && (1-u-v>0);
-    inter.p = ray.o + ray.d * t_tmp;
+    inter.p = ray(t_tmp);
     inter.n = this->normal;
     inter.wo = -ray.d;
     

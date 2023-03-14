@@ -4,6 +4,7 @@
 #include "geometry.h"
 #include "material.h"
 #include "mesh.h"
+#include "medium.h"
 
 namespace r
 {
@@ -12,6 +13,8 @@ class Interaction
 {
 public:
     Interaction();
+    Interaction(const Vector3f &p, const Vector3f &wo, 
+        const MediumInterface &mediumInterface);
     Ray spawnRay(const Vector3f &d) const;
 
     double distance;
@@ -19,6 +22,8 @@ public:
     Vector3f p;
     Vector3f n;
     Vector3f wo;
+
+    MediumInterface mediumInterface;
 };
 
 class SurfaceInteraction : public Interaction
@@ -35,8 +40,13 @@ public:
 class MediumInteraction : public Interaction
 {
 public:
-    MediumInteraction();
-    // phase 
+    MediumInteraction() : phase(nullptr){}
+    MediumInteraction(const Vector3f &p, const Vector3f &wo,
+                     const Medium *medium, const PhaseFunction *phase)
+        : Interaction(p,wo, medium), phase(phase){}
+    bool isVaild() const { return phase != nullptr; }
+    
+    const PhaseFunction *phase;
 };
 
 }

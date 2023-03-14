@@ -8,10 +8,9 @@ namespace r {
 
 class Medium {
 public:
-    Medium() = default;
     virtual ~Medium(){}
     virtual Vector3f Tr(const Ray &ray) const = 0;
-    virtual Vector3f Sample(const Ray &ray) const = 0;
+    virtual Vector3f Sample(const Ray &ray,MediumInteraction *mi) const = 0;
 };
 
 class HomogeneousMedium : public Medium {
@@ -19,7 +18,7 @@ public:
     HomogeneousMedium(const Vector3f &sigma_a, const Vector3f &sigma_s, float g) 
         : sigma_a(sigma_a), sigma_s(sigma_s), sigma_t(sigma_s + sigma_a), g(g) {}
     Vector3f Tr(const Ray &ray) const;
-    Vector3f Sample(const Ray &ray) const;
+    Vector3f Sample(const Ray &ray, MediumInteraction *mi) const;
     
 private:
     const Vector3f sigma_a,sigma_s,sigma_t;

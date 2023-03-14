@@ -166,6 +166,8 @@ public:
     Ray(Vector3f _o,Vector3f _d);
     Ray(const Vector3f _o,const Vector3f _d, float tMax,const Medium *medium = nullptr);
 
+    Vector3f operator()(float t) const { return o + d * t; }
+
     Vector3f o;
     Vector3f d;
     Vector3f d_inv;

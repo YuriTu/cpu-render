@@ -57,11 +57,13 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
         // scene.intersect(ray,)
         SurfaceInteraction isect;
         bool foundIntersection = scene.intersect(ray, &isect);
-        bool foundMediumIntersection = false;
+        MediumInteraction mi;
+        if (ray.medium) beta = beta * ray.medium->Sample(ray, &mi);
 
         if (beta.isBlack()) break;
 
-        if (foundMediumIntersection) {
+        if (mi.isVaild()) {
+            // medium term
 
         } else {
             // emission term
