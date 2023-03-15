@@ -4,7 +4,7 @@
 
 namespace r{
 
-BVHAccel::BVHAccel(std::vector<std::shared_ptr<Mesh>> p, int maxPrimsInNode,
+BVHAccel::BVHAccel(std::vector<std::shared_ptr<GeometricPrimitive>> p, int maxPrimsInNode,
                    SplitMethod splitMethod)
     : maxPrimsInNode(std::min(255, maxPrimsInNode)), splitMethod(splitMethod),
       primitives(std::move(p))
@@ -27,17 +27,17 @@ BVHAccel::BVHAccel(std::vector<std::shared_ptr<Mesh>> p, int maxPrimsInNode,
         hrs, mins, secs);
 }
 
-BVHBuildNode* BVHAccel::recursiveBuild(std::vector<std::shared_ptr<Mesh>> objects)
+BVHBuildNode* BVHAccel::recursiveBuild(std::vector<std::shared_ptr<GeometricPrimitive>> objects)
 {
     BVHBuildNode* node = new BVHBuildNode();
 
     // Compute bounds of all primitives in BVH node
     Bounds3 bounds;
     for (int i = 0; i < objects.size(); ++i)
-        bounds = Union(bounds, objects[i]->getBounds());
+        bounds = Union(bounds, objects[i]->WorldBound());
     if (objects.size() == 1) {
         // Create leaf _BVHBuildNode_
-        node->bounds = objects[0]->getBounds();
+        node->bounds = objects[0]->WorldBound();
         node->object = objects[0];
         node->left = nullptr;
         node->right = nullptr;
@@ -45,8 +45,8 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<std::shared_ptr<Mesh>> object
         return node;
     }
     else if (objects.size() == 2) {
-        node->left = recursiveBuild(std::vector<std::shared_ptr<Mesh>>{objects[0]});
-        node->right = recursiveBuild(std::vector<std::shared_ptr<Mesh>>{objects[1]});
+        node->left = recursiveBuild(std::vector<std::shared_ptr<GeometricPrimitive>>{objects[0]});
+        node->right = recursiveBuild(std::vector<std::shared_ptr<GeometricPrimitive>>{objects[1]});
 
         node->bounds = Union(node->left->bounds, node->right->bounds);
         node->area = node->left->area + node->right->area;
@@ -56,25 +56,25 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<std::shared_ptr<Mesh>> object
         Bounds3 centroidBounds;
         for (int i = 0; i < objects.size(); ++i)
             centroidBounds =
-                Union(centroidBounds, objects[i]->getBounds().Centroid());
+                Union(centroidBounds, objects[i]->WorldBound().Centroid());
         int dim = centroidBounds.maxExtent();
         switch (dim) {
         case 0:
             std::sort(objects.begin(), objects.end(), [](auto f1, auto f2) {
-                return f1->getBounds().Centroid().x <
-                       f2->getBounds().Centroid().x;
+                return f1->WorldBound().Centroid().x <
+                       f2->WorldBound().Centroid().x;
             });
             break;
         case 1:
             std::sort(objects.begin(), objects.end(), [](auto f1, auto f2) {
-                return f1->getBounds().Centroid().y <
-                       f2->getBounds().Centroid().y;
+                return f1->WorldBound().Centroid().y <
+                       f2->WorldBound().Centroid().y;
             });
             break;
         case 2:
             std::sort(objects.begin(), objects.end(), [](auto f1, auto f2) {
-                return f1->getBounds().Centroid().z <
-                       f2->getBounds().Centroid().z;
+                return f1->WorldBound().Centroid().z <
+                       f2->WorldBound().Centroid().z;
             });
             break;
         }
@@ -83,8 +83,8 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<std::shared_ptr<Mesh>> object
         auto middling = objects.begin() + (objects.size() / 2);
         auto ending = objects.end();
 
-        auto leftshapes = std::vector<std::shared_ptr<Mesh>>(beginning, middling);
-        auto rightshapes = std::vector<std::shared_ptr<Mesh>>(middling, ending);
+        auto leftshapes = std::vector<std::shared_ptr<GeometricPrimitive>>(beginning, middling);
+        auto rightshapes = std::vector<std::shared_ptr<GeometricPrimitive>>(middling, ending);
 
         assert(objects.size() == (leftshapes.size() + rightshapes.size()));
 

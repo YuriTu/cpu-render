@@ -3,7 +3,7 @@
 namespace r 
 {
 
-Vector3f Material::toWorld(const Vector3f &a,const Vector3f &N){
+Vector3f Material::toWorld(const Vector3f &a,const Vector3f &N) const{
     Vector3f B, C;
     if (std::fabs(N.x) > std::fabs(N.y)){
         float invLen = 1.0f / std::sqrt(N.x * N.x + N.z * N.z);
@@ -17,12 +17,12 @@ Vector3f Material::toWorld(const Vector3f &a,const Vector3f &N){
     return a.x * B + a.y * C + a.z * N;
 }
 
-bool Material::hasEmission() {
+bool Material::hasEmission() const {
     if (m_emission.lengthSquared() > EPSILON) return true;
     else return false;
 }
 
-Vector3f Material::getEmission() {
+Vector3f Material::getEmission() const {
     return this->m_emission;
 }
 
@@ -31,7 +31,7 @@ MaterialType Material::getType() {
 }
 
 
-Vector3f Material::sample(const Vector3f &wi, const Vector3f &N, float &pdf){
+Vector3f Material::sample(const Vector3f &wi, const Vector3f &N, float &pdf) const{
     pdf = 0;
     Vector3f rs = Vector3f();
     switch(m_type){

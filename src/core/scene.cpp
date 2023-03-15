@@ -7,11 +7,11 @@ Scene::Scene(int w, int h) {
     height = h;
 }
 
-void Scene::add(std::shared_ptr<Mesh> obj) {
+void Scene::add(std::shared_ptr<GeometricPrimitive> obj) {
     objects.push_back(obj);
 }
 
-void Scene::add(std::vector<std::shared_ptr<Mesh>> lists) {
+void Scene::add(std::vector<std::shared_ptr<GeometricPrimitive>> lists) {
     objects.insert(objects.end(),lists.begin(),lists.end());
 }
 
@@ -30,7 +30,7 @@ void Scene::applyTemplate(const SceneBasic temp) {
 void Scene::_initLightList() {
     int nLight = 0;
     for (size_t i = 0; i < this->objects.size(); i++) {
-        Material* material = objects[i]->getMaterial();
+        const Material* material = objects[i]->getMaterial();
         if (material->hasEmission()) {
             lights.push_back(objects[i]);
         }

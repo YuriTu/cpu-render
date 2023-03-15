@@ -15,7 +15,7 @@ Vector3f TracingRender::uniformSampleOneLight(const Interaction &isect,const Sce
     return estimateDirect(isect, scene, scene.lights[nLight]);
 }
 
-Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &scene, std::shared_ptr<Mesh> light) {
+Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &scene, std::shared_ptr<GeometricPrimitive> light) {
     // sample light
     Vector3f L = Vector3f();
     Vector3f Le = Vector3f();

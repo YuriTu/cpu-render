@@ -24,7 +24,7 @@ public:
     // BVHAccel Public Types
     enum class SplitMethod { NAIVE, SAH };
     // todo 原本用的share_prt
-    BVHAccel(std::vector<std::shared_ptr<Mesh>> p, int maxPrimsInNode = 1, SplitMethod splitMethod = SplitMethod::NAIVE);
+    BVHAccel(std::vector<std::shared_ptr<GeometricPrimitive>> p, int maxPrimsInNode = 1, SplitMethod splitMethod = SplitMethod::NAIVE);
 
     bool intersect(const Ray& ray, SurfaceInteraction *isect) const;
     bool getIntersection(BVHBuildNode* node, const Ray& ray, SurfaceInteraction *isect)const;
@@ -32,12 +32,12 @@ public:
     BVHBuildNode* root;
 
     // BVHAccel Private Methods
-    BVHBuildNode* recursiveBuild(std::vector<std::shared_ptr<Mesh>> objects);
+    BVHBuildNode* recursiveBuild(std::vector<std::shared_ptr<GeometricPrimitive>> objects);
 
     // BVHAccel Private Data
     const int maxPrimsInNode;
     const SplitMethod splitMethod;
-    std::vector<std::shared_ptr<Mesh>> primitives;
+    std::vector<std::shared_ptr<GeometricPrimitive>> primitives;
 
     void getSample(BVHBuildNode* node, float p, SurfaceInteraction &pos, float &pdf);
     void Sample(SurfaceInteraction &pos, float &pdf);
@@ -47,7 +47,7 @@ struct BVHBuildNode {
     Bounds3 bounds;
     BVHBuildNode *left;
     BVHBuildNode *right;
-    std::shared_ptr<Mesh> object;
+    std::shared_ptr<GeometricPrimitive> object;
     float area;
 
 public:

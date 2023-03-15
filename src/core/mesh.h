@@ -5,62 +5,49 @@
 #include "utils.h"
 #include "interaction.h"
 #include "bounds3.h"
+#include "shape.h"
+#include "medium.h"
 
 
 namespace r
 {
-    class Mesh
-    {
-    public:
-        Mesh() = default;
-        virtual ~Mesh() = default;
-        virtual Bounds3 getBounds() = 0;
-        // virtual void sample(SurfaceInteraction &interaction, float &pdf) = 0;
-        virtual bool intersect(const Ray& ray, SurfaceInteraction *interaction) = 0;
-        virtual float getArea() = 0;
-        virtual void ComputeScatteringFunction(SurfaceInteraction *isect) const = 0;
-        virtual Material* getMaterial() = 0;
-        virtual void Sample(SurfaceInteraction &isect, float &pdf) =0;
-    };
+class Mesh
+{
+public:
+    Mesh() = default;
+    virtual ~Mesh() = default;
+    virtual Bounds3 WorldBound() const = 0; // WorldBound
+    virtual bool intersect(const Ray& ray, SurfaceInteraction *interaction) = 0;
+    virtual const Material* getMaterial() const = 0;
+    virtual void ComputeScatteringFunction(SurfaceInteraction *isect) const = 0;
+   
+};
+
+class GeometricPrimitive : public Mesh 
+{
+public:
+    GeometricPrimitive(std::shared_ptr<Shape> shape,
+                       std::shared_ptr<Material> material)
+                       :shape(shape), material(material), mediumInterface(nullptr){};
+    GeometricPrimitive(const std::shared_ptr<Shape> shape,
+                       const std::shared_ptr<Material> material,
+                       MediumInterface mediumInterface)
+                       :shape(shape), material(material), mediumInterface(mediumInterface){};
+    Bounds3 WorldBound() const;
+    bool intersect(const Ray& ray, SurfaceInteraction *interaction);
+    const Material* getMaterial() const;
+    void ComputeScatteringFunction(SurfaceInteraction *isect) const;
+
+    void Sample(SurfaceInteraction &isect, float &pdf);
+    float getArea() const;
     
+
+private:
+    std::shared_ptr<Material> material;
+    std::shared_ptr<Shape> shape;
+    MediumInterface mediumInterface;
+};
     
-
-    // class Sphere
-    // {
-    // public:
-    //     Sphere(Vector3f _o, float _r, Vector3f _c, reflectType _t);
-    //     bool intersect(Ray &r, float& tNear);
-    //     void getSurfaceProperties(Vector3f &hitPoint, Vector3f &N);
-    //     // void sampleSphereUniform(SurfaceInteraction& ret, float& pdf);
-    //     Vector3f evalBRDF(const Vector3f& wo, const Vector3f& N);
-    //     bool hasEmit();
-    //     Vector3f o;
-    //     float radius;
-    //     float radius2;
-    //     Vector3f color;
-    //     reflectType reflectType;
-    //     // b-phone mode
-    //     Vector3f diffuseColor;
-    //     float kd;
-    //     float ks;
-    //     float specularExponent;
-    //     // reflect
-    //     float ior;
-    //     float area;
-    //     Vector3f emit;
-
-    // };
-
-    class Light
-    {
-    public:
-        Light(Vector3f _pos, float _int):pos(_pos), intensity(_int){};
-
-        Vector3f pos;
-
-
-        float intensity;
-    };
 } // namespace r
 
 

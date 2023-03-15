@@ -16,7 +16,7 @@ namespace r
         void render(const Scene &scene);
         Vector3f Li(Ray &ray, const Scene &scene);
         Vector3f uniformSampleOneLight(const Interaction &isect,const Scene &scene);
-        Vector3f estimateDirect(const Interaction &isect,const Scene &scene, std::shared_ptr<Mesh> light);
+        Vector3f estimateDirect(const Interaction &isect,const Scene &scene, std::shared_ptr<GeometricPrimitive> light);
 
         int width;
         int height;
@@ -24,7 +24,6 @@ namespace r
         float fov;
         
         std::vector<float> depthBuffer;
-        std::vector<Light> lights;
         
     private:
         

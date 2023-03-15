@@ -16,6 +16,7 @@ struct MediumInterface;
 class PhaseFunction;
 class HenyeyGreenstein;
 class Mesh;
+class GeometricPrimitive;
 class Material;
 class Bounds3;
 class BVHAccel;

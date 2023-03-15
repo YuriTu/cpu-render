@@ -2,6 +2,7 @@
 #define RT_TEMPLATE_BASIC_H
 
 #include <memory>
+#include "r.h"
 #include "geometry.h"
 #include "material.h"
 #include "triangle.h"
@@ -28,9 +29,9 @@ struct SceneBasic
     Vector3f background = Vector3f(0.235294, 0.67451, 0.843137);
     Vector3f camPos = Vector3f(278, 273, -800);
     float rrThreshold = 0.8;
-    std::vector<std::shared_ptr<Mesh>> lists = createObject();
+    std::vector<std::shared_ptr<GeometricPrimitive>> lists = createObject();
 
-    std::vector<std::shared_ptr<Mesh>> createObject() {
+    std::vector<std::shared_ptr<GeometricPrimitive>> createObject() {
         Material* red = new Material(DIFFUSE, Vector3f(0.0f));
         red->Kd = Vector3f(0.63f, 0.065f, 0.05f);
         Material* green = new Material(DIFFUSE, Vector3f(0.0f));
@@ -43,15 +44,17 @@ struct SceneBasic
         Material* light = new Material(DIFFUSE, (8.0f * Vector3f(0.747f+0.058f, 0.747f+0.258f, 0.747f) + 15.6f * Vector3f(0.740f+0.287f,0.740f+0.160f,0.740f) + 18.4f *Vector3f(0.737f+0.642f,0.737f+0.159f,0.737f)));
         light->Kd = Vector3f(0.65f);
         
-        auto floor = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white);
-        auto left = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
-        auto right = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
-        auto shortbox = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", green);
-        auto fo = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
-        auto light_ = std::make_shared<MeshTriangle>("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
+        std::shared_ptr<GeometricPrimitive> floor = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white );
+        std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
+        std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
+        std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", green);
+        std::shared_ptr<GeometricPrimitive> fo = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
+        std::shared_ptr<GeometricPrimitive> light_ = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
+
         
-        std::vector<std::shared_ptr<Mesh>> rs = {
-            left,right,floor,
+        std::vector<std::shared_ptr<GeometricPrimitive>> rs = {
+            left,
+            right,floor,
             shortbox,
             // fo,
          light_};

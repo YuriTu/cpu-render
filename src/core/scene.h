@@ -17,12 +17,12 @@ class Scene
         Scene(int w,int h);
         bool intersect(const Ray& ray,SurfaceInteraction *isect ) const;
         void buildBVH();
-        void add(std::shared_ptr<Mesh> obj);
-        void add(std::vector<std::shared_ptr<Mesh>> lists);
+        void add(std::shared_ptr<GeometricPrimitive> obj);
+        void add(std::vector<std::shared_ptr<GeometricPrimitive>> lists);
         void applyTemplate(const SceneBasic temp);
         
-        std::vector<std::shared_ptr<Mesh>> objects;
-        std::vector<std::shared_ptr<Mesh>> lights;
+        std::vector<std::shared_ptr<GeometricPrimitive>> objects;
+        std::vector<std::shared_ptr<GeometricPrimitive>> lights;
         BVHAccel *bvh;
         int depth;
         int height;

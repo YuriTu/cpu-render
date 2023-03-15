@@ -3,8 +3,8 @@
 namespace r
 {
 
-Triangle::Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2, Material* _m)
-: v0(_v0), v1(_v1), v2(_v2), material(_m)
+Triangle::Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2)
+: v0(_v0), v1(_v1), v2(_v2)
 {
     e1 = v1 - v0;
     e2 = v2 - v0;
@@ -13,11 +13,11 @@ Triangle::Triangle(Vector3f _v0, Vector3f _v1, Vector3f _v2, Material* _m)
     area =  square2.length()*0.5f;
 }
 
-float Triangle::getArea() {
+float Triangle::getArea() const {
     return area;
 }
 
-bool Triangle::intersect(const Ray& ray,SurfaceInteraction *interaction)
+bool Triangle::intersect(const Ray& ray,SurfaceInteraction *interaction) const
 {
     SurfaceInteraction inter;
     bool hit = false;
@@ -44,8 +44,8 @@ bool Triangle::intersect(const Ray& ray,SurfaceInteraction *interaction)
     inter.p = ray(t_tmp);
     inter.n = this->normal;
     inter.wo = -ray.d;
-    
-    inter.primitive = this;
+    // 注意
+    // inter.primitive = this;
 
     inter.distance = t_tmp;
     *interaction = inter;
@@ -58,31 +58,50 @@ void Triangle::Sample(SurfaceInteraction &isect, float &pdf){
     // 1-x + x - xy + xy = 1 所以不会超过重心坐标系
     isect.p = v0 * (1.0f - x) + v1 * (x * (1.0f - y)) + v2 * (x * y);
     isect.n = this->normal;
-    isect.primitive = this;
+    // 注意
+    // isect.primitive = this;
     pdf = 1.0f / area;
     // printf("triangle:sample pdf %f  \n", pdf);
 }
 
-void Triangle::ComputeScatteringFunction(SurfaceInteraction *isect) const {
-    return this->material->ComputeScatteringFunction(isect);
-};
 
-Material* Triangle::getMaterial() {
-    return this->material;
-};
-
-Bounds3 Triangle::getBounds() {
+Bounds3 Triangle::WorldBound() const {
     return Union(Bounds3(v0, v1), v2);
 }
 
+MeshTriangle::MeshTriangle(BVHAccel *_bvh, Bounds3 _bounding, float _area) {
+    bvh = _bvh;
+    bounding_box = _bounding;
+    area = _area;
+}
 
-MeshTriangle::MeshTriangle(const std::string& filename, Material *mt) {
+float MeshTriangle::getArea() const {
+    return area;
+}
+
+bool MeshTriangle::intersect(const Ray& ray, SurfaceInteraction *interaction) const {
+    bool hit = false;
+    if (this->bvh) {
+        hit = bvh->intersect(ray, interaction);
+    }
+
+    return hit;
+};
+
+Bounds3 MeshTriangle::WorldBound() const {
+    return bounding_box;
+}
+
+void MeshTriangle::Sample(SurfaceInteraction &isect, float &pdf) {
+    this->bvh->Sample(isect, pdf);
+}
+
+std::vector<std::shared_ptr<Triangle>> createMeshTriangleShape(const std::string& filename, Vector3f *minVert, Vector3f *maxVert) {
     objl::Loader loader;
     loader.LoadFile(filename);
-    area = 0;
-    material = mt;
     assert(loader.LoadedMeshes.size() == 1);
     auto mesh = loader.LoadedMeshes[0];
+    std::vector<std::shared_ptr<Triangle>> triangles;
 
     Vector3f min_vert = Vector3f{std::numeric_limits<float>::infinity(),
                                     std::numeric_limits<float>::infinity(),
@@ -107,45 +126,39 @@ MeshTriangle::MeshTriangle(const std::string& filename, Material *mt) {
                                 std::max(max_vert.z, vert.z));
         }
 
-        triangles.emplace_back(face_vertices[0], face_vertices[1],
-                                face_vertices[2], mt);
-    }
+        auto tri = std::make_shared<Triangle>(face_vertices[0],face_vertices[1],
+                                face_vertices[2]);
 
-    bounding_box = Bounds3(min_vert, max_vert);
-
-    std::vector<std::shared_ptr<Mesh>> ptrs;
-    for (auto& tri : triangles){
-        // todo 这里需要和上面emplace 部分优化一下
-        auto ptr = std::make_shared<Triangle>(tri.v0,tri.v1,tri.v2,tri.material);
-        ptrs.push_back(ptr);
-        area += tri.area;
+        triangles.push_back(tri);
     }
-    bvh = new BVHAccel(ptrs);
+    *minVert = min_vert;
+    *maxVert = max_vert;
+    return triangles;
 }
 
-float MeshTriangle::getArea() {
-    return area;
-}
-
-bool MeshTriangle::intersect(const Ray& ray, SurfaceInteraction *interaction){
-    bool hit = false;
-    if (this->bvh) {
-        hit = bvh->intersect(ray, interaction);
+std::shared_ptr<GeometricPrimitive> createMeshTriangle(const std::string& filename,const Material *mt) {
+    Vector3f min;
+    Vector3f max;
+    std::vector<std::shared_ptr<Triangle>> triangles = createMeshTriangleShape(filename, &min, &max);
+    Bounds3 bounding_box = Bounds3(min, max);
+    // 构建bvh
+    float area = 0.f;
+    std::vector<std::shared_ptr<GeometricPrimitive>> ptrs;
+    for (auto const tri : triangles){
+        // const std::shared_ptr<Material> material = std::make_shared<Material>(*mt);
+        // const auto sh = std::make_shared<GeometricPrimitive>(tri,material);
+        // auto ptr = std::make_shared<GeometricPrimitive>(tri,material);
+        // ptrs.push_back(ptr);
+        // area += tri->getArea();
     }
+    // BVHAccel *bvh = new BVHAccel(ptrs);
+    
+    // auto shape = std::make_shared<MeshTriangle>(bvh, bounding_box, area);
+    // auto shape = MeshTriangle(bvh, bounding_box, area);
+    // auto obj = std::make_shared<GeometricPrimitive>(mt, shape);
 
-    return hit;
-};
-
-void MeshTriangle::ComputeScatteringFunction(SurfaceInteraction *isect) const {
-    return this->material->ComputeScatteringFunction(isect);
-};
-
-Material* MeshTriangle::getMaterial() {
-    return this->material;
-};
-
-void MeshTriangle::Sample(SurfaceInteraction &isect, float &pdf) {
-    this->bvh->Sample(isect, pdf);
+    return ptrs[0];
 }
+
 
 }
