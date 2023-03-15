@@ -14,7 +14,9 @@ bool GeometricPrimitive::intersect(const Ray& ray, SurfaceInteraction *interacti
     // ray.setTMax(interaction->distance);
 
     if (mediumInterface.isMediumTransition()) {
-
+        interaction->mediumInterface = mediumInterface;
+    } else {
+        interaction->mediumInterface = MediumInterface(ray.medium);
     }
     return hit;
 }
