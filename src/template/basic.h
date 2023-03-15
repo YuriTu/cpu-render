@@ -2,7 +2,6 @@
 #define RT_TEMPLATE_BASIC_H
 
 #include <memory>
-#include "r.h"
 #include "geometry.h"
 #include "material.h"
 #include "triangle.h"
@@ -16,7 +15,6 @@ struct SceneBasic
     int width = 200;
     int height = 200;
     int sampleCount = 1;
-    // primitive list  light
 
     // perspectiveProjection
     Vector3f lookAt = Vector3f(0,0,-1);
@@ -50,14 +48,14 @@ struct SceneBasic
         std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", green);
         std::shared_ptr<GeometricPrimitive> fo = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
         std::shared_ptr<GeometricPrimitive> light_ = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
-
         
         std::vector<std::shared_ptr<GeometricPrimitive>> rs = {
             left,
             right,floor,
             shortbox,
             // fo,
-         light_};
+         light_
+         };
         return rs;
     }
 };

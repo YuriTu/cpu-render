@@ -136,29 +136,29 @@ std::vector<std::shared_ptr<Triangle>> createMeshTriangleShape(const std::string
     return triangles;
 }
 
-std::shared_ptr<GeometricPrimitive> createMeshTriangle(const std::string& filename,const Material *mt) {
-    Vector3f min;
-    Vector3f max;
-    std::vector<std::shared_ptr<Triangle>> triangles = createMeshTriangleShape(filename, &min, &max);
-    Bounds3 bounding_box = Bounds3(min, max);
-    // 构建bvh
-    float area = 0.f;
-    std::vector<std::shared_ptr<GeometricPrimitive>> ptrs;
-    for (auto const tri : triangles){
-        // const std::shared_ptr<Material> material = std::make_shared<Material>(*mt);
-        // const auto sh = std::make_shared<GeometricPrimitive>(tri,material);
-        // auto ptr = std::make_shared<GeometricPrimitive>(tri,material);
-        // ptrs.push_back(ptr);
-        // area += tri->getArea();
-    }
-    // BVHAccel *bvh = new BVHAccel(ptrs);
+// void createMeshTriangle(const std::string& filename,const Material *mt) {
+//     // Vector3f min;
+//     // Vector3f max;
+//     // std::vector<std::shared_ptr<Triangle>> triangles = createMeshTriangleShape(filename, &min, &max);
+//     // Bounds3 bounding_box = Bounds3(min, max);
+//     // // 构建bvh
+//     // float area = 0.f;
+//     std::vector<std::shared_ptr<GeometricPrimitive>> ptrs;
+//     // for (auto const tri : triangles){
+//     //     // const std::shared_ptr<Material> material = std::make_shared<Material>(*mt);
+//     //     // const auto sh = std::make_shared<GeometricPrimitive>(tri,material);
+//     //     // auto ptr = std::make_shared<GeometricPrimitive>(tri,material);
+//     //     // ptrs.push_back(ptr);
+//     //     // area += tri->getArea();
+//     // }
+//     // BVHAccel *bvh = new BVHAccel(ptrs);
     
-    // auto shape = std::make_shared<MeshTriangle>(bvh, bounding_box, area);
-    // auto shape = MeshTriangle(bvh, bounding_box, area);
-    // auto obj = std::make_shared<GeometricPrimitive>(mt, shape);
+//     // auto shape = std::make_shared<MeshTriangle>(bvh, bounding_box, area);
+//     // auto shape = MeshTriangle(bvh, bounding_box, area);
+//     // auto obj = std::make_shared<GeometricPrimitive>(mt, shape);
 
-    return ptrs[0];
-}
+//     // return ptrs[0];
+// }
 
 
 }
