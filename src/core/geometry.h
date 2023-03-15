@@ -177,6 +177,7 @@ public:
     Ray(const Vector3f _o,const Vector3f _d, float tMax,const Medium *medium = nullptr);
 
     Vector3f operator()(float t) const { return o + d * t; }
+    void setTMax(float t) { tMax = t;}
 
     Vector3f o;
     Vector3f d;

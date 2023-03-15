@@ -45,7 +45,7 @@ public:
 };
 
 std::vector<std::shared_ptr<Triangle>> createMeshTriangleShape(const std::string& filename, Vector3f *minVert, Vector3f *maxVert);
-inline std::shared_ptr<GeometricPrimitive> createMeshTriangle(const std::string& filename, Material *mt) {
+inline std::shared_ptr<GeometricPrimitive> createMeshTriangle(const std::string& filename, Material *mt, MediumInterface& mi = MediumInterface()) {
     Vector3f min;
     Vector3f max;
     std::vector<std::shared_ptr<Triangle>> triangles = createMeshTriangleShape(filename, &min, &max);
@@ -64,7 +64,7 @@ inline std::shared_ptr<GeometricPrimitive> createMeshTriangle(const std::string&
     BVHAccel *bvh = new BVHAccel(ptrs);
     
     auto shape = std::make_shared<MeshTriangle>(bvh, bounding_box, area);
-    auto obj = std::make_shared<GeometricPrimitive>(shape, material);
+    auto obj = std::make_shared<GeometricPrimitive>(shape, material, mi);
     return obj;
 };
 

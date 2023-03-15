@@ -9,6 +9,9 @@ Bounds3 GeometricPrimitive::WorldBound() const {
 bool GeometricPrimitive::intersect(const Ray& ray, SurfaceInteraction *interaction){
     
     bool hit = shape->intersect(ray, interaction);
+    interaction->primitive = this;
+    // warning
+    // ray.setTMax(interaction->distance);
 
     if (mediumInterface.isMediumTransition()) {
 
@@ -25,7 +28,8 @@ void GeometricPrimitive::ComputeScatteringFunction(SurfaceInteraction *isect) co
 }
 
 void GeometricPrimitive::Sample(SurfaceInteraction &isect, float &pdf) {
-    return shape->Sample(isect,pdf);
+    shape->Sample(isect,pdf);
+    isect.primitive = this;
 };
 
 float GeometricPrimitive::getArea() const {

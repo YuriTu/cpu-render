@@ -44,8 +44,7 @@ bool Triangle::intersect(const Ray& ray,SurfaceInteraction *interaction) const
     inter.p = ray(t_tmp);
     inter.n = this->normal;
     inter.wo = -ray.d;
-    // 注意
-    // inter.primitive = this;
+    // 在mesh 层面处理primitive
 
     inter.distance = t_tmp;
     *interaction = inter;
@@ -58,10 +57,8 @@ void Triangle::Sample(SurfaceInteraction &isect, float &pdf){
     // 1-x + x - xy + xy = 1 所以不会超过重心坐标系
     isect.p = v0 * (1.0f - x) + v1 * (x * (1.0f - y)) + v2 * (x * y);
     isect.n = this->normal;
-    // 注意
-    // isect.primitive = this;
+    // primitive 基类处理
     pdf = 1.0f / area;
-    // printf("triangle:sample pdf %f  \n", pdf);
 }
 
 
@@ -135,30 +132,5 @@ std::vector<std::shared_ptr<Triangle>> createMeshTriangleShape(const std::string
     *maxVert = max_vert;
     return triangles;
 }
-
-// void createMeshTriangle(const std::string& filename,const Material *mt) {
-//     // Vector3f min;
-//     // Vector3f max;
-//     // std::vector<std::shared_ptr<Triangle>> triangles = createMeshTriangleShape(filename, &min, &max);
-//     // Bounds3 bounding_box = Bounds3(min, max);
-//     // // 构建bvh
-//     // float area = 0.f;
-//     std::vector<std::shared_ptr<GeometricPrimitive>> ptrs;
-//     // for (auto const tri : triangles){
-//     //     // const std::shared_ptr<Material> material = std::make_shared<Material>(*mt);
-//     //     // const auto sh = std::make_shared<GeometricPrimitive>(tri,material);
-//     //     // auto ptr = std::make_shared<GeometricPrimitive>(tri,material);
-//     //     // ptrs.push_back(ptr);
-//     //     // area += tri->getArea();
-//     // }
-//     // BVHAccel *bvh = new BVHAccel(ptrs);
-    
-//     // auto shape = std::make_shared<MeshTriangle>(bvh, bounding_box, area);
-//     // auto shape = MeshTriangle(bvh, bounding_box, area);
-//     // auto obj = std::make_shared<GeometricPrimitive>(mt, shape);
-
-//     // return ptrs[0];
-// }
-
 
 }
