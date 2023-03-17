@@ -148,7 +148,7 @@ inline void exportImg(std::vector<Vector3f> frameBuffer,int width, int height)
     fclose(fp);
     
 }
-
+// deprecated 
 inline float fresnel(Vector3f I, Vector3f N, float ior) {
     float theta_input = Dot(I,N);
     float n1 = 1;
@@ -186,6 +186,29 @@ inline Vector3f getVecFromSampleSphereUniform(){
     float x = r * cos(phi);
     float y = r * sin(phi);
     return normalize(Vector3f(x,y,z));
+}
+
+inline Vector3f concentricSampleDisk() {
+    Vector3f temp = Vector3f(getRandom(),getRandom(),0.f);
+    Vector3f uOffset = 2.f * temp  - Vector3f(1,1,0);
+
+    if (uOffset.x == 0 && uOffset.y == 0) return Vector3f(0.f);
+
+    float theta, r;
+    if (std::abs(uOffset.x) > std::abs(uOffset.y)) {
+        r = uOffset.x;
+        theta = PiOver4 * (uOffset.y / uOffset.x);
+    } else {
+        r = uOffset.y;
+        theta = PiOver2 - PiOver4 * (uOffset.x / uOffset.y);
+    }
+    return r * Vector3f(std::cos(theta), std::sin(theta), 0.f);
+}
+
+inline Vector3f CosineSampleHemisphere() {
+    Vector3f d = concentricSampleDisk();
+    float z = std::sqrt(std::max((float)0.f, 1 - (d.x * d.x + d.y * d.y)));
+    return Vector3f(d.x, d.y, z);
 }
 
 } // namespace r

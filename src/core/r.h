@@ -41,5 +41,7 @@ static constexpr float Inv2Pi = 0.15915494309189533577;
 static constexpr float Inv4Pi = 0.07957747154594766788;
 static constexpr float EPS = 1e-4;
 static constexpr float EPSILON = 1e-4;
+static constexpr float PiOver2 = 1.57079632679489661923;
+static constexpr float PiOver4 = 0.78539816339744830961;
 
 #endif

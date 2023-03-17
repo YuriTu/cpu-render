@@ -1,4 +1,5 @@
 #include "fresnel.h"
+#include "utils.h"
 
 namespace r 
 {
@@ -27,5 +28,28 @@ float FrDielectric(float cosThetaI, float etaI, float etaT) {
                 ((etaI * cosThetaT) + (etaT * cosThetaI));
     return (r1 * r1 + r2 * r2) / 2.f;
 }
+
+Vector3f FresnelDielectric::evaluate(float cosThetaI) const {
+    return FrDielectric(cosThetaI, etaI, etaT);
+}
+
+Vector3f BxDF::Sample_f(const Vector3f &wo, Vector3f *wi, float *pdf) const {
+    *wi = CosineSampleHemisphere();
+    if (wo.z < 0.f) {
+        wi->z *= -1;
+    }
+    *pdf = Pdf(wo, *wi);
+    return f(wo, *wi);
+
+}
+
+
+// warning 注意人家做了坐标系转换简化了计算，我们还没有做
+float BxDF::Pdf(const Vector3f &wo, const Vector3f &wi) const {
+    // wi方向上的PDF是一个以法线为中心的圆形分布
+    // 所以需要 位置 / 总面积（pi）
+    return SameHemisphere(wi,wo) ? AbsCosTheta(wi) * InvPi : 0;
+}
+
 
 }
