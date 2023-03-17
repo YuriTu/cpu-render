@@ -12,6 +12,7 @@ float FrDielectric(float cosThetaI, float etaI, float etaT);
 inline bool SameHemisphere(const Vector3f &wi, const Vector3f &wo) {
     return wi.z * wo.z > 0;
 }
+inline float CosTheta(const Vector3f &w) {return w.z;}
 inline float AbsCosTheta(const Vector3f &w) {return std::abs(w.z);}
 
 
@@ -35,7 +36,20 @@ public:
     virtual Vector3f Sample_f(const Vector3f &wo, Vector3f *wi, float *pdf) const;
     virtual Vector3f f(const Vector3f &wo, const Vector3f &wi) const = 0;
     virtual float Pdf(const Vector3f &wo, const Vector3f &wi) const;
+};
 
+class FresnelSpecular : public BxDF {
+
+public:
+    FresnelSpecular(const Vector3f &R, const Vector3f &T, float etaI, float etaT)
+        :R(R),T(T), etaI(etaI), etaT(etaT) {}
+    Vector3f f(const Vector3f &wo, const Vector3f &wi) const;
+    Vector3f Sample_f(const Vector3f &wo, Vector3f *wi, float *pdf) const;
+    float Pdf(const Vector3f &wo, const Vector3f &wi) const;
+
+private:
+    const Vector3f R,T; // re color \ tau
+    const float etaI,etaT;
 };
 
 }

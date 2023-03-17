@@ -130,6 +130,18 @@ inline Vector3f refract(Vector3f I, Vector3f N, float ior) {
     return eta * I - (eta * cos_i + sqrtf(k)) * N;
 }
 
+inline bool Refract(const Vector3f &wi, const Vector3f &n, float eta, Vector3f *wt) {
+    float cosThetaI = Dot(wi, n);
+    float sin2ThetaI = std::max(0.f, (float)(1 - cosThetaI * cosThetaI));
+    float sin2ThetaT = eta * eta * sin2ThetaI;
+    float k = 1.f - sin2ThetaT;
+    if (k <= 0.f) return false;
+
+    float cosThetaT = std::sqrt(k);
+    *wt = eta * -wi + (eta * cosThetaI - cosThetaT) * n;
+    return true;
+}
+
 inline void exportImg(std::vector<Vector3f> frameBuffer,int width, int height)
 {
     FILE* fp = fopen("img.ppm","wb");

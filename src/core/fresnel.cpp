@@ -40,9 +40,7 @@ Vector3f BxDF::Sample_f(const Vector3f &wo, Vector3f *wi, float *pdf) const {
     }
     *pdf = Pdf(wo, *wi);
     return f(wo, *wi);
-
 }
-
 
 // warning 注意人家做了坐标系转换简化了计算，我们还没有做
 float BxDF::Pdf(const Vector3f &wo, const Vector3f &wi) const {
@@ -51,5 +49,38 @@ float BxDF::Pdf(const Vector3f &wo, const Vector3f &wi) const {
     return SameHemisphere(wi,wo) ? AbsCosTheta(wi) * InvPi : 0;
 }
 
+Vector3f FresnelSpecular::f(const Vector3f &wo, const Vector3f &wi) const {
+    return Vector3f(0.f);
+}
 
+Vector3f FresnelSpecular::Sample_f(const Vector3f &wo, Vector3f *wi, float *pdf) const {
+    float u = getRandom(0.8,1.0);
+    float F = FrDielectric(CosTheta(wo), etaI, etaT);
+
+    if (u < F) {
+        // reflect
+        *wi = Vector3f(-wo.x, -wo.y, wo.z);
+        *pdf = F;
+        return F * R / AbsCosTheta(*wi);
+    } else {
+        // tr
+        bool entering = CosTheta(wo) > 0;
+        float _etaI = entering ? etaI : etaT;
+        float _etaT = entering ? etaI : etaT;
+
+        if (!Refract(wo, Vector3f(0.f), _etaI / _etaT, wi)){
+            return Vector3f(0.f);
+        }
+        Vector3f ft = T * (1 - F);
+
+        *pdf = 1 - F;
+        // radiance?
+        ft *= (_etaI * _etaI) / (_etaT * _etaT);
+        return ft / AbsCosTheta(*wi);
+    }
+}
+
+float FresnelSpecular::Pdf(const Vector3f &wo, const Vector3f &wi) const {
+    return 0.f;
+}
 }
