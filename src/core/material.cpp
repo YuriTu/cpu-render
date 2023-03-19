@@ -50,7 +50,7 @@ Vector3f Material::sample(const Vector3f &wi, const Vector3f &N, float &pdf) con
         }
         case TRANSMISSION:
         {
-            
+            // 
         }
         
     }

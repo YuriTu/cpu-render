@@ -39,7 +39,7 @@ struct SceneBasic
         white->Kd = Vector3f(0.725f, 0.71f, 0.68f);
         Material* jade = new Material(DIFFUSE, Vector3f(0.0f));
         white->Kd = Vector3f(0.325f, 0.529f, 0.415f);
-
+        // names home mi
         HomogeneousMedium* volume = new HomogeneousMedium(Vector3f(.06,.06,.06), Vector3f(.9,.9,.9), -.7f);
         MediumInterface mi = MediumInterface(volume, nullptr);
 
