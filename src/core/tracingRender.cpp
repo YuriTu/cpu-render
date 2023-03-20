@@ -64,6 +64,9 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
         // scene.intersect(ray,)
         SurfaceInteraction isect;
         bool foundIntersection = scene.intersect(ray, &isect);
+        if (isect.n.isBlack() && foundIntersection){
+                printf("error n0!");
+            }
         MediumInteraction mi;
         if (ray.medium) beta = beta * ray.medium->Sample(ray, &mi);
 
@@ -97,7 +100,12 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
             }
 
             if (!foundIntersection) {
+                printf("not found bounce %i \n", bounces);
                 break;
+            }
+
+            if (isect.n.isBlack()){
+                printf("error n1!");
             }
 
             // 计算bsdf的情况
@@ -107,6 +115,10 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
             Vector3f irradiance = this->uniformSampleOneLight(isect, scene);
             // 计算radiance 
             directRadiance += beta * irradiance;
+
+            if (isect.n.isBlack()){
+                printf("error n2! \n");
+            }
 
             // 采样bsdf 准备下一次bounce
             Vector3f wo = - ray.d;
@@ -162,9 +174,9 @@ void TracingRender::render(const Scene &scene)
             }
             
             // printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
-            // if (i == 5 && j == 5) {
-            //     printf("debug");
-            // }
+            if (i == 5 && j == 5) {
+                printf("debug");
+            }
             frameBuffer[index] = radiance / spp;
         }
     }

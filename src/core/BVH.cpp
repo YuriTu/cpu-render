@@ -123,26 +123,30 @@ bool BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray, SurfaceIntera
 
     if (node->object) {
         SurfaceInteraction tempIsect;
-        bool temp = node->object->intersect(ray, &tempIsect);
+        flag = node->object->intersect(ray, &tempIsect);
         rs = tempIsect;
+        if (rs.n.isBlack() && flag){
+                printf("error n0.5 !");
+            }
     } else {
         SurfaceInteraction left = SurfaceInteraction();
         SurfaceInteraction right = SurfaceInteraction();
         bool b_left = getIntersection(node->left, ray,&left);
         bool b_right = getIntersection(node->right, ray, &right);
 
-        // 谁距离仅用谁
-        if (left.distance < right.distance) {
-            rs = left;
+        if (b_left || b_right) {
+            // 谁距离仅用谁
+            if (left.distance < right.distance) {
+                rs = left;
+            } else {
+                rs = right;
+            }
         } else {
-            rs = right;
+            flag = false;
         }
+        
     }
     *isect = rs;
-    // 检查一下insect bound 但是没有insect到 primitive的情况
-    if (rs.primitive == nullptr) {
-        flag = false;
-    }
 
     return flag;
     
