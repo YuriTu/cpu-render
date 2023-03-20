@@ -38,8 +38,8 @@ public:
     SurfaceInteraction(const Vector3f &p, const Vector3f &n,const Vector3f &wo);
     Vector3f Le() const;
     void ComputeScatteringFunction(const Ray &ray);
-    Mesh* primitive;
-    BxDF bsdf;
+    Mesh* primitive = nullptr;
+    BxDF* bsdf = nullptr;
 };
 
 class MediumInteraction : public Interaction

@@ -29,8 +29,7 @@ class Triangle;
 class MeshTriangle;
 class BxDF;
 class FresnelSpecular;
-class LambertianReflection
-
+class LambertianReflection;
 }
 
 

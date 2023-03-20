@@ -1,4 +1,5 @@
 #include "material.h"
+#include "fresnel.h"
 
 namespace r 
 {
@@ -82,7 +83,6 @@ void Material::setKd(const Vector3f &v) {
 
 void Material::ComputeScatteringFunction(SurfaceInteraction *isect) const {
     // todo compute bsdf 
-    isect->bsdf = Vector3f(1.f);
     switch (m_type)
     {
     case DIFFUSE:
@@ -91,7 +91,8 @@ void Material::ComputeScatteringFunction(SurfaceInteraction *isect) const {
             float cosTheta = Dot(isect->n, isect->wo);
             if (cosTheta > 0.f) {
                 // 半球cos积分pi 非面积积分（2pi） // 这里有一个隐式的vector（1.0） light的光
-                isect->bsdf = LambertianReflection(this->Kd);
+                auto brdf = LambertianReflection(this->Kd);
+                *isect->bsdf = brdf;
             }
         }
         break;

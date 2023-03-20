@@ -50,7 +50,7 @@ SurfaceInteraction::SurfaceInteraction() {
     wo = Vector3f();
     distance= std::numeric_limits<double>::max();
     primitive = nullptr;
-    bsdf = Vector3f(0.0);
+    bsdf = nullptr;
 }
 
 SurfaceInteraction::SurfaceInteraction(const Vector3f &_p, const Vector3f &_n,const Vector3f &_wo) {
