@@ -39,7 +39,7 @@ public:
     Vector3f Le() const;
     void ComputeScatteringFunction(const Ray &ray);
     Mesh* primitive;
-    Vector3f bsdf;
+    BxDF bsdf;
 };
 
 class MediumInteraction : public Interaction

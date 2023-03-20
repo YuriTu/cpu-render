@@ -48,9 +48,9 @@ Vector3f Material::sample(const Vector3f &wi, const Vector3f &N, float &pdf) con
             
             break;
         }
-        case TRANSMISSION:
+        case REFLECTION_AND_REFRACTION:
         {
-            // 
+            // 比例 pdf wi的方向
         }
         
     }
@@ -90,8 +90,8 @@ void Material::ComputeScatteringFunction(SurfaceInteraction *isect) const {
             // WI WO n cos integrater 
             float cosTheta = Dot(isect->n, isect->wo);
             if (cosTheta > 0.f) {
-                // 半球cos积分pi 非面积积分（2pi）
-                isect->bsdf = this->Kd / PI;
+                // 半球cos积分pi 非面积积分（2pi） // 这里有一个隐式的vector（1.0） light的光
+                isect->bsdf = LambertianReflection(this->Kd);
             }
         }
         break;

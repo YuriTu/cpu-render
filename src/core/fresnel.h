@@ -52,6 +52,17 @@ private:
     const float etaI,etaT;
 };
 
+class LambertianReflection : public BxDF {
+
+public:
+    LambertianReflection(const Vector3f &R) : R(R){}
+    Vector3f f(const Vector3f &wo, const Vector3f &wi) const;
+
+private:
+    const Vector3f R;
+
+};
+
 }
 
 

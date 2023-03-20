@@ -83,4 +83,9 @@ Vector3f FresnelSpecular::Sample_f(const Vector3f &wo, Vector3f *wi, float *pdf)
 float FresnelSpecular::Pdf(const Vector3f &wo, const Vector3f &wi) const {
     return 0.f;
 }
+
+Vector3f LambertianReflection::f(const Vector3f &wo, const Vector3f &wi) const {
+    return R * InvPi;
+}
+
 }

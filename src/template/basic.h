@@ -37,7 +37,8 @@ struct SceneBasic
         green->Kd = Vector3f(0.14f, 0.45f, 0.091f);
         Material* white = new Material(DIFFUSE, Vector3f(0.0f));
         white->Kd = Vector3f(0.725f, 0.71f, 0.68f);
-        Material* jade = new Material(DIFFUSE, Vector3f(0.0f));
+
+        Material* jade = new Material(REFLECTION_AND_REFRACTION, Vector3f(0.0f));
         white->Kd = Vector3f(0.325f, 0.529f, 0.415f);
         // names home mi
         HomogeneousMedium* volume = new HomogeneousMedium(Vector3f(.06,.06,.06), Vector3f(.9,.9,.9), -.7f);
@@ -50,7 +51,7 @@ struct SceneBasic
         std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
         std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
 
-        std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", white, mi);
+        std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj", jade, mi);
         std::shared_ptr<GeometricPrimitive> fo = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
         std::shared_ptr<GeometricPrimitive> light_ = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
         

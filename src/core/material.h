@@ -12,9 +12,6 @@ enum MaterialType {
     DIFFUSE,
     REFLECTION,
     REFLECTION_AND_REFRACTION,
-    TRANSMISSION,
-    REFLECTION_TRANSMISSION,
-    
 };
 
 class Material{
