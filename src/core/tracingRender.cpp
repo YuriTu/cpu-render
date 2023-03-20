@@ -21,9 +21,9 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     Vector3f L = Vector3f();
     Vector3f Le = Vector3f();
     // light pdf
-    float pdf;
+    float lightPdf;
     SurfaceInteraction light_isect;
-    light->Sample(light_isect, pdf);
+    light->Sample(light_isect, lightPdf);
 
     Vector3f wi_origin = light_isect.p - isect.p;
     Vector3f wi = normalize(wi_origin);
@@ -31,19 +31,21 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     Vector3f p_normal = isect.n;
     // todo 后面要考虑直接sample到light的情况
 
-    if (!light_isect.primitive) {
+    if (!light_isect.primitive || lightPdf <= 0.f) {
         return L;
     }
+
     Le = light_isect.primitive->getMaterial()->getEmission();
     // light 的cos ，反一下从light出发的向量
     float light_cosTheta = AbsDot(-wi,light_normal);
     float dw2da = light_cosTheta / wi_origin.lengthSquared();
-
     float cosTheta = SafeDot(wi,p_normal);
 
     const SurfaceInteraction &it = (const SurfaceInteraction &)isect;
     Vector3f brdf = it.bsdf->f(wi,it.wo);
-    L = (Le *  dw2da / pdf) * cosTheta * brdf;
+
+    // Li * brdf * cos\omega
+    L = (Le *  dw2da / lightPdf)  * brdf * cosTheta;
     return L;
 }
 

@@ -34,10 +34,7 @@ class Material{
 
         // sample a ray by Material properties
         Vector3f sample(const Vector3f &wi, const Vector3f &N, float &pdf) const;
-
-        // given a ray, calculate the contribution of this ray
-        inline Vector3f eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &N);
-
+        
         void ComputeScatteringFunction(SurfaceInteraction *isect) const ;
 };
 

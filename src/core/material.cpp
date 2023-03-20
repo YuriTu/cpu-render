@@ -58,25 +58,6 @@ Vector3f Material::sample(const Vector3f &wi, const Vector3f &N, float &pdf) con
     return rs;
 }
 
-
-Vector3f Material::eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &N){
-    switch(m_type){
-        case DIFFUSE:
-        {
-            // calculate the contribution of diffuse   model
-            float cosalpha = Dot(N, wo);
-            if (cosalpha > 0.0f) {
-                Vector3f diffuse = Kd / M_PI;
-                return diffuse;
-            }
-            else
-                return Vector3f(0.0f);
-            break;
-        }
-    }
-    return Vector3f(0.0);
-}
-
 void Material::setKd(const Vector3f &v) {
     this->Kd = v;
 }
@@ -87,18 +68,13 @@ void Material::ComputeScatteringFunction(SurfaceInteraction *isect) const {
     {
     case DIFFUSE:
         {
-            // WI WO n cos integrater 
-            float cosTheta = Dot(isect->n, isect->wo);
-            if (cosTheta > 0.f) {
-                // 半球cos积分pi 非面积积分（2pi） // 这里有一个隐式的vector（1.0） light的光
-                auto brdf = LambertianReflection(this->Kd);
-                *isect->bsdf = brdf;
-            }
+            isect->bsdf = new LambertianReflection(this->Kd);
         }
         break;
     
     default:
          isect->bsdf;
+         printf("error material");
         break;
     }
 }

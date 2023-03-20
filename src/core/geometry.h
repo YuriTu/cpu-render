@@ -86,6 +86,9 @@ class Vector3
             if (x == 0 && y == 0 && z == 0) {
                 rs = true;
             }
+            if (std::isnan(x) || std::isnan(y) || std::isnan(z)) {
+                rs = true;
+            }
             return rs;
         }
 
