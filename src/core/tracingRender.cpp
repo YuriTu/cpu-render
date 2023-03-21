@@ -49,10 +49,11 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     return L;
 }
 
-Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
+Vector3f TracingRender::Li(Ray &r, const Scene &scene) {
     Vector3f radiance(0.f);
     Vector3f indirectRadiance(0.0);
     Vector3f directRadiance(0.0);
+    Ray ray = Ray(r);
     int depth = 0;
     int bounces;
     
@@ -64,9 +65,12 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
         // scene.intersect(ray,)
         SurfaceInteraction isect;
         bool foundIntersection = scene.intersect(ray, &isect);
+        // fixme 临时处理
+        ray.tMax = isect.distance;
+
         if (isect.n.isBlack() && foundIntersection){
-                printf("error n0!");
-            }
+            printf("error n0!");
+        }
         MediumInteraction mi;
         if (ray.medium) beta = beta * ray.medium->Sample(ray, &mi);
 
@@ -100,16 +104,17 @@ Vector3f TracingRender::Li(Ray &ray, const Scene &scene) {
             }
 
             if (!foundIntersection) {
-                printf("not found bounce %i \n", bounces);
                 break;
-            }
-
-            if (isect.n.isBlack()){
-                printf("error n1!");
             }
 
             // 计算bsdf的情况
             isect.ComputeScatteringFunction(ray);
+            // 如果是空 material 直接穿过处理
+            if (!isect.bsdf) {
+                ray = isect.spawnRay(ray.d);
+                bounces--;
+                continue;
+            }
 
             // 对于光源进行采样 转化为p的da积分
             Vector3f irradiance = this->uniformSampleOneLight(isect, scene);
