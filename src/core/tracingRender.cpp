@@ -13,6 +13,13 @@ TracingRender::TracingRender(int w, int h): width(w),height(h) {
 Vector3f TracingRender::uniformSampleOneLight(const Interaction &isect,const Scene &scene) {\
     // 先只考虑一个光源的标准情况
     int nLight = 0;
+    // if (isect.isMediumInteraction()) {
+    //     Vector3f wi = Vector3f(1.f);
+    // const MediumInteraction &mi = (const MediumInteraction &)isect;
+    // const PhaseFunction* pha = mi.phase;
+    //     float p = pha->p(mi.wo, wi);
+    
+    // }
     return estimateDirect(isect, scene, scene.lights[nLight]);
 }
 
@@ -20,8 +27,9 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     // sample light
     Vector3f L = Vector3f();
     Vector3f Le = Vector3f();
+    Vector3f brdf = Vector3f();
     // light pdf
-    float lightPdf;
+    float lightPdf, scatteringPdf;
     SurfaceInteraction light_isect;
     light->Sample(light_isect, lightPdf);
 
@@ -29,23 +37,44 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     Vector3f wi = normalize(wi_origin);
     Vector3f light_normal = light_isect.n;
     Vector3f p_normal = isect.n;
+
+    Le = light_isect.primitive->getMaterial()->getEmission();
     // todo 后面要考虑直接sample到light的情况
 
-    if (!light_isect.primitive || lightPdf <= 0.f) {
+    if (Le.isBlack() || lightPdf <= 0.f) {
         return L;
     }
 
-    Le = light_isect.primitive->getMaterial()->getEmission();
-    // light 的cos ，反一下从light出发的向量
-    float light_cosTheta = AbsDot(-wi,light_normal);
-    float dw2da = light_cosTheta / wi_origin.lengthSquared();
-    float cosTheta = SafeDot(wi,p_normal);
+    if (isect.isSurfaceInteraction()) {
+        // light 的cos ，反一下从light出发的向量
+        float light_cosTheta = AbsDot(-wi,light_normal);
+        float dw2da = light_cosTheta / wi_origin.lengthSquared();
+        float cosTheta = SafeDot(wi,p_normal);
 
-    const SurfaceInteraction &it = (const SurfaceInteraction &)isect;
-    Vector3f brdf = it.bsdf->f(wi,it.wo);
+        const SurfaceInteraction &it = (const SurfaceInteraction &)isect;
+        brdf = it.bsdf->f(wi,it.wo);
+        // fixme
+        scatteringPdf = brdf.x;
 
-    // Li * brdf * cos\omega
-    L = (Le *  dw2da / lightPdf)  * brdf * cosTheta;
+        // Li * brdf * cos\omega
+        // L = (Le *  dw2da / lightPdf)  * brdf * cosTheta;
+
+        //fixme 适应下面的操作 
+        brdf = dw2da * brdf  * cosTheta;
+    } else {
+        const MediumInteraction &mi = (const MediumInteraction &)isect;
+        float p = mi.phase->p(mi.wo, wi);
+        brdf = Vector3f(p);
+        scatteringPdf = p;
+    }
+
+    if (!brdf.isBlack()) {
+        // 处理shadow
+        // todo 
+        if (!Le.isBlack()) {
+            L = Le * brdf / lightPdf;
+        }
+    }
     return L;
 }
 
@@ -68,9 +97,6 @@ Vector3f TracingRender::Li(Ray &r, const Scene &scene) {
         // fixme 临时处理
         ray.tMax = isect.distance;
 
-        if (isect.n.isBlack() && foundIntersection){
-            printf("error n0!");
-        }
         MediumInteraction mi;
         if (ray.medium) beta = beta * ray.medium->Sample(ray, &mi);
 
@@ -78,12 +104,13 @@ Vector3f TracingRender::Li(Ray &r, const Scene &scene) {
 
         if (mi.isVaild()) {
             // medium term
-            Vector3f irradiance = this->uniformSampleOneLight(isect, scene);
+            Vector3f irradiance = this->uniformSampleOneLight(mi, scene);
 
             // 采样phase 准备下次bounce
             Vector3f wo = -ray.d;
             Vector3f wi;
-            Vector3f u = Vector3f(getRandom(), getRandom(),0.f);
+            float tvalue = getRandom();
+            Vector3f u = Vector3f(tvalue, 1- tvalue,0.f);
             mi.phase->Sample_p(wo, &wi, u);
             ray = mi.spawnRay(wi);
 
@@ -178,8 +205,8 @@ void TracingRender::render(const Scene &scene)
                 radiance += this->Li(ray,scene);
             }
             
-            // printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
-            if (i == 5 && j == 5) {
+            printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
+            if (i == 5 && j == 138) {
                 printf("debug");
             }
             frameBuffer[index] = radiance / spp;

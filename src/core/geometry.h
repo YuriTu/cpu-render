@@ -173,6 +173,34 @@ Vector3<T> EXP(const Vector3<T> &v) {
     return Vector3<T>(std::exp(v.x),std::exp(v.y),std::exp(v.z));
 }
 
+template <typename T>
+inline void CoordinateSystem(const Vector3<T> &v1, Vector3<T> *v2, Vector3<T> *v3) {
+    if (std::abs(v1.x) > std::abs(v1.y)) {
+        *v2 = Vector3<T>(-v1.z, 0.f, v1.x) / std::sqrt(v1.x * v1.x + v1.z * v1.z);
+    } else {
+        *v2 = Vector3<T>(0.f, v1.z, -v1.y) / std::sqrt(v1.y * v1.y + v1.z * v1.z);
+    }
+    *v3 = Cross(v1, *v2);
+}
+
+inline Vector3f SphericalDirection(float sinTheta, float cosTheta, float phi) {
+    // sinTheta 类比方位角降维 变成了方位角的一个点 所以cos phi 就是x
+    return Vector3f(
+        sinTheta * std::cos(phi),
+        sinTheta * std::sin(phi),
+        cosTheta
+    );
+}
+
+inline Vector3f SphericalDirection(float sinTheta, float cosTheta, float phi,
+                                   const Vector3f&x,const Vector3f&y,const Vector3f&z) {
+    // xyz 是三个坐标轴，即映射到xyz坐标轴的结果
+    return sinTheta * std::cos(phi) * x +
+        sinTheta * std::sin(phi) * y +
+        cosTheta * z;
+}
+
+
 class Ray
 {   
 public:

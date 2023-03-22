@@ -73,8 +73,8 @@ void Material::ComputeScatteringFunction(SurfaceInteraction *isect) const {
         break;
     
     default:
-         isect->bsdf;
-         printf("error material");
+         isect->bsdf = nullptr;
+        //  printf("error material");
         break;
     }
 }

@@ -47,11 +47,14 @@ class MediumInteraction : public Interaction
 public:
     MediumInteraction() : phase(nullptr){}
     MediumInteraction(const Vector3f &p, const Vector3f &wo,
-                     const Medium *medium, const PhaseFunction *phase)
+                     const Medium *medium, std::shared_ptr<PhaseFunction> phase)
         : Interaction(p,wo, medium), phase(phase){}
-    bool isVaild() const { return phase != nullptr; }
+    bool isVaild() const { 
+        return phase != nullptr; 
+    }
     
-    const PhaseFunction *phase;
+    // const PhaseFunction *phase;
+    std::shared_ptr<PhaseFunction> phase;
 };
 
 }

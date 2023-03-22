@@ -6,6 +6,14 @@
 
 namespace r {
 
+inline float PhaseHG(float cosTheta, float g) {
+    float g2 = g*g;
+    float denom = 1 + g2 + 2*g*cosTheta;
+    // denom^1.5
+    return (Inv4Pi * (1 - g2)) / (denom * std::sqrt(denom));
+}
+
+
 class Medium {
 public:
     Medium() = default;

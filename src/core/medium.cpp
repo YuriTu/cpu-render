@@ -19,8 +19,10 @@ Vector3f HomogeneousMedium::Sample(const Ray &ray, MediumInteraction *mi) const 
     bool sampleMedium = t < ray.tMax;
 
     if (sampleMedium) {
-        HenyeyGreenstein hg = HenyeyGreenstein(g);
-        *mi = MediumInteraction(ray(t),-ray.d,this,&hg);
+        // HenyeyGreenstein hg = HenyeyGreenstein(g);
+        auto hg = std::make_shared<HenyeyGreenstein>(g);
+        *mi = MediumInteraction(ray(t),-ray.d,this,hg);
+        float fff = mi->phase->p(Vector3f(),Vector3f());
     }
     
     Vector3f Tr = EXP(-sigma_t * std::min(t * ray.d.length(), MAXFloat));
@@ -44,11 +46,28 @@ Vector3f HomogeneousMedium::Sample(const Ray &ray, MediumInteraction *mi) const 
 }
 
 float HenyeyGreenstein::p(const Vector3f &wo, const Vector3f &wi) const{
-    return 0.f;
+    return PhaseHG(Dot(wo, wi), g);
 }
 
 float HenyeyGreenstein::Sample_p(const Vector3f &wo, Vector3f *wi, const Vector3f &u) const{
-    return 0.f;
+    float cosTheta;
+    if (std::abs(g) < 1e-3) {
+        // g =0 的时候 随机在2pi (cos = [-1, 1])中取一个方向
+        cosTheta = 1 - 2 * u[0];
+    } else {
+        float g2 = g *g;
+        float sqrTerm = (1 - g2) / (1 + g - 2*g*u[0]);
+        cosTheta = - (1 + g2 - sqrTerm * sqrTerm ) / (2 * g);
+    }
+
+    // cos phi平面角转方位角
+    float sinTheta = std::sqrt(std::max(0.f, 1 - cosTheta * cosTheta));
+    float phi = 2 * PI * u[1];
+    Vector3f v1,v2;
+    CoordinateSystem(wo, &v1, &v2);
+    // wo作为z是为了 转化为平面 
+    *wi = SphericalDirection(sinTheta, cosTheta,phi, v1,v2,wo);
+    return PhaseHG(cosTheta, g);
 }
 
 }
