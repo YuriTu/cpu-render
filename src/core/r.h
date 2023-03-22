@@ -3,6 +3,14 @@
 
 #include <limits>
 #include <iostream>
+
+#ifdef DEBUG
+#define DEBUG_MODE true
+#else
+#define DEBUG_MODE false
+#endif
+
+
 namespace r 
 {
 class Scene;
@@ -30,6 +38,7 @@ class BxDF;
 class FresnelSpecular;
 class LambertianReflection;
 }
+
 
 
 static constexpr float MAXFloat = std::numeric_limits<float>::max();

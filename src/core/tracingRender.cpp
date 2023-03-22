@@ -41,11 +41,10 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     // light 的cos ，反一下从light出发的向量
     float light_cosTheta = AbsDot(-wi,light_normal);
     float dw2da = light_cosTheta / wi_origin.lengthSquared();
-    float cosTheta = SafeDot(wi,p_normal);
+    
 
     if (isect.isSurfaceInteraction()) {
-        
-
+        float cosTheta = SafeDot(wi,p_normal);
         const SurfaceInteraction &it = (const SurfaceInteraction &)isect;
         brdf = it.bsdf->f(wi,it.wo);
         // fixme
@@ -210,7 +209,7 @@ void TracingRender::render(const Scene &scene)
                 radiance += this->Li(ray,scene);
             }
             
-            printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
+            DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
             if (i == 48 && j == 16) {
                 printf("debug");
             }

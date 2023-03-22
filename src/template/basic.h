@@ -13,8 +13,8 @@ namespace r
 struct SceneBasic
 {
     // scene prototype;
-    int width = 200;
-    int height = 200;
+    int width = 500;
+    int height = 500;
     int sampleCount = 1;
 
     // perspectiveProjection
@@ -41,7 +41,7 @@ struct SceneBasic
         Material* jade = new Material(REFLECTION_AND_REFRACTION, Vector3f(0.0f));
         white->Kd = Vector3f(0.325f, 0.529f, 0.415f);
         // names home mi
-        HomogeneousMedium* volume = new HomogeneousMedium(Vector3f(.06,.06,.06), Vector3f(.9,.9,.9), -.7f);
+        HomogeneousMedium* volume = new HomogeneousMedium(Vector3f(.06,.06,.06), Vector3f(.09,.09,.09), -.7f);
         MediumInterface mi = MediumInterface(volume, nullptr);
 
         Material* light = new Material(DIFFUSE, (8.0f * Vector3f(0.747f+0.058f, 0.747f+0.258f, 0.747f) + 15.6f * Vector3f(0.740f+0.287f,0.740f+0.160f,0.740f) + 18.4f *Vector3f(0.737f+0.642f,0.737f+0.159f,0.737f)));
