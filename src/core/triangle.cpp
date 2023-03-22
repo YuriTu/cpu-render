@@ -51,9 +51,9 @@ bool Triangle::intersect(const Ray& ray,SurfaceInteraction *interaction) const
 
     // printf("inter x %f y %f z %f length %f -- \n", inter.n.x,inter.n.y,inter.n.z,inter.n.lengthSquared());
 
-    if (inter.n.isBlack()){
-                printf("error n0.1!");
-            }
+    if (t_tmp < EPSILON) {
+        hit = false;
+    }
 
     return hit;
 }

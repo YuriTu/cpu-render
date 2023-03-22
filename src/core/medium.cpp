@@ -19,10 +19,8 @@ Vector3f HomogeneousMedium::Sample(const Ray &ray, MediumInteraction *mi) const 
     bool sampleMedium = t < ray.tMax;
 
     if (sampleMedium) {
-        // HenyeyGreenstein hg = HenyeyGreenstein(g);
         auto hg = std::make_shared<HenyeyGreenstein>(g);
         *mi = MediumInteraction(ray(t),-ray.d,this,hg);
-        float fff = mi->phase->p(Vector3f(),Vector3f());
     }
     
     Vector3f Tr = EXP(-sigma_t * std::min(t * ray.d.length(), MAXFloat));
@@ -34,12 +32,16 @@ Vector3f HomogeneousMedium::Sample(const Ray &ray, MediumInteraction *mi) const 
     for (int i = 0; i < channelCount; i++) {
         pdf += density[i];
     }
-    pdf *= (float)(1 / channel);
+    pdf *= 1.f / (float)channelCount;
 
     if (sampleMedium) {
         beta = Tr * sigma_s / pdf;
     } else {
         beta = Tr / pdf;
+    }
+
+    if (beta.lengthSquared() > 1e4 || beta.lengthSquared() < EPSILON) {
+        printf("error medium");
     }
 
     return beta;

@@ -13,13 +13,6 @@ TracingRender::TracingRender(int w, int h): width(w),height(h) {
 Vector3f TracingRender::uniformSampleOneLight(const Interaction &isect,const Scene &scene) {\
     // 先只考虑一个光源的标准情况
     int nLight = 0;
-    // if (isect.isMediumInteraction()) {
-    //     Vector3f wi = Vector3f(1.f);
-    // const MediumInteraction &mi = (const MediumInteraction &)isect;
-    // const PhaseFunction* pha = mi.phase;
-    //     float p = pha->p(mi.wo, wi);
-    
-    // }
     return estimateDirect(isect, scene, scene.lights[nLight]);
 }
 
@@ -45,11 +38,13 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
         return L;
     }
 
+    // light 的cos ，反一下从light出发的向量
+    float light_cosTheta = AbsDot(-wi,light_normal);
+    float dw2da = light_cosTheta / wi_origin.lengthSquared();
+    float cosTheta = SafeDot(wi,p_normal);
+
     if (isect.isSurfaceInteraction()) {
-        // light 的cos ，反一下从light出发的向量
-        float light_cosTheta = AbsDot(-wi,light_normal);
-        float dw2da = light_cosTheta / wi_origin.lengthSquared();
-        float cosTheta = SafeDot(wi,p_normal);
+        
 
         const SurfaceInteraction &it = (const SurfaceInteraction &)isect;
         brdf = it.bsdf->f(wi,it.wo);
@@ -64,7 +59,8 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     } else {
         const MediumInteraction &mi = (const MediumInteraction &)isect;
         float p = mi.phase->p(mi.wo, wi);
-        brdf = Vector3f(p);
+        // 这里假设所有的光都是1.0过来的 本来就不会按照surface的cos处理
+        brdf = Vector3f(p) * dw2da;
         scatteringPdf = p;
     }
 
@@ -100,11 +96,20 @@ Vector3f TracingRender::Li(Ray &r, const Scene &scene) {
         MediumInteraction mi;
         if (ray.medium) beta = beta * ray.medium->Sample(ray, &mi);
 
+        if (beta.hasNaNs() || beta.lengthSquared() > 1e4) {
+            printf("beta nans");
+        }
+
         if (beta.isBlack()) break;
 
         if (mi.isVaild()) {
             // medium term
             Vector3f irradiance = this->uniformSampleOneLight(mi, scene);
+
+            if (irradiance.hasNaNs() || irradiance.lengthSquared() < EPSILON) {
+                printf("irradiance nans");
+            }
+            directRadiance += beta * irradiance;
 
             // 采样phase 准备下次bounce
             Vector3f wo = -ray.d;
@@ -206,8 +211,11 @@ void TracingRender::render(const Scene &scene)
             }
             
             printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
-            if (i == 5 && j == 138) {
+            if (i == 48 && j == 16) {
                 printf("debug");
+            }
+            if (radiance.hasNaNs()) {
+                printf("radiance nan!");
             }
             frameBuffer[index] = radiance / spp;
         }

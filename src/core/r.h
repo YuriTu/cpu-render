@@ -3,7 +3,6 @@
 
 #include <limits>
 #include <iostream>
-
 namespace r 
 {
 class Scene;

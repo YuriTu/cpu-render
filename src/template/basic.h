@@ -48,8 +48,8 @@ struct SceneBasic
         light->Kd = Vector3f(0.65f);
         
         std::shared_ptr<GeometricPrimitive> floor = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white );
-        std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
-        std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
+        std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", white);
+        std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", white);
 
         // std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",white);
         std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle(

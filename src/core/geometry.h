@@ -3,6 +3,16 @@
 #include "r.h"
 namespace r
 {
+template <typename T>
+inline bool isNaN(const T x) {
+    return std::isnan(x);
+}
+
+template<>
+inline bool isNaN(const int x) {
+    return false;
+}
+
 
 template <typename T>
 class Vector3
@@ -11,7 +21,15 @@ class Vector3
         Vector3():x(0),y(0),z(0) {}
         Vector3(T xx): x(xx),y(xx),z(xx) {}
         Vector3(T xx,T yy): x(xx),y(yy),z(0) {}
-        Vector3(T xx,T yy, T zz): x(xx),y(yy),z(zz) {}
+        Vector3(T xx,T yy, T zz): x(xx),y(yy),z(zz) {
+            if (hasNaNs()) {
+                printf("vector nan");
+            }
+        }
+
+        bool hasNaNs() const {
+            return isNaN(x) || isNaN(y) || isNaN(z);
+        }
         
         T operator[](int i) const {
             if (i == 0) return x;
@@ -84,9 +102,6 @@ class Vector3
         bool isBlack() const {
             bool rs = false;
             if (x == 0 && y == 0 && z == 0) {
-                rs = true;
-            }
-            if (std::isnan(x) || std::isnan(y) || std::isnan(z)) {
                 rs = true;
             }
             return rs;
