@@ -5,7 +5,7 @@ project(CPU_RENDER VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# add_compile_definitions(DEBUG)
+add_compile_definitions(DEBUG)
 
 add_executable(cpu_render src/main.cpp)
 

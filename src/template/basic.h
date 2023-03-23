@@ -13,8 +13,8 @@ namespace r
 struct SceneBasic
 {
     // scene prototype;
-    int width = 500;
-    int height = 500;
+    int width = DEBUG_MODE ? 200 : 500;
+    int height = DEBUG_MODE ? 200 : 500;
     int sampleCount = 1;
 
     // perspectiveProjection
@@ -39,7 +39,7 @@ struct SceneBasic
         white->Kd = Vector3f(0.725f, 0.71f, 0.68f);
 
         Material* jade = new Material(REFLECTION_AND_REFRACTION, Vector3f(0.0f));
-        white->Kd = Vector3f(0.325f, 0.529f, 0.415f);
+        jade->Kd = Vector3f(0.325f, 0.529f, 0.415f);
         // names home mi
         HomogeneousMedium* volume = new HomogeneousMedium(Vector3f(.06,.06,.06), Vector3f(.09,.09,.09), -.7f);
         MediumInterface mi = MediumInterface(volume, nullptr);
@@ -48,10 +48,10 @@ struct SceneBasic
         light->Kd = Vector3f(0.65f);
         
         std::shared_ptr<GeometricPrimitive> floor = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white );
-        std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", white);
-        std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", white);
+        std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
+        std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
 
-        // std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",white);
+        std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",white);
         std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle(
             "D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",
             jade,mi);
