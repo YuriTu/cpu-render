@@ -189,6 +189,10 @@ inline float getRandom(float min = 0.f, float max = 1.f) {
     std::uniform_real_distribution<float> range(min,max);
     return range(dev);
 }
+inline Vector3f getRandom2D() {
+    float v = getRandom();
+    return Vector3f(v, 1 - v, 0.f);
+}
 
 inline Vector3f getVecFromSampleSphereUniform(){
     float phi =  getRandom(0,1) * 2 * PI;

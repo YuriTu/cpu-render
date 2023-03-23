@@ -38,6 +38,8 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
         return L;
     }
 
+    // light-sampling
+
     // light 的cos ，反一下从light出发的向量
     float light_cosTheta = AbsDot(-wi,light_normal);
     float dw2da = light_cosTheta / wi_origin.lengthSquared();
@@ -70,6 +72,26 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
             L = Le * brdf / lightPdf;
         }
     }
+
+    // brdf sampling
+    if (isect.isSurfaceInteraction()) {
+        const SurfaceInteraction &it = (const SurfaceInteraction &)isect;
+        brdf = it.bsdf->Sample_f(it.wo, &wi, &scatteringPdf);
+        float cosTheta = AbsDot(wi, isect.n);
+        brdf *= cosTheta;
+    } else {
+        const MediumInteraction &mi = (const MediumInteraction &)isect;
+        Vector3f uScatting = getRandom2D();
+        float p = mi.phase->Sample_p(mi.wo,&wi, uScatting);
+        brdf = Vector3f(p);
+        scatteringPdf = p;
+    }
+
+    if (!brdf.isBlack()) {
+        // get light pdf
+        
+    }
+
     return L;
 }
 
