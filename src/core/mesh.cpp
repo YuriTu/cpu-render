@@ -29,6 +29,10 @@ void GeometricPrimitive::ComputeScatteringFunction(SurfaceInteraction *isect) co
     material->ComputeScatteringFunction(isect);
 }
 
+float GeometricPrimitive::Pdf(const Interaction &ref, const Vector3f &wi) const {
+    return shape->Pdf(ref, wi);
+};
+
 void GeometricPrimitive::Sample(SurfaceInteraction &isect, float &pdf) {
     shape->Sample(isect,pdf);
     isect.primitive = this;

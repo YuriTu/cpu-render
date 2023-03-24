@@ -19,8 +19,12 @@ Vector3f TracingRender::uniformSampleOneLight(const Interaction &isect,const Sce
 Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &scene, std::shared_ptr<GeometricPrimitive> light) {
     // sample light
     Vector3f L = Vector3f();
+    Vector3f Llight = Vector3f();
+    Vector3f Lbsdf = Vector3f();
     Vector3f Le = Vector3f();
     Vector3f brdf = Vector3f();
+    float bsdfWeight = 0.f;
+    float lightWeight = 0.f;
     // light pdf
     float lightPdf, scatteringPdf;
     SurfaceInteraction light_isect;
@@ -69,7 +73,8 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
         // 处理shadow
         // todo 
         if (!Le.isBlack()) {
-            L = Le * brdf / lightPdf;
+            lightWeight = PowerHeuristic(1, lightPdf, 1, scatteringPdf);
+            Llight = Le * brdf * lightWeight / lightPdf;
         }
     }
 
@@ -89,8 +94,15 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
 
     if (!brdf.isBlack()) {
         // get light pdf
-        
+        lightPdf = light->Pdf(isect, wi);
+        if (lightPdf == 0) return L;
+        bsdfWeight = PowerHeuristic(1,scatteringPdf, 1, lightPdf );
+
+
+        Lbsdf = Le * brdf * bsdfWeight / scatteringPdf;
     }
+
+    L = Llight + Lbsdf;
 
     return L;
 }

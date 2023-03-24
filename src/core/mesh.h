@@ -37,7 +37,9 @@ public:
     bool intersect(const Ray& ray, SurfaceInteraction *interaction);
     const Material* getMaterial() const;
     void ComputeScatteringFunction(SurfaceInteraction *isect) const;
-
+    
+    // 直接转发shape的几个临时方法
+    float Pdf(const Interaction &ref, const Vector3f &wi) const;
     void Sample(SurfaceInteraction &isect, float &pdf);
     float getArea() const;
     

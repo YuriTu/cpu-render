@@ -227,5 +227,16 @@ inline Vector3f CosineSampleHemisphere() {
     return Vector3f(d.x, d.y, z);
 }
 
+inline float CosineHemispherePdf(float cosTheta) {
+    return cosTheta * InvPi;
+}
+
+inline float PowerHeuristic(int nf, float fPdf, int ng, float gPdf) {
+    // 默认系数为2
+    float f = nf * fPdf;
+    float g = ng * gPdf;
+    return (f * f) / (f * f + g * g);
+}
+
 } // namespace r
 #endif //RT_UTILS_H
