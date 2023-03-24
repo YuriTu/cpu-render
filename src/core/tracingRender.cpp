@@ -43,12 +43,10 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     }
 
     // light-sampling
-
     // light 的cos ，反一下从light出发的向量
     float light_cosTheta = AbsDot(-wi,light_normal);
     float dw2da = light_cosTheta / wi_origin.lengthSquared();
     
-
     if (isect.isSurfaceInteraction()) {
         float cosTheta = SafeDot(wi,p_normal);
         const SurfaceInteraction &it = (const SurfaceInteraction &)isect;
@@ -73,10 +71,14 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
         // 处理shadow
         // todo 
         if (!Le.isBlack()) {
-            lightWeight = PowerHeuristic(1, lightPdf, 1, scatteringPdf);
+            // lightWeight = PowerHeuristic(1, lightPdf, 1, scatteringPdf);
+            lightWeight = 1.f;
             Llight = Le * brdf * lightWeight / lightPdf;
+            //fixme 现在的light area太大，lightpdf的权重太低，先不用了
+            return Llight;
         }
     }
+
 
     // brdf sampling
     if (isect.isSurfaceInteraction()) {
@@ -95,9 +97,12 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     if (!brdf.isBlack()) {
         // get light pdf
         lightPdf = light->Pdf(isect, wi);
-        if (lightPdf == 0) return L;
+        if (lightPdf == 0) {
+            L = Llight + Lbsdf;
+            return L;
+        };
         bsdfWeight = PowerHeuristic(1,scatteringPdf, 1, lightPdf );
-
+        bsdfWeight = 1.f;
 
         Lbsdf = Le * brdf * bsdfWeight / scatteringPdf;
     }
@@ -210,7 +215,6 @@ Vector3f TracingRender::Li(Ray &r, const Scene &scene) {
         } else {
             break;
         }
-        // printf("bounce %i beta:%f %f %f \n",bounces, beta.x,beta.y,beta.z);
     }
     radiance = directRadiance + indirectRadiance;
     return radiance;
@@ -243,7 +247,7 @@ void TracingRender::render(const Scene &scene)
                 radiance += this->Li(ray,scene);
             }
             
-            DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
+            // DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
             if (i == 48 && j == 16) {
                 printf("debug");
             }

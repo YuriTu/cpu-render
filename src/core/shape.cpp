@@ -10,7 +10,7 @@ float Shape::Pdf(const Interaction &ref) const {
 float Shape::Pdf(const Interaction &ref, const Vector3f &wi) const {
     // 看下光线是否相交
 
-    Ray ray = ref.Swapray(wi);
+    Ray ray = ref.spawnRay(wi);
     SurfaceInteraction isectLight;
 
 
@@ -22,8 +22,8 @@ float Shape::Pdf(const Interaction &ref, const Vector3f &wi) const {
 
     float pdf = distance2 / cosTheta * getArea();
 
-    if (pdf > 1e4) {
-        pdf = 0;
+    if (std::isinf(pdf)) {
+        pdf = 0.f;
     }
 
     return pdf;

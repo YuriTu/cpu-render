@@ -3,6 +3,7 @@
 
 #include "r.h"
 #include "geometry.h"
+#include "interaction.h"
 
 namespace r
 {
