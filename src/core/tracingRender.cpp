@@ -79,7 +79,6 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
         }
     }
 
-
     // brdf sampling
     if (isect.isSurfaceInteraction()) {
         const SurfaceInteraction &it = (const SurfaceInteraction &)isect;
@@ -198,7 +197,6 @@ Vector3f TracingRender::Li(Ray &r, const Scene &scene) {
             // 采样bsdf 准备下一次bounce
             Vector3f wo = - ray.d;
             float pdf;
-            // isect.bsdf sample(wi)
             //warning 如果是medium材质，这里要做处理 
             Vector3f wi =  isect.primitive->getMaterial()->sample(wo,isect.n,pdf);
             float cosTheta = AbsDot(wi,isect.n);
@@ -250,9 +248,6 @@ void TracingRender::render(const Scene &scene)
             // DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
             if (i == 48 && j == 16) {
                 printf("debug");
-            }
-            if (radiance.hasNaNs()) {
-                printf("radiance nan!");
             }
             frameBuffer[index] = radiance / spp;
         }

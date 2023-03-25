@@ -165,14 +165,12 @@ void BVHAccel::getSample(BVHBuildNode* node, float p, SurfaceInteraction &pos, f
     } else {
         getSample(node->right, p - node->left->area, pos, pdf);
     } 
-    // printf("bvh:getsample pdf %f \n", pdf);
     return ;
 }
 
 void BVHAccel::Sample(SurfaceInteraction &pos, float &pdf){
     float p = std::sqrt(getRandom()) * root->area;
     getSample(root, p, pos, pdf);
-    // printf("bvh:sample pdf %f  \n", pdf);
     pdf /= root->area;
 }
 
