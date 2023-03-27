@@ -3,6 +3,10 @@
 
 #include <limits>
 #include <iostream>
+#include <complex>
+#include <vector>
+#include <cstring>
+#include <random>
 
 #ifdef DEBUG
 #define DEBUG_MODE true
@@ -37,6 +41,7 @@ class MeshTriangle;
 class BxDF;
 class FresnelSpecular;
 class LambertianReflection;
+class VisibilityTester;
 }
 
 

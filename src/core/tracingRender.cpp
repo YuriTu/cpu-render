@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "interaction.h"
 #include "fresnel.h"
+#include "light.h"
 
 #include <omp.h>
 
@@ -10,13 +11,15 @@ namespace r{
 TracingRender::TracingRender(int w, int h): width(w),height(h) {
 }
 
-Vector3f TracingRender::uniformSampleOneLight(const Interaction &isect,const Scene &scene) {\
+Vector3f TracingRender::uniformSampleOneLight(const Interaction &isect,const Scene &scene, bool handleMedia) {
     // 先只考虑一个光源的标准情况
     int nLight = 0;
-    return estimateDirect(isect, scene, scene.lights[nLight]);
+    return estimateDirect(isect, scene, scene.lights[nLight], handleMedia);
 }
 
-Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &scene, std::shared_ptr<GeometricPrimitive> light) {
+Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &scene, 
+                                       std::shared_ptr<GeometricPrimitive> light, bool handleMedia) 
+{
     // sample light
     Vector3f L = Vector3f();
     Vector3f Llight = Vector3f();
@@ -37,7 +40,6 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
 
     Le = light_isect.primitive->getMaterial()->getEmission();
     // todo 后面要考虑直接sample到light的情况
-
     if (Le.isBlack() || lightPdf <= 0.f) {
         return L;
     }
@@ -53,7 +55,6 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
         brdf = it.bsdf->f(wi,it.wo);
         // fixme
         scatteringPdf = brdf.x;
-
         // Li * brdf * cos\omega
         // L = (Le *  dw2da / lightPdf)  * brdf * cosTheta;
 
@@ -69,13 +70,23 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
 
     if (!brdf.isBlack()) {
         // 处理shadow
-        // todo 
+        VisibilityTester vt = VisibilityTester(isect,light_isect);
+        
+        if (handleMedia) {
+            // Li 处理穿过media的scattering 效果
+            Le *= vt.tr(scene);
+        } else if (vt.isOccluded(scene)) {
+            Le = Vector3f(0.f);
+        } else {
+            // 没有shadow ray 
+        }
+        
         if (!Le.isBlack()) {
             // lightWeight = PowerHeuristic(1, lightPdf, 1, scatteringPdf);
+            //fixme 现在的light area太大，lightpdf的权重太低，先打满
             lightWeight = 1.f;
             Llight = Le * brdf * lightWeight / lightPdf;
-            //fixme 现在的light area太大，lightpdf的权重太低，先不用了
-            return Llight;
+            
         }
     }
 
@@ -101,9 +112,22 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
             return L;
         };
         bsdfWeight = PowerHeuristic(1,scatteringPdf, 1, lightPdf );
-        bsdfWeight = 1.f;
 
-        Lbsdf = Le * brdf * bsdfWeight / scatteringPdf;
+        SurfaceInteraction lightIsect;
+        Ray ray = isect.spawnRay(wi);
+        Vector3f tr(1.f);
+        bool foundFaceInteraction = handleMedia ? scene.intersect(ray, &lightIsect) 
+                                                : scene.intersectTr(ray, &lightIsect, &tr);
+        
+        Le = Vector3f(0.f);
+        light_isect.primitive->getMaterial()->getEmission();
+        if (foundFaceInteraction) {
+            Le = lightIsect.primitive->getMaterial()->getEmission();
+        }
+
+        if (!Le.isBlack()) {
+            Lbsdf = Le * brdf * bsdfWeight / scatteringPdf;
+        }
     }
 
     L = Llight + Lbsdf;
@@ -141,7 +165,7 @@ Vector3f TracingRender::Li(Ray &r, const Scene &scene) {
 
         if (mi.isVaild()) {
             // medium term
-            Vector3f irradiance = this->uniformSampleOneLight(mi, scene);
+            Vector3f irradiance = this->uniformSampleOneLight(mi, scene, true);
 
             if (irradiance.hasNaNs() || irradiance.lengthSquared() < EPSILON) {
                 printf("irradiance nans");
@@ -186,7 +210,7 @@ Vector3f TracingRender::Li(Ray &r, const Scene &scene) {
             }
 
             // 对于光源进行采样 转化为p的da积分
-            Vector3f irradiance = this->uniformSampleOneLight(isect, scene);
+            Vector3f irradiance = this->uniformSampleOneLight(isect, scene, true);
             // 计算radiance 
             directRadiance += beta * irradiance;
 

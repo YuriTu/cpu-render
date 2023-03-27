@@ -51,10 +51,10 @@ struct SceneBasic
         std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
         std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
 
-        std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",white);
-        // std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle(
-        //     "D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",
-        //     jade,mi);
+        // std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",white);
+        std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle(
+            "D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",
+            jade,mi);
         std::shared_ptr<GeometricPrimitive> fo = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
         std::shared_ptr<GeometricPrimitive> light_ = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
         

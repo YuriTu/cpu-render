@@ -1,12 +1,9 @@
 #ifndef RT_UTILS_H
 #define RT_UTILS_H
 
-#include <complex>
-#include <vector>
-#include <cstring>
-#include <random>
 #include "r.h"
 #include "geometry.h"
+#include "interaction.h"
 
 namespace r
 {

@@ -16,6 +16,7 @@ class Scene
     public:
         Scene(int w,int h);
         bool intersect(const Ray& ray,SurfaceInteraction *isect ) const;
+        bool intersectTr(Ray& ray,SurfaceInteraction *isect, Vector3f *tr) const;
         void buildBVH();
         void add(std::shared_ptr<GeometricPrimitive> obj);
         void add(std::vector<std::shared_ptr<GeometricPrimitive>> lists);

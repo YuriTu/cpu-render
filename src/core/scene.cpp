@@ -41,6 +41,29 @@ bool Scene::intersect(const Ray& ray,SurfaceInteraction *isect ) const {
     return this->bvh->intersect(ray, isect);
 };
 
+bool Scene::intersectTr(Ray& ray,SurfaceInteraction *isect, Vector3f *tr) const {
+    // 类似visibility的逻辑
+    *tr = Vector3f(1.f);
+    while (true) {
+        bool hitSurface = this->intersect(ray, isect);
+
+        if (ray.medium) {
+            *tr *= ray.medium->Tr(ray);
+        }
+
+        if (!hitSurface) {
+            return false;
+        }
+
+        isect->ComputeScatteringFunction(ray);
+        if (isect->bsdf != nullptr) {
+            return true;
+        }
+
+        ray = isect->spawnRay(ray.d);
+    }
+}
+
 void Scene::buildBVH() {
     this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::NAIVE);
 }

@@ -69,6 +69,13 @@ class Vector3
             return Vector3<T>( x*f, y*f, z*f);
         }
 
+        Vector3<T> &operator*=(const Vector3<T> &v) {
+            x *= v.x;
+            y *= v.y;
+            z *= v.z;
+            return *this;
+        }
+
         template <typename U>
         Vector3<T> &operator*=(U s) {
             x *= s;
@@ -77,10 +84,11 @@ class Vector3
             return *this;
         }
 
+
         template <typename U>
         Vector3<T> operator/(U f) const {
             float inv = (float)1 / f;
-            return Vector3<T>( x/f, y/f, z/f);
+            return Vector3<T>( x * inv, y * inv, z * inv);
         }
 
         template <typename U>
@@ -113,30 +121,19 @@ class Vector3
         T x,y,z;
 };
 
-
-
 typedef Vector3<float> Vector3f;
 typedef Vector3<int> Vector3i;
 
-// template <typename T,typename U, typename=float>
-// inline Vector3<T> operator*(U n, Vector3<T>& v) {
-//     return v * n;
-// }
+template <typename T,typename U>
+inline Vector3<T> operator*(U s, const Vector3<T>& v) {
+    return v * s;
+}
 
 template <typename T>
 inline std::ostream &operator<<(std::ostream &os, const Vector3<T> &v) {
     os << "[ " << v.x << ", " << v.y << ", " << v.z << " ]";
     return os;
 }
-
-
-template <typename T>
-inline Vector3<T> operator*(float n,const Vector3<T>& v) {
-    return v * n;
-}
-
-
-
 
 template <typename T>
 inline Vector3<T> normalize(const Vector3<T> &v) {
