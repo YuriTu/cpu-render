@@ -15,7 +15,7 @@ struct SceneBasic
     // scene prototype;
     int width = DEBUG_MODE ? 200 : 500;
     int height = DEBUG_MODE ? 200 : 500;
-    int sampleCount = DEBUG_MODE ? 1: 64;
+    int sampleCount = DEBUG_MODE ? 1: 16;
 
     // perspectiveProjection
     Vector3f lookAt = Vector3f(0,0,-1);
@@ -24,7 +24,7 @@ struct SceneBasic
     float far = 1000.f;
     float fov = 40.f;
     float aspect = width / (float)height;
-    float maxDepth = DEBUG_MODE ? 3 : 8;
+    float maxDepth = DEBUG_MODE ? 4 : 8;
     Vector3f background = Vector3f(0.235294, 0.67451, 0.843137);
     Vector3f camPos = Vector3f(278, 273, -800);
     float rrThreshold = 0.8;
@@ -41,7 +41,8 @@ struct SceneBasic
         Material* jade = new Material(REFLECTION_AND_REFRACTION, Vector3f(0.0f));
         jade->Kd = Vector3f(0.325f, 0.529f, 0.415f);
         // names home mi
-        HomogeneousMedium* volume = new HomogeneousMedium(Vector3f(.06,.06,.06), Vector3f(.09,.09,.09), -.7f);
+        HomogeneousMedium* volume = new HomogeneousMedium(
+            Vector3f(.03,.03,.03), Vector3f(.07,.07,.07), 0.f);
         MediumInterface mi = MediumInterface(volume, nullptr);
 
         Material* light = new Material(DIFFUSE, (8.0f * Vector3f(0.747f+0.058f, 0.747f+0.258f, 0.747f) + 15.6f * Vector3f(0.740f+0.287f,0.740f+0.160f,0.740f) + 18.4f *Vector3f(0.737f+0.642f,0.737f+0.159f,0.737f)));
@@ -55,7 +56,9 @@ struct SceneBasic
         std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle(
             "D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",
             jade,mi);
-        std::shared_ptr<GeometricPrimitive> fo = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", white);
+        std::shared_ptr<GeometricPrimitive> fo = createMeshTriangle(
+            "D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", jade,mi
+            );
         std::shared_ptr<GeometricPrimitive> light_ = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
         
         std::vector<std::shared_ptr<GeometricPrimitive>> rs = {

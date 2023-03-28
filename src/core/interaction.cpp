@@ -43,8 +43,8 @@ Ray Interaction::spawnRay(const Vector3f &d) const {
 }
 
 Ray Interaction::spawnRayTo(const Interaction &it) const {
-    Vector3f o = this->p;
-    Vector3f target = it.p;
+    Vector3f o = offsetRayOrigin(this->p, this->n, it.p - this->p);
+    Vector3f target = offsetRayOrigin(it.p, it.n, o - it.p);
     Vector3f d = normalize( target - o );
     // fixme tmax这么设计应该是为了限定为一个单位长度
     return Ray(o, d,1 - EPSILON, getMedium(d));

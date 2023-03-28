@@ -33,12 +33,14 @@ Vector3f VisibilityTester::tr(const Scene &scene) const {
     while (true) {
         SurfaceInteraction isect = SurfaceInteraction();
         bool hitSurface = scene.intersect(ray, &isect);
+        bool hitLightflag = (isect.p - p1.p).lengthSquared() < EPSILON;
 
-        // 如果bsdf == null 就是media的外部geometryPrimitive 正常计算透射情况
+        // 如果bsdf == null 就是media的外部geometryPrimitive 正常计算透射情况,如果是光源则根据ray的情况处理
         // 否则就是有实体阻挡，按照无能量处理
         if (hitSurface) {
             isect.ComputeScatteringFunction(ray);
-            if (isect.bsdf != nullptr) {
+            
+            if (isect.bsdf != nullptr && !hitLightflag) {
                 return Vector3f(0.f);
             }
         }
@@ -48,15 +50,19 @@ Vector3f VisibilityTester::tr(const Scene &scene) const {
         }
 
         // 没有阻挡可以直接到达光源，直接计算透射
-        if (!hitSurface) break;
+        if (!hitSurface || hitLightflag) break;
 
         // 存在media，更新起点继续累计tr前进
         ray = isect.spawnRayTo(p1);
 
         count++;
-        if (count > 50) {
+        // fixme 现在场景简单理论上最多两次就能出去
+        if (count > 10) {
             printf("warning, visibility loop not stop!");
+            break;
         }
     }
+
+    return tr;
 }
 }

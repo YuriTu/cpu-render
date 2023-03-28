@@ -107,30 +107,32 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     if (!brdf.isBlack()) {
         // get light pdf
         lightPdf = light->Pdf(isect, wi);
-        if (lightPdf == 0) {
-            L = Llight + Lbsdf;
-            return L;
+        if (lightPdf != 0) {
+            bsdfWeight = PowerHeuristic(1,scatteringPdf, 1, lightPdf );
+
+            SurfaceInteraction lightIsect;
+            Ray ray = isect.spawnRay(wi);
+            Vector3f tr(1.f);
+            bool foundFaceInteraction = handleMedia ? scene.intersect(ray, &lightIsect) 
+                                                    : scene.intersectTr(ray, &lightIsect, &tr);
+            
+            Le = Vector3f(0.f);
+            light_isect.primitive->getMaterial()->getEmission();
+            if (foundFaceInteraction) {
+                Le = lightIsect.primitive->getMaterial()->getEmission();
+            }
+
+            if (!Le.isBlack()) {
+                Lbsdf = Le * brdf * bsdfWeight / scatteringPdf;
+            }
         };
-        bsdfWeight = PowerHeuristic(1,scatteringPdf, 1, lightPdf );
-
-        SurfaceInteraction lightIsect;
-        Ray ray = isect.spawnRay(wi);
-        Vector3f tr(1.f);
-        bool foundFaceInteraction = handleMedia ? scene.intersect(ray, &lightIsect) 
-                                                : scene.intersectTr(ray, &lightIsect, &tr);
-        
-        Le = Vector3f(0.f);
-        light_isect.primitive->getMaterial()->getEmission();
-        if (foundFaceInteraction) {
-            Le = lightIsect.primitive->getMaterial()->getEmission();
-        }
-
-        if (!Le.isBlack()) {
-            Lbsdf = Le * brdf * bsdfWeight / scatteringPdf;
-        }
     }
 
     L = Llight + Lbsdf;
+
+    if (L.isBlack()) {
+        // printf("direct light radiance black!");
+    }
 
     return L;
 }
@@ -269,7 +271,7 @@ void TracingRender::render(const Scene &scene)
                 radiance += this->Li(ray,scene);
             }
             
-            // DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
+            DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
             if (i == 48 && j == 16) {
                 printf("debug");
             }

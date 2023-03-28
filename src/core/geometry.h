@@ -151,6 +151,11 @@ inline T Dot(const Vector3<T>v1, const Vector3<T>v2) {
 }
 
 template <typename T>
+inline Vector3<T> Abs(const Vector3<T> &v) {
+    return Vector3<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z));
+}
+
+template <typename T>
 inline T AbsDot(const Vector3<T> &v1, const Vector3<T> &v2) {
     return std::abs(Dot(v1, v2));
 }
@@ -212,6 +217,17 @@ inline Vector3f SphericalDirection(float sinTheta, float cosTheta, float phi,
         cosTheta * z;
 }
 
+inline Vector3f offsetRayOrigin(const Vector3f &p,const Vector3f &n, const Vector3f &w) {
+    Vector3f bais(EPSILON);
+    float d = Dot(Abs(n), bais);
+    Vector3f offset = d * n;
+    if (Dot(w, n) < 0) {
+        offset = - offset;
+    }
+    Vector3f p_o = p + offset;
+
+    return p_o;
+}
 
 class Ray
 {   
