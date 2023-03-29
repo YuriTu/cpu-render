@@ -130,10 +130,6 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
 
     L = Llight + Lbsdf;
 
-    if (L.isBlack()) {
-        // printf("direct light radiance black!");
-    }
-
     return L;
 }
 
@@ -216,10 +212,6 @@ Vector3f TracingRender::Li(Ray &r, const Scene &scene) {
             // 计算radiance 
             directRadiance += beta * irradiance;
 
-            if (isect.n.isBlack()){
-                printf("error n2! \n");
-            }
-
             // 采样bsdf 准备下一次bounce
             Vector3f wo = - ray.d;
             float pdf;
@@ -272,8 +264,11 @@ void TracingRender::render(const Scene &scene)
             }
             
             DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
-            if (i == 48 && j == 16) {
+            if (i == 17 && j == 44) {
                 printf("debug");
+            }
+            if (radiance.isBlack()) {
+                printf("black radiance \n \n");
             }
             frameBuffer[index] = radiance / spp;
         }

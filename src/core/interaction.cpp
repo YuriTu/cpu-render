@@ -38,7 +38,7 @@ const Medium* Interaction::getMedium() const {
 }
 
 Ray Interaction::spawnRay(const Vector3f &d) const {
-    Vector3f o = this->p;
+    Vector3f o = offsetRayOrigin(this->p, this->n, d);;
     return Ray(o,d, Infinity, getMedium(d));
 }
 

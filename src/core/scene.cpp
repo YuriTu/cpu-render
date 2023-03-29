@@ -44,6 +44,7 @@ bool Scene::intersect(const Ray& ray,SurfaceInteraction *isect ) const {
 bool Scene::intersectTr(Ray& ray,SurfaceInteraction *isect, Vector3f *tr) const {
     // 类似visibility的逻辑
     *tr = Vector3f(1.f);
+    int count = 0;
     while (true) {
         bool hitSurface = this->intersect(ray, isect);
 
@@ -61,6 +62,12 @@ bool Scene::intersectTr(Ray& ray,SurfaceInteraction *isect, Vector3f *tr) const 
         }
 
         ray = isect->spawnRay(ray.d);
+
+        count++;
+        if (count > 10) {
+            printf("warning, Scene::intersectTr loop not stop! \n");
+            break;
+        }
     }
 }
 

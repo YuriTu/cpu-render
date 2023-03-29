@@ -15,7 +15,7 @@ struct SceneBasic
     // scene prototype;
     int width = DEBUG_MODE ? 200 : 500;
     int height = DEBUG_MODE ? 200 : 500;
-    int sampleCount = DEBUG_MODE ? 1: 16;
+    int sampleCount = DEBUG_MODE ? 3: 64;
 
     // perspectiveProjection
     Vector3f lookAt = Vector3f(0,0,-1);
@@ -64,8 +64,8 @@ struct SceneBasic
         std::vector<std::shared_ptr<GeometricPrimitive>> rs = {
             left,
             right,floor,
-            shortbox,
-            // fo,
+            // shortbox,
+            fo,
             light_
         };
         return rs;

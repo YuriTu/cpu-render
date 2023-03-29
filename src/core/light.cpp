@@ -58,7 +58,12 @@ Vector3f VisibilityTester::tr(const Scene &scene) const {
         count++;
         // fixme 现在场景简单理论上最多两次就能出去
         if (count > 10) {
-            printf("warning, visibility loop not stop!");
+            // printf("warning, VisibilityTester::tr loop not stop!2 \n");
+            // break;
+        }
+
+        if (count > 50) {
+            printf("warning, VisibilityTester::tr loop not stop! \n");
             break;
         }
     }
