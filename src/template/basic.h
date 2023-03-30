@@ -15,7 +15,7 @@ struct SceneBasic
     // scene prototype;
     int width = DEBUG_MODE ? 200 : 500;
     int height = DEBUG_MODE ? 200 : 500;
-    int sampleCount = DEBUG_MODE ? 3: 64;
+    int sampleCount = DEBUG_MODE ? 1: 64;
 
     // perspectiveProjection
     Vector3f lookAt = Vector3f(0,0,-1);
@@ -48,14 +48,14 @@ struct SceneBasic
         Material* light = new Material(DIFFUSE, (8.0f * Vector3f(0.747f+0.058f, 0.747f+0.258f, 0.747f) + 15.6f * Vector3f(0.740f+0.287f,0.740f+0.160f,0.740f) + 18.4f *Vector3f(0.737f+0.642f,0.737f+0.159f,0.737f)));
         light->Kd = Vector3f(0.65f);
         
-        std::shared_ptr<GeometricPrimitive> floor = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white );
+        std::shared_ptr<GeometricPrimitive> floor = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", green );
         std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
         std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
 
         // std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",white);
         std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle(
             "D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",
-            jade,mi);
+            nullptr,mi);
         std::shared_ptr<GeometricPrimitive> fo = createMeshTriangle(
             "D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", jade,mi
             );
@@ -64,8 +64,8 @@ struct SceneBasic
         std::vector<std::shared_ptr<GeometricPrimitive>> rs = {
             left,
             right,floor,
-            // shortbox,
-            fo,
+            shortbox,
+            // fo,
             light_
         };
         return rs;

@@ -263,13 +263,13 @@ void TracingRender::render(const Scene &scene)
                 radiance += this->Li(ray,scene);
             }
             
-            DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
+            // DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
             if (i == 17 && j == 44) {
                 printf("debug");
             }
-            if (radiance.isBlack()) {
-                printf("black radiance \n \n");
-            }
+            // if (radiance.isBlack()) {
+            //     printf("black radiance \n \n");
+            // }
             frameBuffer[index] = radiance / spp;
         }
     }

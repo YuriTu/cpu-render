@@ -218,7 +218,7 @@ inline Vector3f SphericalDirection(float sinTheta, float cosTheta, float phi,
 }
 
 inline Vector3f offsetRayOrigin(const Vector3f &p,const Vector3f &n, const Vector3f &w) {
-    Vector3f bais(1e-2);
+    Vector3f bais(EPSILON);
     float d = Dot(Abs(n), bais);
     Vector3f offset = d * n;
     if (Dot(w, n) < 0) {
