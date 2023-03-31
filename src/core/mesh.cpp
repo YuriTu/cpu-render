@@ -26,7 +26,9 @@ const Material* GeometricPrimitive::getMaterial() const {
 }
 
 void GeometricPrimitive::ComputeScatteringFunction(SurfaceInteraction *isect) const {
-    material->ComputeScatteringFunction(isect);
+    if (material) {
+        material->ComputeScatteringFunction(isect);
+    }
 }
 
 float GeometricPrimitive::Pdf(const Interaction &ref, const Vector3f &wi) const {

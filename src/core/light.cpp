@@ -26,7 +26,6 @@ bool VisibilityTester::isOccluded(const Scene &scene) const {
 
 Vector3f VisibilityTester::tr(const Scene &scene) const {
     Ray ray = Ray(p0.spawnRayTo(p1));
-
     Vector3f tr = Vector3f(1.f);
 
     int count = 0;
@@ -37,13 +36,10 @@ Vector3f VisibilityTester::tr(const Scene &scene) const {
 
         // 如果bsdf == null 就是media的外部geometryPrimitive 正常计算透射情况,如果是光源则根据ray的情况处理
         // 否则就是有实体阻挡，按照无能量处理
-        if (hitSurface) {
-            isect.ComputeScatteringFunction(ray);
-            
-            if (isect.bsdf != nullptr && !hitLightflag) {
-                return Vector3f(0.f);
-            }
+        if (hitSurface && isect.primitive->getMaterial() != nullptr && !hitLightflag) {
+            return Vector3f(0.f);
         }
+
         // 有medium就累计tr，没有就找下一个media
         if (ray.medium) {
             tr *= ray.medium->Tr(ray);
@@ -57,7 +53,7 @@ Vector3f VisibilityTester::tr(const Scene &scene) const {
 
         count++;
         // fixme 现在场景简单理论上最多两次就能出去
-        if (count > 50 || tr.lengthSquared() < EPSILON) {
+        if (count > 10 || tr.lengthSquared() < EPSILON) {
             printf("warning, VisibilityTester::tr loop not stop! \n");
             break;
         }

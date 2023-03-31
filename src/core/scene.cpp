@@ -31,7 +31,7 @@ void Scene::_initLightList() {
     int nLight = 0;
     for (size_t i = 0; i < this->objects.size(); i++) {
         const Material* material = objects[i]->getMaterial();
-        if (material->hasEmission()) {
+        if (material && material->hasEmission()) {
             lights.push_back(objects[i]);
         }
     }
@@ -56,8 +56,7 @@ bool Scene::intersectTr(Ray& ray,SurfaceInteraction *isect, Vector3f *tr) const 
             return false;
         }
 
-        isect->ComputeScatteringFunction(ray);
-        if (isect->bsdf != nullptr) {
+        if (isect->primitive->getMaterial() != nullptr) {
             return true;
         }
 
@@ -69,6 +68,7 @@ bool Scene::intersectTr(Ray& ray,SurfaceInteraction *isect, Vector3f *tr) const 
             break;
         }
     }
+    return false;
 }
 
 void Scene::buildBVH() {

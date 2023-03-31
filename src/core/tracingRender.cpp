@@ -38,7 +38,12 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
     Vector3f light_normal = light_isect.n;
     Vector3f p_normal = isect.n;
 
-    Le = light_isect.primitive->getMaterial()->getEmission();
+    const Material *lightMaterial = light_isect.primitive->getMaterial();
+
+    if (lightMaterial) {
+        Le = lightMaterial->getEmission();
+    }
+    
     // todo 后面要考虑直接sample到light的情况
     if (Le.isBlack() || lightPdf <= 0.f) {
         return L;
@@ -117,9 +122,11 @@ Vector3f TracingRender::estimateDirect(const Interaction &isect,const Scene &sce
                                                     : scene.intersectTr(ray, &lightIsect, &tr);
             
             Le = Vector3f(0.f);
-            light_isect.primitive->getMaterial()->getEmission();
             if (foundFaceInteraction) {
-                Le = lightIsect.primitive->getMaterial()->getEmission();
+                const Material *mt = lightIsect.primitive->getMaterial();
+                if (mt) {
+                    Le = mt->getEmission();
+                }
             }
 
             if (!Le.isBlack()) {
@@ -263,7 +270,8 @@ void TracingRender::render(const Scene &scene)
                 radiance += this->Li(ray,scene);
             }
             
-            // DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
+            // DEBUG_MODE && 
+            printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
             if (i == 17 && j == 44) {
                 printf("debug");
             }

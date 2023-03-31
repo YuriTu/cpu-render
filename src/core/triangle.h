@@ -52,7 +52,7 @@ inline std::shared_ptr<GeometricPrimitive> createMeshTriangle(const std::string&
     Bounds3 bounding_box = Bounds3(min, max);
     // 构建bvh
     float area = 0.f;
-    const std::shared_ptr<Material> material = std::make_shared<Material>(*mt);
+    const std::shared_ptr<Material> material = mt ? std::make_shared<Material>(*mt) : nullptr;
     std::vector<std::shared_ptr<GeometricPrimitive>> ptrs;
     for (auto const tri : triangles){
         
