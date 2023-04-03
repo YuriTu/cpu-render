@@ -23,6 +23,7 @@ void Scene::applyTemplate(const SceneBasic temp) {
     maxDepth = temp.maxDepth;
     camPos = temp.camPos;
     rrThreshold = temp.rrThreshold;
+    filename = temp.filename;
     buildBVH();
     _initLightList();
 }

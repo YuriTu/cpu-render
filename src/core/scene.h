@@ -35,6 +35,7 @@ class Scene
         float maxDepth;
         float rrThreshold;
         Vector3f camPos;
+        const char* filename;
     private:
         void _initLightList();
 };

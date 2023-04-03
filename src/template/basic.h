@@ -6,18 +6,35 @@
 #include "material.h"
 #include "triangle.h"
 #include "medium.h"
+#include <ctime>
 
 namespace r
 {
 
+inline const char* createFileName() {
+    time_t now = time(nullptr);
+    tm *ltm = localtime(&now);
+
+    char buffer[30];
+    sprintf(buffer, "file-%02d-%02d-%02d-%02d-%02d.ppm",
+            ltm->tm_mon + 1, ltm->tm_mday, ltm->tm_hour, ltm->tm_min, ltm->tm_sec);
+
+    char *filename = new char[strlen(buffer) + 1];
+    strcpy(filename, buffer);
+    return filename;
+}
+
 struct SceneBasic
 {
+    // file
+    const char *filename = createFileName();
     // scene prototype;
     int width = DEBUG_MODE ? 200 : 500;
     int height = DEBUG_MODE ? 200 : 500;
-    int sampleCount = DEBUG_MODE ? 1: 32;
+    int sampleCount = DEBUG_MODE ? 1: 16;
 
     // perspectiveProjection
+    Vector3f camPos = Vector3f(278, 273, -800);
     Vector3f lookAt = Vector3f(0,0,-1);
     Vector3f transition = Vector3f(0,0,0);
     float near = .01;
@@ -26,7 +43,7 @@ struct SceneBasic
     float aspect = width / (float)height;
     float maxDepth = DEBUG_MODE ? 16 : 64;
     Vector3f background = Vector3f(0.235294, 0.67451, 0.843137);
-    Vector3f camPos = Vector3f(278, 273, -800);
+    
     float rrThreshold = 0.8;
     std::vector<std::shared_ptr<GeometricPrimitive>> lists = createObject();
 
@@ -42,13 +59,17 @@ struct SceneBasic
         jade->Kd = Vector3f(0.325f, 0.529f, 0.415f);
         // names home mi
         HomogeneousMedium* volume = new HomogeneousMedium(
-            Vector3f(.03,.03,.03), Vector3f(.07,.07,.07), -0.7f);
+            Vector3f(.001,.001,.001), Vector3f(.0015,.0015,.0015), 0.f);
         MediumInterface mi = MediumInterface(volume, nullptr);
 
         Material* light = new Material(DIFFUSE, (8.0f * Vector3f(0.747f+0.058f, 0.747f+0.258f, 0.747f) + 15.6f * Vector3f(0.740f+0.287f,0.740f+0.160f,0.740f) + 18.4f *Vector3f(0.737f+0.642f,0.737f+0.159f,0.737f)));
         light->Kd = Vector3f(0.65f);
         
-        std::shared_ptr<GeometricPrimitive> floor = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj", white );
+        std::shared_ptr<GeometricPrimitive> floor = createMeshTriangle(
+            "D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj",
+            white 
+            // green
+        );
         std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
         std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
 

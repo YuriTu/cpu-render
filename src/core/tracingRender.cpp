@@ -172,8 +172,8 @@ Vector3f TracingRender::Li(Ray &r, const Scene &scene) {
             // medium term
             Vector3f irradiance = this->uniformSampleOneLight(mi, scene, true);
 
-            if (irradiance.hasNaNs() || irradiance.lengthSquared() < EPSILON) {
-                printf("irradiance nans");
+            if (irradiance.hasNaNs()) {
+                printf("irradiance nans!! \n");
             }
             directRadiance += beta * irradiance;
 
@@ -270,8 +270,7 @@ void TracingRender::render(const Scene &scene)
                 radiance += this->Li(ray,scene);
             }
             
-            // DEBUG_MODE && 
-            printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
+            // DEBUG_MODE && printf("now: x:%i,y%i| li:%f,%f,%f \n",i,j,radiance.x,radiance.y,radiance.z);
             if (i == 17 && j == 44) {
                 printf("debug");
             }
@@ -280,8 +279,9 @@ void TracingRender::render(const Scene &scene)
             // }
             frameBuffer[index] = radiance / spp;
         }
+        printf("render process: %f %\n",((float)i/width) * 100.f);
     }
-    exportImg(frameBuffer, width,height);
+    exportImg(frameBuffer, width,height, scene.filename);
 }
 
 }

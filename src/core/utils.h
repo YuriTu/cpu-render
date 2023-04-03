@@ -139,9 +139,9 @@ inline bool Refract(const Vector3f &wi, const Vector3f &n, float eta, Vector3f *
     return true;
 }
 
-inline void exportImg(std::vector<Vector3f> frameBuffer,int width, int height)
+inline void exportImg(std::vector<Vector3f> frameBuffer,int width, int height, const char* str = "img.ppm")
 {
-    FILE* fp = fopen("img.ppm","wb");
+    FILE* fp = fopen(str,"wb");
     (void)fprintf(fp, "P6\n%d %d\n255\n", width, height);
     for (int i = 0; i < frameBuffer.size(); i++) {
         static unsigned char color[3];
