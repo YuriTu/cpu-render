@@ -57,6 +57,9 @@ float HenyeyGreenstein::Sample_p(const Vector3f &wo, Vector3f *wi, const Vector3
         // g =0 的时候 随机在2pi (cos = [-1, 1])中取一个方向
         cosTheta = 1 - 2 * u[0];
     } else {
+        // 根据Henyey and Greenstein phase function的概率密度函数，可以计算出散射角度的分布。
+        // 通常可以使用反函数法（Inverse Transform Sampling）来生成散射角度，即通过生成一个在[0,1]范围内的随机数r，
+        // 然后通过Henyey and Greenstein phase function的概率密度函数的反函数解出散射角度θ。
         float g2 = g *g;
         float sqrTerm = (1 - g2) / (1 + g - 2*g*u[0]);
         cosTheta = - (1 + g2 - sqrTerm * sqrTerm ) / (2 * g);
