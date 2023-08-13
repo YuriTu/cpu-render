@@ -57,7 +57,7 @@ struct SceneBasic
 
         Material* jade = new Material(REFLECTION_AND_REFRACTION, Vector3f(0.0f));
         jade->Kd = Vector3f(0.325f, 0.529f, 0.415f);
-        // names home mi
+        // names home mi sigma_a0.001 sigma_s0.0015 sigama_g
         HomogeneousMedium* volume = new HomogeneousMedium(
             Vector3f(.001,.001,.001), Vector3f(.0015,.0015,.0015), 0.f);
         MediumInterface mi = MediumInterface(volume, nullptr);

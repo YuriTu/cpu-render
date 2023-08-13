@@ -70,8 +70,8 @@ float HenyeyGreenstein::Sample_p(const Vector3f &wo, Vector3f *wi, const Vector3
     float phi = 2 * PI * u[1];
     Vector3f v1,v2;
     CoordinateSystem(wo, &v1, &v2);
-    // wo作为z是为了 转化为平面 
-    *wi = SphericalDirection(sinTheta, cosTheta,phi, v1,v2,wo);
+    // wo作为z是为了 转化为平面 -wo是因为pbrt里面是左手系 我们是右手系
+    *wi = SphericalDirection(sinTheta, cosTheta,phi, v1,v2,-wo);
     return PhaseHG(cosTheta, g);
 }
 
