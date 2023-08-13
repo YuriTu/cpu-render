@@ -66,22 +66,22 @@ struct SceneBasic
         light->Kd = Vector3f(0.65f);
         
         std::shared_ptr<GeometricPrimitive> floor = createMeshTriangle(
-            "D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\floor.obj",
+            "D:\\workspace\\cpu-render\\models\\cornellbox\\floor.obj",
             white 
             // green
         );
-        std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\left.obj", red);
-        std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\right.obj", green);
+        std::shared_ptr<GeometricPrimitive> left = createMeshTriangle("D:\\workspace\\cpu-render\\models\\cornellbox\\left.obj", red);
+        std::shared_ptr<GeometricPrimitive> right = createMeshTriangle("D:\\workspace\\cpu-render\\models\\cornellbox\\right.obj", green);
 
-        // std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",white);
+        // std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle("D:\\workspace\\cpu-render\\models\\cornellbox\\shortbox.obj",white);
         std::shared_ptr<GeometricPrimitive> shortbox = createMeshTriangle(
-            "D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\shortbox.obj",
-            // "D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\duanbox.obj",
+            "D:\\workspace\\cpu-render\\models\\cornellbox\\shortbox.obj",
+            // "D:\\workspace\\cpu-render\\models\\cornellbox\\duanbox.obj",
             nullptr,mi);
         std::shared_ptr<GeometricPrimitive> fo = createMeshTriangle(
-            "D:\\workspace\\vulkan\\cpu-render\\models\\fo\\foo_update_1.obj", jade,mi
+            "D:\\workspace\\cpu-render\\models\\fo\\foo_update_1.obj", jade,mi
             );
-        std::shared_ptr<GeometricPrimitive> light_ = createMeshTriangle("D:\\workspace\\vulkan\\cpu-render\\models\\cornellbox\\light.obj", light);
+        std::shared_ptr<GeometricPrimitive> light_ = createMeshTriangle("D:\\workspace\\cpu-render\\models\\cornellbox\\light.obj", light);
         
         std::vector<std::shared_ptr<GeometricPrimitive>> rs = {
             left,

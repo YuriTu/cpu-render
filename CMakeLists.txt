@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # add_compile_definitions(DEBUG)
+set(GLOBAL_CMAKE_DIR "D:\\workspace\\cpu-render")
+add_definitions("-DBASIC_PATH=\"${GLOBAL_CMAKE_DIR}\"")
+message("The global CMake directory is: ${GLOBAL_CMAKE_DIR}")
 
 add_executable(cpu_render src/main.cpp)
 
